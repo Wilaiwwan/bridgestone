@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Paper, InputBase, Checkbox } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SearchIcon from "@mui/icons-material/Search";
@@ -14,6 +14,7 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { useHistory } from "react-router-dom";
 
 const drawerHeight = "100%";
 const drawerwidth = "100%";
@@ -74,9 +75,19 @@ const ITEM_HEIGHT = 48;
 
 export default function AllSubject() {
   const classes = useStyles();
+  const token = localStorage.getItem("token");
+  const history = useHistory();
+
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
+  useEffect(() => {
+    if (token) {
+      // fetchDataKaizen();
+    } else {
+      history.push("/login");
+    }
+  }, []);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);

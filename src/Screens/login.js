@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./login.css";
 import { makeStyles } from "@mui/styles";
 import {
@@ -8,7 +8,8 @@ import {
   Checkbox,
   FormControlLabel,
 } from "@mui/material";
-import { borderRadius, display } from "@mui/system";
+import api from "../Component/api/api";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -40,6 +41,28 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Login() {
   const classes = useStyles();
+  const history = useHistory();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleRoute = () => {
+    history.push("/AllSubject");
+  };
+
+  const login = async () => {
+    try {
+      const result = await api.post("users/login", {
+        username,
+        password,
+      });
+
+      localStorage.setItem("token", result.data.results.accessToken);
+      handleRoute();
+      console.log(result);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="container">
@@ -77,7 +100,7 @@ export default function Login() {
                     style={{
                       flexGrow: 1,
                     }}
-                    // onChange={(e) => setUsername(e.target.value)}
+                    onChange={(e) => setUsername(e.target.value)}
                   />
                 </div>
               </Paper>
@@ -111,7 +134,7 @@ export default function Login() {
                     style={{
                       flexGrow: 1,
                     }}
-                    // onChange={(e) => setUsername(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
               </Paper>
@@ -125,7 +148,7 @@ export default function Login() {
                 }}
               >
                 <FormControlLabel control={<Checkbox />} label="Remember Me" />
-                <span style={{ alignSelf: "center" }}>Forgot Password ?</span>
+                {/* <span style={{ alignSelf: "center" }}>Forgot Password ?</span> */}
               </div>
               <div className={classes.center}>
                 <Button
@@ -137,7 +160,7 @@ export default function Login() {
                     color: "white",
                     // textTransform: "lowercase",
                   }}
-                  // onClick={fetchData}
+                  onClick={login}
                 >
                   Sign in
                 </Button>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@mui/styles";
 import { Paper, InputBase, TextField, Button } from "@mui/material";
 import InputLabel from "@mui/material/InputLabel";
@@ -14,6 +14,7 @@ import Switch from "@mui/material/Switch";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import DatePicker from "@mui/lab/DatePicker";
+import { useDropzone } from "react-dropzone";
 
 const drawerHeight = "100%";
 const drawerwidth = "100%";
@@ -83,6 +84,32 @@ export default function Information() {
     setAge(event.target.value);
   };
   const [value, setValue] = useState(null);
+  const [Files, setFiles] = useState([]);
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: "image/*",
+    // accept: ".PDF",
+    onDrop: (acceptedFiles) => {
+      setFiles(
+        acceptedFiles.map((file) =>
+          Object.assign(file, {
+            preview: URL.createObjectURL(file),
+          })
+        )
+      );
+    },
+  });
+
+  const images = Files.map((file) => (
+    <div key={file.name}>
+      <div>
+        <img src={file.preview} style={{ width: "150px" }} alt="preview" />
+        
+        {/* {file.name} */}
+      </div>
+    </div>
+  ));
+
+  console.log(Files, "KKKKKKK", getRootProps, images);
 
   return (
     <div className={classes.root}>
@@ -111,17 +138,36 @@ export default function Information() {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                flexGrow: 1,
               }}
             >
-              <div
-                style={{
-                  border: "4px dotted #FF0000 ",
-                  width: 150,
-                  height: 150,
-                  borderRadius: 10,
-                }}
-              ></div>
+              <div {...getRootProps()}>
+                <input
+                  {...getInputProps()}
+                  // type="file"
+                />
+                {Files.length > 0 ? (
+                  <div>{images}</div>
+                ) : (
+                  <div
+                    style={{
+                      border: "4px dotted #FF0000 ",
+                      width: 150,
+                      height: 150,
+                      borderRadius: 10,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <span
+                      style={{ color: "#FF0000", fontSize: 50 }}
+                      class="material-icons-outlined"
+                    >
+                      add
+                    </span>
+                  </div>
+                )}
+              </div>
               <span style={{ color: "gray" }}>รูป 1920 x 700 พิกเซล</span>
             </div>
           </div>
@@ -269,6 +315,33 @@ export default function Information() {
             </div>
           </div>
           <div className={classes.width}>
+            <p className={classes.subject}>แคตตาล็อก</p>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                flexGrow: 1,
+              }}
+            >
+              <FormControl variant="standard">
+                <InputLabel htmlFor="demo-customized-select-native">
+                  Age
+                </InputLabel>
+                <NativeSelect
+                  id="demo-customized-select-native"
+                  value={age}
+                  onChange={handleChange}
+                  input={<BootstrapInput />}
+                >
+                  <option aria-label="None" value="" />
+                  <option value={10}>Ten</option>
+                  <option value={20}>Twenty</option>
+                  <option value={30}>Thirty</option>
+                </NativeSelect>
+              </FormControl>
+            </div>
+          </div>
+          <div className={classes.width}>
             <p className={classes.subject}>อัปโหลด PDF</p>
             <div
               style={{
@@ -277,18 +350,35 @@ export default function Information() {
                 flexGrow: 1,
               }}
             >
-              <div
-                style={{
-                  border: "4px dotted #FF0000 ",
-                  width: 150,
-                  height: 150,
-                  borderRadius: 10,
-                }}
-              ></div>
+              <div {...getRootProps()}>
+                <input
+                  {...getInputProps()}
+                  // type="file"
+                />
+                <div
+                  style={{
+                    border: "4px dotted #FF0000 ",
+                    width: 150,
+                    height: 150,
+                    borderRadius: 10,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <span
+                    style={{ color: "#FF0000", fontSize: 50 }}
+                    class="material-icons-outlined"
+                  >
+                    add
+                  </span>
+                </div>
+              </div>
+              <div>{images}</div>
               <span style={{ color: "gray" }}>ขนาดไฟล์ไม่เกิน 1 MB.</span>
             </div>
           </div>
-          <div className={classes.width}>
+          {/* <div className={classes.width}>
             <p className={classes.subject}>
               อัปโหลดไฟล์ <br />
               (รายชื่อพนักงาน)
@@ -311,6 +401,7 @@ export default function Information() {
               <span style={{ color: "gray" }}>(.xls) สนับสนุน</span>
             </div>
           </div>
+           */}
           <div className={classes.width}>
             <p className={classes.subject}>วันที่เริ่ม</p>
             <div>
