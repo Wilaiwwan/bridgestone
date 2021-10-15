@@ -17,9 +17,12 @@ import ManagePermissions from "./Screens/B-Admin/ManagePermissions";
 import SetPermissions from "./Screens/B-Admin/SetPermissions";
 import Role from "./Screens/B-Admin/Role";
 import AddUser from "./Screens/B-Admin/AddUser";
+import store from './redux/store';
+import { Provider } from 'react-redux';
 
 function App() {
   return (
+    <Provider store={store}>
     <Router>
       <div
         className="font-face-gm"
@@ -69,6 +72,7 @@ function App() {
         </React.Fragment>
       </div>
     </Router>
+    </Provider>
   );
 }
 

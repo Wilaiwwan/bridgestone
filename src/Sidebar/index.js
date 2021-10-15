@@ -3,6 +3,8 @@ import "./css/styles.css";
 import { makeStyles } from "@mui/styles";
 import Drawer from "@mui/material/Drawer";
 import { NavLink } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { toggle360Sidebar, toggleAdminSidebar, toggleConnectSidebar, toggleNewsSidebar, toggleRewardSidebar } from "../redux/modules/globalSlice";
 
 const drawerHeight = "100%";
 const drawerWidth = 240;
@@ -15,23 +17,28 @@ const useStyles = makeStyles((theme) => ({
 }));
 export default function Index(props) {
   const classes = useStyles();
+  const { sidebarOpen, sidebarNewsOpen,sidebarRewardOpen,sidebar360Open,sidebarConnectOpen,sidebarAdminOpen } = useSelector((state) => state.global.sidebar);
+  const dispatch = useDispatch();
 
-  const [OpenNews, setOpenNews] = useState(false);
-  const toggleNews = () => setOpenNews(!OpenNews);
-  const [OpenReward, setOpenReward] = useState(false);
-  const toggleReward = () => setOpenReward(!OpenReward);
-  const [Open360, setOpen360] = useState(false);
-  const toggle360 = () => setOpen360(!Open360);
-  const [OpenConnect, setOpenConnect] = useState(false);
-  const toggleConnect = () => setOpenConnect(!OpenConnect);
-  const [OpenAdmin, setOpenAdmin] = useState(false);
-  const toggleAdmin = () => setOpenAdmin(!OpenAdmin);
+
+  // const [OpenNews, setOpenNews] = useState(false);
+  // const toggleNews = () => setOpenNews(!OpenNews);
+  // const [OpenReward, setOpenReward] = useState(false);
+  // const toggleReward = () => setOpenReward(!OpenReward);
+  // const [Open360, setOpen360] = useState(false);
+  // const toggle360 = () => setOpen360(!Open360);
+  // const [OpenConnect, setOpenConnect] = useState(false);
+  // const toggleConnect = () => setOpenConnect(!OpenConnect);
+  // const [OpenAdmin, setOpenAdmin] = useState(false);
+  // const toggleAdmin = () => setOpenAdmin(!OpenAdmin);
+
   const handleDrawerClose = () => {
     props.onDrawerClose();
   };
 
   return (
     <Drawer
+      open={sidebarOpen}
       sx={{
         width: drawerWidth,
         flexShrink: 0,
@@ -47,7 +54,7 @@ export default function Index(props) {
       // className="sideNav"
       >
         {/* Core theme CSS (includes Bootstrap)*/}
-        <link href="css/styles.css" rel="stylesheet" />
+        {/* <link href="css/styles.css" rel="stylesheet" /> */}
         <div className="d-flex" id="wrapper">
           {/* Sidebar*/}
           <div className="border-end bg-white" id="sidebar-wrapper">
@@ -71,7 +78,8 @@ export default function Index(props) {
                 style={{ display: "flex", flexDirection: "row" }}
                 className="list-group-item list-group-item-action list-group-item-light p-3"
                 href="#!"
-                onClick={() => toggleNews(!OpenNews)}
+                // onClick={() => toggleNews(!OpenNews)}
+                onClick={() => dispatch(toggleNewsSidebar(!sidebarNewsOpen))}
               >
                 <span
                   style={{ marginRight: 10 }}
@@ -80,7 +88,7 @@ export default function Index(props) {
                   campaign
                 </span>
                 News/Announcement
-                {OpenNews ? (
+                {sidebarNewsOpen ? (
                   <span
                     style={{
                       display: "flex",
@@ -104,7 +112,7 @@ export default function Index(props) {
                   </span>
                 )}
               </a>
-              {OpenNews ? (
+              {sidebarNewsOpen ? (
                 <div>
                   <NavLink
                     className="list-group-item list-group-item-action list-group-item-light p-3"
@@ -136,7 +144,8 @@ export default function Index(props) {
                 style={{ display: "flex", flexDirection: "row" }}
                 className="list-group-item list-group-item-action list-group-item-light p-3"
                 href="#!"
-                onClick={() => toggleReward(!OpenReward)}
+                // onClick={() => toggleReward(!OpenReward)}
+                onClick={() => dispatch(toggleRewardSidebar(!sidebarRewardOpen))}
               >
                 <span
                   style={{ marginRight: 10 }}
@@ -145,7 +154,7 @@ export default function Index(props) {
                   emoji_events
                 </span>
                 B-Reward
-                {OpenReward ? (
+                {sidebarRewardOpen ? (
                   <span
                     style={{
                       display: "flex",
@@ -169,7 +178,7 @@ export default function Index(props) {
                   </span>
                 )}
               </a>
-              {OpenReward ? (
+              {sidebarRewardOpen ? (
                 <div>
                   <NavLink
                     className="list-group-item list-group-item-action list-group-item-light p-3"
@@ -201,7 +210,8 @@ export default function Index(props) {
                 style={{ display: "flex", flexDirection: "row" }}
                 className="list-group-item list-group-item-action list-group-item-light p-3"
                 href="#!"
-                onClick={() => toggle360(!Open360)}
+                // onClick={() => toggle360(!Open360)}
+                onClick={() => dispatch(toggle360Sidebar(!sidebar360Open))}
               >
                 <span
                   style={{ marginRight: 10 }}
@@ -210,7 +220,7 @@ export default function Index(props) {
                   face_retouching_natural
                 </span>
                 B-360
-                {Open360 ? (
+                {sidebar360Open ? (
                   <span
                     style={{
                       display: "flex",
@@ -234,7 +244,7 @@ export default function Index(props) {
                   </span>
                 )}
               </a>
-              {Open360 ? (
+              {sidebar360Open ? (
                 <div>
                   <NavLink
                     className="list-group-item list-group-item-action list-group-item-light p-3"
@@ -266,7 +276,7 @@ export default function Index(props) {
                 style={{ display: "flex", flexDirection: "row" }}
                 className="list-group-item list-group-item-action list-group-item-light p-3"
                 href="#!"
-                onClick={() => toggleConnect(!OpenConnect)}
+                onClick={() => dispatch(toggleConnectSidebar(!sidebarConnectOpen))}
               >
                 <span
                   style={{ marginRight: 10 }}
@@ -275,7 +285,7 @@ export default function Index(props) {
                   add_link
                 </span>
                 B-Connect
-                {OpenConnect ? (
+                {sidebarConnectOpen ? (
                   <span
                     style={{
                       display: "flex",
@@ -299,7 +309,7 @@ export default function Index(props) {
                   </span>
                 )}
               </a>
-              {OpenConnect ? (
+              {sidebarConnectOpen ? (
                 <div>
                   <NavLink
                     className="list-group-item list-group-item-action list-group-item-light p-3"
@@ -331,7 +341,8 @@ export default function Index(props) {
                 style={{ display: "flex", flexDirection: "row" }}
                 className="list-group-item list-group-item-action list-group-item-light p-3"
                 href="#!"
-                onClick={() => toggleAdmin(!OpenAdmin)}
+                // onClick={() => toggleAdmin(!OpenAdmin)}
+                onClick={() => dispatch(toggleAdminSidebar(!sidebarAdminOpen))}
               >
                 <span
                   style={{ marginRight: 10 }}
@@ -340,7 +351,7 @@ export default function Index(props) {
                   admin_panel_settings
                 </span>
                 B-Admin
-                {OpenAdmin ? (
+                {sidebarAdminOpen ? (
                   <span
                     style={{
                       display: "flex",
@@ -364,7 +375,7 @@ export default function Index(props) {
                   </span>
                 )}
               </a>
-              {OpenAdmin ? (
+              {sidebarAdminOpen ? (
                 <div>
                   <NavLink
                     className="list-group-item list-group-item-action list-group-item-light p-3"

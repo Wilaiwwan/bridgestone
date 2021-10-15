@@ -5,6 +5,8 @@ import { makeStyles } from "@mui/styles";
 import Container from "@mui/material/Container";
 import clsx from "clsx";
 import { useMediaQuery } from "react-responsive";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleSidebar } from "../redux/modules/globalSlice";
 
 const drawerWidth = 240;
 
@@ -42,18 +44,32 @@ const useStyles = makeStyles((theme) => ({
 
 export default function AuthLayout(props) {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
+  // const [open, setOpen] = React.useState(true);
+
+  const { sidebarOpen } = useSelector((state) => state.global.sidebar);
+  const dispatch = useDispatch();
+
 
   const handleDrawerToggle = () => {
-    setOpen(!open);
+    // setOpen(!open);
+    if (sidebarOpen) {
+      document.body.classList.add('sb-sidenav-toggled');
+    }
+    else {
+      document.body.classList.remove('sb-sidenav-toggled');
+    }
+    dispatch(toggleSidebar(!sidebarOpen));
+
   };
 
   const handleDrawerOpen = () => {
-    setOpen(true);
+    // setOpen(true);
+    dispatch(toggleSidebar(true));
   };
 
   const handleDrawerClose = () => {
-    setOpen(false);
+    // setOpen(false);
+    dispatch(toggleSidebar(false));
   };
 
   useMediaQuery({ query: `(max-width: 768px)` }, undefined, (matches) => {
@@ -62,15 +78,15 @@ export default function AuthLayout(props) {
 
   return (
     <div className={classes.root}>
-      <Sidebar open={open} onDrawerClose={handleDrawerClose} />
+      <Sidebar open={sidebarOpen} onDrawerClose={handleDrawerClose} />
 
       <div
         id="page-content-wrapper"
         className={clsx(classes.content, {
-          [classes.contentShift]: open,
+          [classes.contentShift]: sidebarOpen,
         })}
       >
-        <Header open={open} onDrawerToggle={handleDrawerToggle} />
+        <Header open={sidebarOpen} onDrawerToggle={handleDrawerToggle} />
         <Container className={classes.container} maxWidth={false}>
           <div className={classes.contentContainer}>
             {props.children} {/* render component */}
