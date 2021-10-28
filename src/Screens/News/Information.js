@@ -431,6 +431,7 @@ export default function Information() {
     history.push("/AllSubject");
   };
 
+
   return (
     <div className={classes.root}>
       <Paper elevation={1}>
@@ -662,7 +663,10 @@ export default function Information() {
               <FormControl size="small">
                 <Select
                   value={CatalogyId}
-                  onChange={(e) => setCatalogyId(e.target.value)}
+                  onChange={(e) => {
+                    setCatalogyId(e.target.value)
+                    
+                  }}
                   displayEmpty
                   inputProps={{ "aria-label": "Without label" }}
                   disableUnderline
@@ -694,13 +698,21 @@ export default function Information() {
                   inputProps={{ "aria-label": "Without label" }}
                   disableUnderline
                 >
-                  {CatalogyList.map((x) => x.subCatalogys)
+                  {/* {CatalogyList.map((x) => x.subCatalogys)
                     .filter((x) => x.catalogyId === CatalogyId)
                     .map((sub) => (
                       <MenuItem value={sub.subCatalogyId}>
                         {sub.subcatalogyName}
                       </MenuItem>
-                    ))}
+                    ))} */}
+
+                    {
+                      CatalogyList.find(x => x.catalogyId === CatalogyId)?.subCatalogys.map((sub) => (
+                        <MenuItem value={sub.subCatalogyId}>
+                          {sub.subcatalogyName}
+                        </MenuItem>
+                      ))
+                      } 
                 </Select>
               </FormControl>
               <span style={{ color: "gray" }}>หมวดหมู่รองของข่าวประกาศ</span>
