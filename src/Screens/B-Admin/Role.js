@@ -45,7 +45,7 @@ export default function Role() {
             }}
           >
             <Button
-              variant="outlined"
+              variant="contained"
               size="large"
               style={{
                 color: "#FF0000",
@@ -58,7 +58,7 @@ export default function Role() {
               เพิ่ม
             </Button>
             <Button
-              variant="outlined"
+              variant="contained"
               size="large"
               style={{
                 color: "white",

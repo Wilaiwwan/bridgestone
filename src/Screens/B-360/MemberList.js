@@ -114,7 +114,7 @@ export default function MemberList() {
               />
             </div>
             <Button
-              variant="outlined"
+              variant="contained"
               style={{
                 color: "white",
                 backgroundColor: "#FF0000",
@@ -141,7 +141,7 @@ export default function MemberList() {
                   <StyledTableCell align="center">ชื่อ</StyledTableCell>
                   <StyledTableCell align="center">แผนก</StyledTableCell>
                   <StyledTableCell align="center">คะแนน</StyledTableCell>
-                  <StyledTableCell align="center">แอคชั่น</StyledTableCell>
+                  <StyledTableCell align="center">แก้ไข</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

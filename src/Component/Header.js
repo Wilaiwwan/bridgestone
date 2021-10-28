@@ -1,10 +1,19 @@
 import React, { useState } from "react";
 import "../Sidebar/css/styles.css";
+import { useHistory } from "react-router-dom";
 
 export default function Header(props) {
+  const history = useHistory();
+
   const handleDrawerToggle = () => {
     props.onDrawerToggle();
   };
+
+  const handleLogOut = () => {
+    localStorage.removeItem("token");
+    history.push("/login");
+  };
+
   return (
     <div style={{ width: "100%", position: "sticky", top: 0, zIndex: 1 }}>
       {/* Page content wrapper*/}
@@ -58,9 +67,9 @@ export default function Header(props) {
                       change password
                     </a>
                     <div className="dropdown-divider" />
-                    <a className="dropdown-item" href="#!">
+                    <button className="dropdown-item" onClick={handleLogOut}>
                       Log out
-                    </a>
+                    </button>
                   </div>
                 </li>
               </ul>

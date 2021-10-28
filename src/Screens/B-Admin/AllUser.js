@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Paper, InputBase, Checkbox, Button } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Paper, InputBase, Button, TablePagination } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled } from "@mui/material/styles";
@@ -10,10 +10,8 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { useHistory, Link } from "react-router-dom";
-import IconButton from "@mui/material/IconButton";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import api from "../../Component/api/api";
+import qs from "qs";
 
 const drawerHeight = "100%";
 const drawerwidth = "100%";
@@ -40,17 +38,17 @@ const useStyles = makeStyles((theme) => ({
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    fontSize: 16,
-    backgroundColor: theme.palette.action.hover,
+    fontSize: 18,
+    // backgroundColor: theme.palette.action.hover,
   },
   [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
+    fontSize: 16,
   },
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
-    // backgroundColor: theme.palette.action.hover,
+    backgroundColor: theme.palette.action.hover,
   },
   // hide last border
   "&:last-child td, &:last-child th": {
@@ -58,25 +56,49 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const options = ["ดูรายละเอียด"];
-const ITEM_HEIGHT = 48;
-
 export default function AllUser() {
   const classes = useStyles();
   const history = useHistory();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+  const token = localStorage.getItem("token");
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
+  const [keyword, setKeyword] = useState("");
+  const [EmpList, setEmpList] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
   };
 
-  const handleRoute = () => {
-    history.push("/AddUser");
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
   };
+
+  const fetchEmpList = async () => {
+    try {
+      const params = qs.stringify({
+        ...(keyword && { keyword }),
+      });
+
+      const result = await api.get(
+        `${process.env.REACT_APP_BASE_API_DEV}api/employee/list?${params}`
+      );
+      const _result = result.data.results;
+      setEmpList(_result);
+      console.log(_result);
+    } catch (error) {
+      console.log("error => ", error);
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      fetchEmpList();
+    } else {
+      history.push("/login");
+    }
+  }, [keyword]);
 
   return (
     <div className={classes.root}>
@@ -93,10 +115,15 @@ export default function AllUser() {
           >
             <div className={classes.search}>
               <SearchIcon style={{ margin: 10 }} />
-              <InputBase multiline fullWidth placeholder="ค้นหาพนักงาน" />
+              <InputBase
+                multiline
+                fullWidth
+                placeholder="ค้นหา"
+                onChange={(e) => setKeyword(e.target.value)}
+              />
             </div>
-            <Button
-              variant="outlined"
+            {/* <Button
+              variant="contained"
               style={{
                 color: "white",
                 backgroundColor: "#FF0000",
@@ -107,75 +134,93 @@ export default function AllUser() {
               onClick={handleRoute}
             >
               เพิ่มผู้ใช้งาน
-            </Button>
+            </Button> */}
           </div>
 
           <TableContainer
-          // component={Paper}
+            // component={Paper}
+            sx={{ maxHeight: "62vh" }}
           >
-            <Table
-              sx={{ minWidth: 700 }}
-              size="small"
-              aria-label="customized table"
-            >
+            <Table stickyHeader size="small" aria-label="customized table">
               <TableHead>
                 <TableRow>
-                  <StyledTableCell align="center">รหัสพนักงาน</StyledTableCell>
-                  <StyledTableCell align="center">ชื่อผู้ใช้</StyledTableCell>
-                  <StyledTableCell align="center">แผนก</StyledTableCell>
-                  <StyledTableCell align="center">บทบาท</StyledTableCell>
-                  <StyledTableCell align="center">แอคชั่น</StyledTableCell>
+                  <StyledTableCell width="20%" align="center">
+                    รหัสพนักงาน
+                  </StyledTableCell>
+                  <StyledTableCell width="35%" align="center">
+                    ชื่อผู้ใช้
+                  </StyledTableCell>
+                  <StyledTableCell width="15%" align="center">
+                    แผนก
+                  </StyledTableCell>
+                  <StyledTableCell width="15%" align="center">
+                    บทบาท
+                  </StyledTableCell>
+                  <StyledTableCell width="15%" align="center">
+                    แก้ไข
+                  </StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                <StyledTableRow key="">
-                  <StyledTableCell align="center">000001</StyledTableCell>
-                  <StyledTableCell align="left">
-                    Nakron Suwannato
-                  </StyledTableCell>
-                  <StyledTableCell align="center">สารสนเทศ</StyledTableCell>
-                  <StyledTableCell align="center">Developer</StyledTableCell>
-                  <StyledTableCell align="center">
-                    <IconButton
-                      aria-label="more"
-                      id="long-button"
-                      aria-controls="long-menu"
-                      aria-expanded={open ? "true" : undefined}
-                      aria-haspopup="true"
-                      onClick={handleClick}
-                    >
-                      <MoreVertIcon />
-                    </IconButton>
-                    <Menu
-                      id="long-menu"
-                      MenuListProps={{
-                        "aria-labelledby": "long-button",
-                      }}
-                      anchorEl={anchorEl}
-                      open={open}
-                      onClose={handleClose}
-                      PaperProps={{
-                        style: {
-                          maxHeight: ITEM_HEIGHT * 4.5,
-                          // width: "20ch",
-                        },
-                      }}
-                    >
-                      {options.map((option) => (
-                        <MenuItem
-                          key={option}
-                          selected={option === "Pyxis"}
-                          onClick={handleClose}
-                        >
-                          {option}
-                        </MenuItem>
-                      ))}
-                    </Menu>
-                  </StyledTableCell>
-                </StyledTableRow>
+                {(rowsPerPage > 0
+                  ? EmpList.slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
+                  : EmpList
+                )
+                  // .filter((i, index) => index < 100)
+                  .map((Data, index) => {
+                    return (
+                      <StyledTableRow key={Data.empId}>
+                        <StyledTableCell align="center">
+                          {Data.empNo}
+                        </StyledTableCell>
+                        <StyledTableCell align="left">
+                          {Data.fistName} <span>&nbsp;&nbsp;</span>
+                          {Data.lastName}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {Data.orgname}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {Data.roleName}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          <Link
+                            to={{
+                              pathname: `/EditUser/${Data.empId}`,
+                            }}
+                          >
+                            <Button
+                              variant="contained"
+                              style={{
+                                color: "white",
+                                backgroundColor: "#FF0000",
+                                borderColor: "transparent",
+                                marginRight: 10,
+                                width: 80,
+                              }}
+                            >
+                              เพิ่มเติม
+                            </Button>
+                          </Link>
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    );
+                  })}
               </TableBody>
             </Table>
           </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[15, 45, 105]}
+            component="div"
+            count={EmpList.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </div>
       </Paper>
     </div>

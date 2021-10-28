@@ -10,6 +10,8 @@ import {
 } from "@mui/material";
 import api from "../Component/api/api";
 import { useHistory } from "react-router-dom";
+import Alert from "@mui/material/Alert";
+import Stack from "@mui/material/Stack";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,24 +46,35 @@ export default function Login() {
   const history = useHistory();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
-  const handleRoute = () => {
-    history.push("/AllSubject");
-  };
+  const [Err, setErr] = useState(false);
 
   const login = async () => {
     try {
-      const result = await api.post("users/login", {
+      const result = await api.post("api/users/login", {
         username,
         password,
       });
-
+      if (result.data.message !== "Success.") {
+        setErr(true);
+      }
       localStorage.setItem("token", result.data.results.accessToken);
       handleRoute();
       console.log(result);
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const handleRoute = () => {
+    history.push("/AllSubject");
+  };
+  const handleChengeUserName = (e) => {
+    setUsername(e.target.value);
+    setErr(false);
+  };
+  const handleChengePass = (e) => {
+    setPassword(e.target.value);
+    setErr(false);
   };
 
   return (
@@ -71,6 +84,13 @@ export default function Login() {
           <div className={classes.center}>
             <div>
               <img src="/images/Bridgestone.png" alt="" className="logo" />
+              {Err ? (
+                <Stack sx={{ width: "100%" }} spacing={2}>
+                  <Alert severity="error">
+                    Username or Password is incorrect.
+                  </Alert>
+                </Stack>
+              ) : null}
               <Paper
                 elevation={2}
                 style={{ minWidth: 300, minHeight: 37, marginTop: 25 }}
@@ -100,7 +120,7 @@ export default function Login() {
                     style={{
                       flexGrow: 1,
                     }}
-                    onChange={(e) => setUsername(e.target.value)}
+                    onChange={handleChengeUserName}
                   />
                 </div>
               </Paper>
@@ -122,6 +142,7 @@ export default function Login() {
                     lock
                   </span>
                   <TextField
+                    type="password"
                     variant="standard"
                     id="outlined-basic"
                     placeholder="Password"
@@ -134,10 +155,11 @@ export default function Login() {
                     style={{
                       flexGrow: 1,
                     }}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={handleChengePass}
                   />
                 </div>
               </Paper>
+
               <div
                 style={{
                   display: "flex",
@@ -150,6 +172,7 @@ export default function Login() {
                 <FormControlLabel control={<Checkbox />} label="Remember Me" />
                 {/* <span style={{ alignSelf: "center" }}>Forgot Password ?</span> */}
               </div>
+
               <div className={classes.center}>
                 <Button
                   variant="contained"

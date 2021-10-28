@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Paper, TextField, Button, Dialog, DialogContent } from "@mui/material";
+import { Paper, Dialog, DialogContent, Button, TextField } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { alpha, styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
-import LocalizationProvider from "@mui/lab/LocalizationProvider";
-import DatePicker from "@mui/lab/DatePicker";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 import { useHistory, useParams } from "react-router-dom";
 import qs from "qs";
 import api from "../../Component/api/api";
@@ -25,18 +25,25 @@ const useStyles = makeStyles((theme) => ({
     width: drawerwidth,
     marginTop: 20,
   },
-  width: {
-    width: "70%",
+  search: {
     display: "flex",
-    flexDirection: "row",
     alignItems: "center",
-    marginTop: 50,
+    border: "1px solid #e0e0e0",
+    width: "20%",
+    marginRight: 20,
   },
   Padding: {
     paddingTop: "2%",
     paddingRight: "6%",
     paddingLeft: "6%",
     paddingBottom: "2%",
+  },
+  widthInput: {
+    width: "70%",
+    display: "flex",
+    flexDirection: "row",
+    // alignItems: "center",
+    marginTop: 50,
   },
   subject: {
     width: "20%",
@@ -46,13 +53,13 @@ const useStyles = makeStyles((theme) => ({
     height: 50,
     marginRight: 10,
   },
+  dialogPaper: {
+    height: "380px",
+  },
   Row: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-  },
-  dialogPaper: {
-    height: "380px",
   },
 }));
 
@@ -67,27 +74,27 @@ const GreenSwitch = styled(Switch)(({ theme }) => ({
     backgroundColor: "#FF0000",
   },
 }));
-export default function AddNewReward() {
+
+export default function EditUser() {
   const classes = useStyles();
   const history = useHistory();
   const token = localStorage.getItem("token");
   const { id } = useParams();
-  const itemId = id;
+  const empId = id;
 
-  const [StartDate, setStartDate] = useState(new Date());
-  const [EndDate, setEndDate] = useState(new Date());
-  const [ItemName, setItemName] = useState("");
-  const [GroupItemId, setGroupItemId] = useState(null);
-  const [Point, setPoint] = useState(0);
-  const [Stock, setStock] = useState("");
-  const [Description, setDescription] = useState("");
+  const [EmpNo, setEmpNo] = useState("");
+  const [FirstName, setFirstName] = useState("");
+  const [LastName, setLastName] = useState("");
+  const [DepartmentId, setDepartmentId] = useState("");
+  const [Orgname, setOrgname] = useState("");
+  const [RoleList, setRoleList] = useState([]);
+  const [RoleId, setRoleId] = useState("");
   const [FileId, setFileId] = useState("");
   const [Status, setStatus] = useState(true);
-  const [Deleted, setDeleted] = useState(false);
   const [open, setOpen] = useState(false);
-  const [ShowInput, setShowInput] = useState(false);
   const [Path, setPath] = useState("");
-
+  const [ShowInput, setShowInput] = useState(false);
+  console.log(FileId);
   const [Files, setFiles] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
     // accept: "image/*",
@@ -116,6 +123,16 @@ export default function AddNewReward() {
       }
     },
   });
+
+  const Del = (index) => {
+    console.log(index);
+    setFiles([]);
+    setFileId(null);
+    setPath("");
+    // const filteredArray = Files.filter((_, i) => i !== index);
+    // setFiles(filteredArray);
+  };
+
   const images = Files.map((file, index) => (
     <div key={index} className={classes.Row}>
       {console.log(file.type)}
@@ -156,63 +173,76 @@ export default function AddNewReward() {
     </div>
   ));
 
-  console.log(StartDate, EndDate, GroupItemId);
-  const save = async () => {
-    const ItemId = undefined ? null : id;
+  const handleRoute = () => {
+    history.push("/AllUser");
+  };
+
+  const fetchEmpData = async () => {
     try {
-      const result = await api.post("api/breward/add", {
-        ItemId,
-        ItemName,
-        GroupItemId,
-        Point,
-        Stock,
-        StartDate,
-        EndDate,
-        Description,
-        FileId,
-        Status,
-        Deleted,
+      const params = qs.stringify({
+        ...(empId && { empId }),
       });
-      setOpen(true);
-      setTimeout(() => {
-        history.push(`/AllReward`);
-      }, 2000);
-      console.log(result);
+
+      const result = await api.get(
+        `${process.env.REACT_APP_BASE_API_DEV}api/employee/list?${params}`
+      );
+      const _result = result.data.results[0];
+      setEmpNo(_result.empNo);
+      setFirstName(_result.fistName);
+      setLastName(_result.lastName);
+      setDepartmentId(_result.departmentId);
+      setOrgname(_result.orgname);
+      setRoleId(_result.roleId);
+      setFileId(_result.fileId);
+      setStatus(_result.status);
+      setPath(_result.path);
+      console.log(_result);
     } catch (error) {
       console.log("error => ", error);
     }
   };
 
-  const Del = (index) => {
-    setFiles([]);
-    setFileId(null);
-    setPath("");
-    // const filteredArray = Files.filter((_, i) => i !== index);
-    // setFiles(filteredArray);
+  const roleData = async () => {
+    try {
+      const result = await api.get("api/setting/role/list");
+      const _result = result.data.results;
+      setRoleList(_result);
+      console.log(_result);
+    } catch (error) {
+      console.log("error => ", error);
+    }
   };
 
-
-  const fetchBRewardList = async () => {
+  const save = async () => {
+    const EmpId = id;
+    const FistName = FirstName;
+    console.log(
+      EmpId,
+      EmpNo,
+      FistName,
+      LastName,
+      DepartmentId,
+      Orgname,
+      RoleId,
+      FileId,
+      Status
+    );
     try {
-      const params = qs.stringify({
-        isBackend: true,
-        ...(itemId && { itemId }),
+      const result = await api.post("api/employee/update", {
+        EmpId,
+        EmpNo,
+        FistName,
+        LastName,
+        DepartmentId,
+        Orgname,
+        RoleId,
+        FileId,
+        Status,
       });
-
-      const result = await api.get(
-        `${process.env.REACT_APP_BASE_API_DEV}api/bpoint/item/list?${params}`
-      );
-      const _result = result.data.results[0];
-      setItemName(_result.itemName);
-      setGroupItemId(_result.groupItemId);
-      setPoint(_result.point);
-      setStock(_result.stock);
-      setStartDate(_result.startDate);
-      setEndDate(_result.endDate);
-      setFileId(_result.fileId);
-      setStatus(_result.status);
-      setPath(_result.path);
-
+      setOpen(true);
+      setTimeout(() => {
+        history.push(`/AllUser`);
+      }, 2000);
       console.log(result);
     } catch (error) {
       console.log("error => ", error);
@@ -221,26 +251,21 @@ export default function AddNewReward() {
 
   useEffect(() => {
     if (token) {
-      if (itemId) {
-        fetchBRewardList();
-      }
+      fetchEmpData();
+      roleData();
     } else {
       history.push("/login");
     }
   }, []);
 
-  const handleRoute = () => {
-    history.push("/AllReward");
-  };
-
   return (
     <div className={classes.root}>
       <Paper elevation={1}>
         <div class={classes.Padding}>
-          <p style={{ color: "red" }}>B-Reward</p>
-          <h3>เพิ่มของรางวัลใหม่</h3>
-          <div className={classes.width}>
-            <p className={classes.subject}>ชื่อของรางวัล</p>
+          <p style={{ color: "red" }}>B-Admin</p>
+          <h3>แก้ไขผู้ใช้</h3>
+          <div className={classes.widthInput}>
+            <p className={classes.subject}>รหัสพนักงาน</p>
             <div
               style={{
                 display: "flex",
@@ -250,14 +275,90 @@ export default function AddNewReward() {
             >
               <TextField
                 size="small"
-                placeholder="Bridgestone Jacket 2020"
-                onChange={(e) => setItemName(e.target.value)}
-                value={ItemName}
-              ></TextField>
+                placeholder="รหัสพนักงาน"
+                onChange={(e) => setEmpNo(e.target.value)}
+                value={EmpNo}
+              />
             </div>
           </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>รูปของรางวัล</p>
+
+          <div className={classes.widthInput}>
+            <p className={classes.subject}>ชื่อ</p>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                flexGrow: 1,
+              }}
+            >
+              <TextField
+                size="small"
+                placeholder="ชื่อ"
+                onChange={(e) => setFirstName(e.target.value)}
+                value={FirstName}
+              />
+            </div>
+          </div>
+          <div className={classes.widthInput}>
+            <p className={classes.subject}>นามสกุล</p>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                flexGrow: 1,
+              }}
+            >
+              <TextField
+                size="small"
+                placeholder="นามสกุล"
+                onChange={(e) => setLastName(e.target.value)}
+                value={LastName}
+              />
+            </div>
+          </div>
+          <div className={classes.widthInput}>
+            <p className={classes.subject}>บทบาท</p>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                flexGrow: 1,
+              }}
+            >
+              <FormControl size="small">
+                <Select
+                  value={RoleId}
+                  onChange={(e) => setRoleId(e.target.value)}
+                  displayEmpty
+                  inputProps={{ "aria-label": "Without label" }}
+                  disableUnderline
+                >
+                  {RoleList.map((Role) => (
+                    <MenuItem value={Role.roleId}>{Role.roleName}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+          </div>
+          <div className={classes.widthInput}>
+            <p className={classes.subject}>แผนก</p>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                flexGrow: 1,
+              }}
+            >
+              <TextField
+                size="small"
+                placeholder="แผนก"
+                onChange={(e) => setOrgname(e.target.value)}
+                value={Orgname}
+              />
+            </div>
+          </div>
+          <div className={classes.widthInput}>
+            <p className={classes.subject}>รูปภาพ</p>
             <div>
               {Path && !ShowInput ? (
                 <div className={classes.Row}>
@@ -356,7 +457,7 @@ export default function AddNewReward() {
                           </span>
                         </div>
                         <span style={{ color: "gray" }}>
-                          รูปภาพ 1920x700 พิกเซล
+                          รูปภาพ 512 x 512 พิกเซล
                         </span>
                       </div>
                     )}
@@ -365,99 +466,7 @@ export default function AddNewReward() {
               )}
             </div>
           </div>
-
-          <div className={classes.width}>
-            <p className={classes.subject}>จำนวนของรางวัลในคลัง</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
-              <TextField
-                size="small"
-                placeholder="15"
-                type="number"
-                onChange={(e) => setStock(e.target.value)}
-                value={Stock}
-              ></TextField>
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>รายละเอียด</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
-              <TextField
-                size="small"
-                // placeholder="15"
-                onChange={(e) => setDescription(e.target.value)}
-                value={Description}
-              ></TextField>
-            </div>
-          </div>
-
-          <div className={classes.width}>
-            <p className={classes.subject}>คะแนนแลก</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
-              <TextField
-                size="small"
-                placeholder="1500"
-                onChange={(e) => setPoint(e.target.value)}
-                value={Point}
-                type="number"
-              />
-              <span style={{ color: "gray" }}>
-                จำนวนคะแนนเพื่อใช้แลกของรางวัล
-              </span>
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>วันที่เริ่ม</p>
-            <div>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  // label="Basic example"
-                  value={StartDate}
-                  onChange={(newValue) => {
-                    setStartDate(newValue);
-                  }}
-                  renderInput={(params) => (
-                    <TextField {...params} size="small" />
-                  )}
-                />
-              </LocalizationProvider>
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>วันที่สิ้นสุด</p>
-            <div>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  // label="Basic example"
-                  value={EndDate}
-                  onChange={(newValue) => {
-                    setEndDate(newValue);
-                  }}
-                  renderInput={(params) => (
-                    <TextField {...params} size="small" />
-                  )}
-                />
-              </LocalizationProvider>
-            </div>
-          </div>
-          <div className={classes.width}>
+          <div className={classes.widthInput}>
             <p className={classes.subject}>สถานะ</p>
             <div
               style={{
@@ -472,7 +481,6 @@ export default function AddNewReward() {
               />
             </div>
           </div>
-
           <div
             style={{
               width: "70%",

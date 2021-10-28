@@ -75,7 +75,7 @@ export default function AddMember() {
               <InputBase multiline fullWidth placeholder="ค้นหาพนักงาน" />
             </div>
             <Button
-              variant="outlined"
+              variant="contained"
               style={{
                 color: "white",
                 backgroundColor: "#FF0000",
@@ -102,7 +102,7 @@ export default function AddMember() {
                   <StyledTableCell align="center">รหัสพนักงาน</StyledTableCell>
                   <StyledTableCell align="center">ชื่อ</StyledTableCell>
                   <StyledTableCell align="center">แผนก</StyledTableCell>
-                  <StyledTableCell align="center">แอคชั่น</StyledTableCell>
+                  <StyledTableCell align="center">แก้ไข</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

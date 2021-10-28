@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Paper, InputBase, Checkbox } from "@mui/material";
+import { Paper, InputBase, Button } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SearchIcon from "@mui/icons-material/Search";
 import Table from "@mui/material/Table";
@@ -10,11 +10,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { alpha, styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
-import IconButton from "@mui/material/IconButton";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
+import qs from "qs";
+import moment from "moment";
+import api from "../../Component/api/api";
 
 const drawerHeight = "100%";
 const drawerwidth = "100%";
@@ -70,31 +69,41 @@ const GreenSwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-const options = ["ดูรายละเอียด"];
-const ITEM_HEIGHT = 48;
-
 export default function AllSubject() {
   const classes = useStyles();
   const token = localStorage.getItem("token");
   const history = useHistory();
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+  const [keyword, setKeyword] = useState("");
+  const [ContentMainId, setContentMainId] = useState("");
+  const [AdminContentList, setAdminContentList] = useState([]);
+  const [Status, setStatus] = useState(true);
+
+  const fetchAdminContentList = async () => {
+    try {
+      const params = qs.stringify({
+        ...(keyword && { keyword }),
+        ...(ContentMainId && { ContentMainId }),
+      });
+
+      const result = await api.get(
+        `${process.env.REACT_APP_BASE_API_DEV}api/admin/content/list?${params}`
+      );
+      const _result = result.data.results;
+      setAdminContentList(_result);
+      console.log(_result);
+    } catch (error) {
+      console.log("error => ", error);
+    }
+  };
 
   useEffect(() => {
     if (token) {
-      // fetchDataKaizen();
+      fetchAdminContentList();
     } else {
       history.push("/login");
     }
   }, []);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   return (
     <div className={classes.root}>
@@ -115,103 +124,76 @@ export default function AllSubject() {
             </div>
           </div>
 
-          <TableContainer
-          // component={Paper}
-          >
-            <Table
-              sx={{ minWidth: 700 }}
-              size="small"
-              aria-label="customized table"
-            >
+          <TableContainer sx={{ maxHeight: "62vh" }}>
+            <Table stickyHeader size="small" aria-label="customized table">
               <TableHead>
                 <TableRow>
-                  {/* <StyledTableCell align="center">
-                    <Checkbox
-                      // {...label}
-                      // defaultChecked
-                      sx={{
-                        color: red[500],
-                        "&.Mui-checked": {
-                          color: red[500],
-                        },
-                      }}
-                    />
-                  </StyledTableCell> */}
                   <StyledTableCell align="center">วันที่เริ่ม</StyledTableCell>
                   <StyledTableCell align="center">
                     วันที่สิ้นสุด
                   </StyledTableCell>
-                  <StyledTableCell align="center">ชื่อเรื่อง</StyledTableCell>
+                  <StyledTableCell width="30%" align="center">
+                    ชื่อเรื่อง
+                  </StyledTableCell>
                   <StyledTableCell align="center">หมวดหมู่</StyledTableCell>
                   <StyledTableCell align="center">หมวดหมู่ย่อย</StyledTableCell>
                   <StyledTableCell align="center">ผู้เขียน</StyledTableCell>
                   <StyledTableCell align="center">สถานะ</StyledTableCell>
-                  <StyledTableCell align="center">แอคชั่น</StyledTableCell>
+                  <StyledTableCell align="center">แก้ไข</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                <StyledTableRow key="">
-                  {/* <StyledTableCell align="center">
-                    <Checkbox
-                      // {...label}
-                      defaultChecked
-                      sx={{
-                        color: red[500],
-                        "&.Mui-checked": {
-                          color: red[500],
-                        },
-                      }}
-                    />
-                  </StyledTableCell> */}
-                  <StyledTableCell align="center">04/06/2021</StyledTableCell>
-                  <StyledTableCell align="center">04/06/2021</StyledTableCell>
-                  <StyledTableCell align="center">
-                    Solutions for your journey
-                  </StyledTableCell>
-                  <StyledTableCell align="center">Announcement</StyledTableCell>
-                  <StyledTableCell align="center"></StyledTableCell>
-                  <StyledTableCell align="left">Nakron</StyledTableCell>
-                  <StyledTableCell align="center">
-                    <GreenSwitch defaultChecked />
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    <IconButton
-                      aria-label="more"
-                      id="long-button"
-                      aria-controls="long-menu"
-                      aria-expanded={open ? "true" : undefined}
-                      aria-haspopup="true"
-                      onClick={handleClick}
-                    >
-                      <MoreVertIcon />
-                    </IconButton>
-                    <Menu
-                      id="long-menu"
-                      MenuListProps={{
-                        "aria-labelledby": "long-button",
-                      }}
-                      anchorEl={anchorEl}
-                      open={open}
-                      onClose={handleClose}
-                      PaperProps={{
-                        style: {
-                          maxHeight: ITEM_HEIGHT * 4.5,
-                          // width: "20ch",
-                        },
-                      }}
-                    >
-                      {options.map((option) => (
-                        <MenuItem
-                          key={option}
-                          selected={option === "Pyxis"}
-                          onClick={handleClose}
+                {AdminContentList.map((Data, index) => {
+                  return (
+                    <StyledTableRow key={Data.contentMainId}>
+                      <StyledTableCell align="center">
+                        {moment(Data.startDate).format("DD-MM-YYYY")}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {moment(Data.endDate).format("DD-MM-YYYY")}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {Data.contentTitle}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {Data.catalogyName}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {Data.subCatalogyName}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        {Data.createName}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {Data.status === "C"
+                          ? "Cancel"
+                          : Data.status === "D"
+                          ? "Draff"
+                          : "Publish"}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <Link
+                          to={{
+                            pathname: `/EditInformation/${Data.contentMainId}`,
+                          }}
                         >
-                          {option}
-                        </MenuItem>
-                      ))}
-                    </Menu>
-                  </StyledTableCell>
-                </StyledTableRow>
+                          <Button
+                            variant="contained"
+                            style={{
+                              color: "white",
+                              backgroundColor: "#FF0000",
+                              borderColor: "transparent",
+                              marginRight: 10,
+                              width: 80,
+                            }}
+                          >
+                            เพิ่มเติม
+                          </Button>
+                        </Link>
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Paper, InputBase, Checkbox } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Paper, InputBase, Button } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled } from "@mui/material/styles";
@@ -9,10 +9,9 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import IconButton from "@mui/material/IconButton";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { useHistory, Link } from "react-router-dom";
+import qs from "qs";
+import api from "../../Component/api/api";
 
 const drawerHeight = "100%";
 const drawerwidth = "100%";
@@ -38,17 +37,17 @@ const useStyles = makeStyles((theme) => ({
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    fontSize: 16,
-    backgroundColor: theme.palette.action.hover,
+    fontSize: 18,
+    // backgroundColor: theme.palette.action.hover,
   },
   [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
+    fontSize: 16,
   },
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
-    // backgroundColor: theme.palette.action.hover,
+    backgroundColor: theme.palette.action.hover,
   },
   // hide last border
   "&:last-child td, &:last-child th": {
@@ -56,20 +55,40 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const options = ["ดูรายละเอียด"];
-const ITEM_HEIGHT = 48;
-
 export default function AllLink() {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+  const history = useHistory();
+  const token = localStorage.getItem("token");
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const [keyword, setKeyword] = useState("");
+  const [BconnectID, setBconnectID] = useState("");
+  const [BconnectList, setBconnectList] = useState([]);
+
+  const fetchBconnectList = async () => {
+    try {
+      const params = qs.stringify({
+        ...(keyword && { keyword }),
+        ...(BconnectID && { BconnectID }),
+      });
+
+      const result = await api.get(
+        `${process.env.REACT_APP_BASE_API_DEV}api/bconnect/list?${params}`
+      );
+      const _result = result.data.results;
+      setBconnectList(_result);
+      console.log(_result);
+    } catch (error) {
+      console.log("error => ", error);
+    }
   };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+
+  useEffect(() => {
+    if (token) {
+      fetchBconnectList();
+    } else {
+      history.push("/login");
+    }
+  }, [keyword]);
 
   return (
     <div className={classes.root}>
@@ -86,77 +105,71 @@ export default function AllLink() {
           >
             <div className={classes.search}>
               <SearchIcon style={{ margin: 10 }} />
-              <InputBase multiline fullWidth placeholder="ค้นหาพนักงาน" />
+              <InputBase
+                multiline
+                fullWidth
+                placeholder="ค้นหาชื่อ"
+                onChange={(e) => setKeyword(e.target.value)}
+              />
             </div>
           </div>
 
-          <TableContainer
-          // component={Paper}
-          >
-            <Table
-              sx={{ minWidth: 700 }}
-              size="small"
-              aria-label="customized table"
-            >
+          <TableContainer sx={{ maxHeight: "62vh" }}>
+            <Table stickyHeader size="small" aria-label="customized table">
               <TableHead>
                 <TableRow>
                   <StyledTableCell align="center">ลำดับ</StyledTableCell>
                   <StyledTableCell align="center">ชื่อ</StyledTableCell>
-                  <StyledTableCell align="center">ลิงค์ปลายทาง</StyledTableCell>
+                  <StyledTableCell width="10%" align="center">
+                    ลิงค์ปลายทาง
+                  </StyledTableCell>
                   <StyledTableCell align="center">กลุ่ม</StyledTableCell>
                   <StyledTableCell align="center">ผู้เขียน</StyledTableCell>
-                  <StyledTableCell align="center">แอคชั่น</StyledTableCell>
+                  <StyledTableCell align="center">แก้ไข</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                <StyledTableRow key="">
-                  <StyledTableCell align="center">1</StyledTableCell>
-                  <StyledTableCell align="center">
-                    สายด่วนบีทีเอ็มที
-                  </StyledTableCell>
-                  <StyledTableCell align="center">
-                    https://line.btmt.co.th/page/addressbook
-                  </StyledTableCell>
-                  <StyledTableCell align="center">กลุ่ม</StyledTableCell>
-                  <StyledTableCell align="center">Nakron</StyledTableCell>
-                  <StyledTableCell align="center">
-                    <IconButton
-                      aria-label="more"
-                      id="long-button"
-                      aria-controls="long-menu"
-                      aria-expanded={open ? "true" : undefined}
-                      aria-haspopup="true"
-                      onClick={handleClick}
-                    >
-                      <MoreVertIcon />
-                    </IconButton>
-                    <Menu
-                      id="long-menu"
-                      MenuListProps={{
-                        "aria-labelledby": "long-button",
-                      }}
-                      anchorEl={anchorEl}
-                      open={open}
-                      onClose={handleClose}
-                      PaperProps={{
-                        style: {
-                          maxHeight: ITEM_HEIGHT * 4.5,
-                          // width: "20ch",
-                        },
-                      }}
-                    >
-                      {options.map((option) => (
-                        <MenuItem
-                          key={option}
-                          selected={option === "Pyxis"}
-                          onClick={handleClose}
+                {BconnectList.map((Data, index) => {
+                  return (
+                    <StyledTableRow key={Data.bconnectID}>
+                      <StyledTableCell align="center">
+                        {index + 1}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {Data.bconnectName}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <a>{Data.url}</a>
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {Data.typeConnectName}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        {Data.createName}
+                      </StyledTableCell>
+                      <StyledTableCell align="center">
+                        <Link
+                          to={{
+                            pathname: `/EditLink/${Data.bconnectID}`,
+                          }}
                         >
-                          {option}
-                        </MenuItem>
-                      ))}
-                    </Menu>
-                  </StyledTableCell>
-                </StyledTableRow>
+                          <Button
+                            variant="contained"
+                            style={{
+                              color: "white",
+                              backgroundColor: "#FF0000",
+                              borderColor: "transparent",
+                              marginRight: 10,
+                              width: 80,
+                            }}
+                          >
+                            เพิ่มเติม
+                          </Button>
+                        </Link>
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>

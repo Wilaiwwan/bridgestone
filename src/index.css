@@ -1,20 +1,21 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
 @font-face {
   font-family: "Sarabun";
-  src: local("Sarabun"), url(./fonts/Sarabun/Sarabun-Bold.ttf) format("truetype");
+  src: local("Sarabun"),
+    url(./fonts/Sarabun/Sarabun-Bold.ttf) format("truetype");
 }
 @font-face {
   font-family: "Sarabun";
@@ -33,7 +34,8 @@ code {
 }
 @font-face {
   font-family: "Sarabun";
-  src: local("Sarabun"), url(./fonts/Sarabun/Sarabun-ExtraLight.ttf) format("truetype");
+  src: local("Sarabun"),
+    url(./fonts/Sarabun/Sarabun-ExtraLight.ttf) format("truetype");
 }
 @font-face {
   font-family: "Sarabun";
@@ -42,7 +44,8 @@ code {
 }
 @font-face {
   font-family: "Sarabun";
-  src: local("Sarabun"), url(./fonts/Sarabun/Sarabun-Italic.ttf) format("truetype");
+  src: local("Sarabun"),
+    url(./fonts/Sarabun/Sarabun-Italic.ttf) format("truetype");
 }
 @font-face {
   font-family: "Sarabun";
@@ -51,7 +54,8 @@ code {
 }
 @font-face {
   font-family: "Sarabun";
-  src: local("Sarabun"), url(./fonts/Sarabun/Sarabun-LightItalic.ttf) format("truetype");
+  src: local("Sarabun"),
+    url(./fonts/Sarabun/Sarabun-LightItalic.ttf) format("truetype");
 }
 @font-face {
   font-family: "Sarabun";
@@ -65,11 +69,13 @@ code {
 }
 @font-face {
   font-family: "Sarabun";
-  src: local("Sarabun"), url(./fonts/Sarabun/Sarabun-SemiBold.ttf) format("truetype");
+  src: local("Sarabun"),
+    url(./fonts/Sarabun/Sarabun-SemiBold.ttf) format("truetype");
 }
 @font-face {
   font-family: "Sarabun";
-  src: local("Sarabun"), url(./fonts/Sarabun/Sarabun-SemiBoldItalic.ttf) format("truetype");
+  src: local("Sarabun"),
+    url(./fonts/Sarabun/Sarabun-SemiBoldItalic.ttf) format("truetype");
 }
 @font-face {
   font-family: "Sarabun";
@@ -88,15 +94,21 @@ code {
     url(./fonts/Sarabun/Sarabun-Regular.ttf) format("truetype");
 }
 
-
 @font-face {
-  font-family: 'Material Icons';
+  font-family: "Material Icons";
   font-style: normal;
   font-weight: 400;
   src: url(https://example.com/MaterialIcons-Regular.eot); /* For IE6-8 */
-  src: local('Material Icons'),
-    local('MaterialIcons-Regular'),
-    url(https://example.com/MaterialIcons-Regular.woff2) format('woff2'),
-    url(https://example.com/MaterialIcons-Regular.woff) format('woff'),
-    url(https://example.com/MaterialIcons-Regular.ttf) format('truetype');
+  src: local("Material Icons"), local("MaterialIcons-Regular"),
+    url(https://example.com/MaterialIcons-Regular.woff2) format("woff2"),
+    url(https://example.com/MaterialIcons-Regular.woff) format("woff"),
+    url(https://example.com/MaterialIcons-Regular.ttf) format("truetype");
+}
+
+.MuiTableCell-root {
+  border-bottom: none !important;
+}
+
+a {
+  text-decoration: none !important;
 }

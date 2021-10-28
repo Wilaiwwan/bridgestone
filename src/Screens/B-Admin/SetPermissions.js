@@ -52,7 +52,7 @@ export default function SetPermissions() {
             }}
           >
             <Button
-              variant="outlined"
+              variant="contained"
               size="large"
               style={{
                 color: "white",
