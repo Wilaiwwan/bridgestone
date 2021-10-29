@@ -10,6 +10,7 @@ import {
   Dialog,
   DialogContent,
   Autocomplete,
+  Stack,
 } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -246,6 +247,8 @@ export default function Information() {
   const [TypeContentList, setTypeContentList] = useState([]);
   const [CatalogyList, setCatalogyList] = useState([]);
   const [empId, setEmpId] = useState("");
+  const [EmpList, setEmpList] = useState([]);
+  const [RoleList, setRoleList] = useState([]);
 
   const [Files, setFiles] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
@@ -343,10 +346,10 @@ export default function Information() {
       setUrlLink(_result.urlLink);
       setDeleted(_result.deleted);
       setPath(_result.path);
-      // setIsPublic()
+      setIsPublic(_result.isPublic);
       setEmployeesAccess(_result.employeesAccess);
       setRolesAccess(_result.rolesAccess);
-      console.log(result);
+      console.log(result, "==> content");
     } catch (error) {
       console.log("error => ", error);
     }
@@ -363,7 +366,6 @@ export default function Information() {
       );
       const _result = result.data.results.typeContent;
       setTypeContentList(_result);
-      // console.log(result);
     } catch (error) {
       console.log("error => ", error);
     }
@@ -380,7 +382,7 @@ export default function Information() {
       );
       const _result = result.data.results.catalogy;
       setCatalogyList(_result);
-      console.log(result);
+      console.log(result, "==> catagoly");
     } catch (error) {
       console.log("error => ", error);
     }
@@ -396,7 +398,21 @@ export default function Information() {
         `${process.env.REACT_APP_BASE_API_DEV}api/employee/list?${params}`
       );
       const _result = result.data.results;
-      console.log(result, "PPPPPPPPPPPP");
+      setEmpList(_result);
+      console.log(result, "Emp");
+    } catch (error) {
+      console.log("error => ", error);
+    }
+  };
+
+  const fetchRoleList = async () => {
+    try {
+      const result = await api.get(
+        `${process.env.REACT_APP_BASE_API_DEV}api/setting/role/list`
+      );
+      const _result = result.data.results;
+      setRoleList(_result);
+      console.log(result, "==> Role");
     } catch (error) {
       console.log("error => ", error);
     }
@@ -405,7 +421,7 @@ export default function Information() {
   const a = CatalogyList.map((x) => x.subCatalogys).filter(
     (x) => x.catalogyId === CatalogyId
   );
-  console.log(a, CatalogyId);
+  // console.log(a, CatalogyId);
 
   const Del = (index) => {
     setFiles([]);
@@ -419,6 +435,7 @@ export default function Information() {
       fetchTypContentList();
       fetchCatalogyList();
       fetchEmpList();
+      fetchRoleList();
       if (ContentMainId) {
         fetchAdminContentList();
       }
@@ -854,8 +871,8 @@ export default function Information() {
                 display: "flex",
                 flexDirection: "column",
                 flexGrow: 1,
-                alignContent:'space-around',
-                // height:500
+                justifyContent: "space-between",
+                height: 180,
               }}
             >
               <FormControlLabel
@@ -870,6 +887,8 @@ export default function Information() {
                   />
                 }
                 label="เห็นได้ทุกคน"
+                checked={IsPublic}
+                onChange={(e) => setIsPublic(e.target.checked)}
               />
 
               <div className={classes.Row}>
@@ -886,20 +905,31 @@ export default function Information() {
                   }
                   label="ระบุตำแหน่ง"
                 />
-                <Autocomplete
+                <div
                   style={{
                     display: "flex",
-                    flexDirection: "column",
+                    justifyContent: "flex-end",
                     flexGrow: 1,
                   }}
-                  disablePortal
-                  id="combo-box-demo"
-                  // options={top100Films}
-                  sx={{ width: 300 }}
-                  renderInput={(params) => (
-                    <TextField {...params} label="Movie" size="small" />
-                  )}
-                />
+                >
+                  <Stack
+                    style={{
+                      maxWidth: 600,
+                      width: 600,
+                    }}
+                  >
+                    <Autocomplete
+                      multiple
+                      id="tags-outlined"
+                      options={RoleList}
+                      getOptionLabel={(option) => option.roleName}
+                      filterSelectedOptions
+                      renderInput={(params) => (
+                        <TextField {...params} size="small" />
+                      )}
+                    />
+                  </Stack>
+                </div>
               </div>
 
               <div className={classes.Row}>
@@ -916,20 +946,31 @@ export default function Information() {
                   }
                   label="ระบุรายบุคคล"
                 />
-                <Autocomplete
+                <div
                   style={{
                     display: "flex",
-                    flexDirection: "column",
+                    justifyContent: "flex-end",
                     flexGrow: 1,
                   }}
-                  disablePortal
-                  id="combo-box-demo"
-                  // options={top100Films}
-                  sx={{ width: 300 }}
-                  renderInput={(params) => (
-                    <TextField {...params} label="Movie" size="small" />
-                  )}
-                />
+                >
+                  <Stack
+                    style={{
+                      maxWidth: 600,
+                      width: 600,
+                    }}
+                  >
+                    <Autocomplete
+                      multiple
+                      id="tags-outlined"
+                      options={EmpList}
+                      getOptionLabel={(option) => option.fistName}
+                      filterSelectedOptions
+                      renderInput={(params) => (
+                        <TextField {...params} size="small" />
+                      )}
+                    />
+                  </Stack>
+                </div>
               </div>
             </div>
           </div>
@@ -937,7 +978,7 @@ export default function Information() {
             style={{
               width: "70%",
               paddingLeft: "14%",
-              marginTop: 50,
+              marginTop: 100,
             }}
           >
             <Button
@@ -952,6 +993,19 @@ export default function Information() {
               onClick={handleRoute}
             >
               กลับ
+            </Button>
+            <Button
+              variant="contained"
+              style={{
+                color: "black",
+                backgroundColor: "#F8F9FA",
+                borderColor: "transparent",
+                marginRight: 10,
+                width: 120,
+              }}
+              onClick={handleRoute}
+            >
+              ยกเลิก
             </Button>
             <Button
               variant="contained"
