@@ -33,7 +33,7 @@ import jpg from "../../images/jpg.png";
 import pdf from "../../images/pdf.png";
 import xls from "../../images/xls.png";
 import FileUploadService from "../../Services/FileUploadService";
-import { height } from "@mui/system";
+import moment from "moment";
 
 const drawerHeight = "100%";
 const drawerwidth = "100%";
@@ -234,12 +234,12 @@ export default function Information() {
   const [SubCatalogyId, setSubCatalogyId] = useState("");
   const [isHighlight, setisHighlight] = useState(Boolean);
   const [TypeContentId, setTypeContentId] = useState("");
-  const [GalleryFileId, setGalleryFileId] = useState("");
-  const [Point, setPoint] = useState("");
+  const [GalleryFileId, setGalleryFileId] = useState(null);
+  const [Point, setPoint] = useState(0);
   const [TextShort, setTextShort] = useState("");
   const [Detail, setDetail] = useState("");
   const [UrlLink, setUrlLink] = useState("");
-  const [Deleted, setDeleted] = useState(Boolean);
+  const [Deleted, setDeleted] = useState(false);
   const [IsPublic, setIsPublic] = useState(Boolean);
   const [EmployeesAccess, setEmployeesAccess] = useState([]);
   const [RolesAccess, setRolesAccess] = useState([]);
@@ -249,6 +249,9 @@ export default function Information() {
   const [empId, setEmpId] = useState("");
   const [EmpList, setEmpList] = useState([]);
   const [RoleList, setRoleList] = useState([]);
+  const [NameRole, setNameRole] = useState([]);
+  console.log(RolesAccess, "RolesAccess");
+  console.log(NameRole, "NameRole");
 
   const [Files, setFiles] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
@@ -320,7 +323,6 @@ export default function Information() {
   ));
 
   const fetchAdminContentList = async () => {
-    console.log(ContentMainId);
     try {
       const params = qs.stringify({
         ...(ContentMainId && { ContentMainId }),
@@ -338,7 +340,7 @@ export default function Information() {
       setStatus(_result.status);
       setisHighlight(_result.isHighlight);
       setTypeContentId(_result.typeContentId);
-      setGalleryFileId(_result.galleryFileId);
+      // setGalleryFileId(_result.galleryFileId);
       setFileId(_result.fileId);
       setPoint(_result.point);
       setTextShort(_result.textShort);
@@ -349,6 +351,7 @@ export default function Information() {
       setIsPublic(_result.isPublic);
       setEmployeesAccess(_result.employeesAccess);
       setRolesAccess(_result.rolesAccess);
+
       console.log(result, "==> content");
     } catch (error) {
       console.log("error => ", error);
@@ -418,10 +421,50 @@ export default function Information() {
     }
   };
 
-  const a = CatalogyList.map((x) => x.subCatalogys).filter(
-    (x) => x.catalogyId === CatalogyId
-  );
-  // console.log(a, CatalogyId);
+  const save = async () => {
+    const ContentMainId = undefined ? null : id;
+    const DelEmp = EmployeesAccess.map((e) => ({
+      empAccessId: e.empAccessId,
+      empId: e.empId,
+      deleted: true,
+    }));
+    const DelRole = RolesAccess.map((e) => ({
+      roleAccessId: e.roleAccessId,
+      roleId: e.roleId,
+      deleted: true,
+    }));
+
+    try {
+      const result = await api.post("api/admin/content/add", {
+        ContentMainId,
+        ContentTitle,
+        CatalogyId,
+        SubCatalogyId,
+        StartDate: moment(StartDate).format("YYYY-MM-DD"),
+        EndDate: moment(EndDate).format("YYYY-MM-DD"),
+        Status,
+        isHighlight,
+        TypeContentId,
+        GalleryFileId,
+        FileId,
+        Point,
+        TextShort,
+        Detail,
+        UrlLink,
+        Deleted: false,
+        IsPublic,
+        EmployeesAccess,
+        RolesAccess,
+      });
+      setOpen(true);
+      setTimeout(() => {
+        history.push(`/AllSubject`);
+      }, 2000);
+      console.log(result);
+    } catch (error) {
+      console.log("error => ", error);
+    }
+  };
 
   const Del = (index) => {
     setFiles([]);
@@ -448,6 +491,19 @@ export default function Information() {
     history.push("/AllSubject");
   };
 
+  const handleCheckBoxPublic = (e) => {
+    setIsPublic(e.target.checked);
+
+    setEmployeesAccess([]);
+    setRolesAccess([]);
+  };
+  const handleCheckBoxEmp = (e) => {
+    setIsPublic(false);
+    setRolesAccess([]);
+  };
+  const handleCheckBoxRole = (e) => {
+    setIsPublic(false);
+  };
 
   return (
     <div className={classes.root}>
@@ -681,8 +737,7 @@ export default function Information() {
                 <Select
                   value={CatalogyId}
                   onChange={(e) => {
-                    setCatalogyId(e.target.value)
-                    
+                    setCatalogyId(e.target.value);
                   }}
                   displayEmpty
                   inputProps={{ "aria-label": "Without label" }}
@@ -723,13 +778,13 @@ export default function Information() {
                       </MenuItem>
                     ))} */}
 
-                    {
-                      CatalogyList.find(x => x.catalogyId === CatalogyId)?.subCatalogys.map((sub) => (
-                        <MenuItem value={sub.subCatalogyId}>
-                          {sub.subcatalogyName}
-                        </MenuItem>
-                      ))
-                      } 
+                  {CatalogyList.find(
+                    (x) => x.catalogyId === CatalogyId
+                  )?.subCatalogys.map((sub) => (
+                    <MenuItem value={sub.subCatalogyId}>
+                      {sub.subcatalogyName}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
               <span style={{ color: "gray" }}>หมวดหมู่รองของข่าวประกาศ</span>
@@ -888,6 +943,9 @@ export default function Information() {
               }}
             >
               <FormControlLabel
+                style={{
+                  width: 150,
+                }}
                 control={
                   <Checkbox
                     sx={{
@@ -900,64 +958,63 @@ export default function Information() {
                 }
                 label="เห็นได้ทุกคน"
                 checked={IsPublic}
-                onChange={(e) => setIsPublic(e.target.checked)}
+                onChange={handleCheckBoxPublic}
               />
 
               <div className={classes.Row}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      sx={{
-                        color: "#FF0000",
-                        "&.Mui-checked": {
-                          color: "#FF0000",
-                        },
-                      }}
-                    />
-                  }
-                  label="ระบุตำแหน่ง"
-                />
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    flexGrow: 1,
-                  }}
+                <span>ระบุตำแหน่ง</span>
+                <span
+                  class="material-icons-outlined"
+                  style={{ color: "#FF0000" }}
                 >
-                  <Stack
-                    style={{
-                      maxWidth: 600,
-                      width: 600,
+                  add
+                </span>
+                <FormControl size="small" sx={{ width: 250 }}>
+                  <Select
+                    value={RoleList}
+                    onChange={(e, newValue) => {
+                      console.log(newValue.props.children);
+                      if (newValue) {
+                        setRolesAccess([
+                          ...RolesAccess,
+                          {
+                            roleAccessId: null,
+                            roleId: newValue.props.value,
+                            deleted: false,
+                          },
+                        ]);
+                        // setNameRole([
+                        //   ...NameRole,
+                        //   {
+                        //     name: newValue.props.children,
+                        //     roleId: newValue.props.value,
+                        //   },
+                        // ]);
+                      }
                     }}
+                    displayEmpty
+                    inputProps={{ "aria-label": "Without label" }}
+                    disableUnderline
                   >
-                    <Autocomplete
-                      multiple
-                      id="tags-outlined"
-                      options={RoleList}
-                      getOptionLabel={(option) => option.roleName}
-                      filterSelectedOptions
-                      renderInput={(params) => (
-                        <TextField {...params} size="small" />
-                      )}
-                    />
-                  </Stack>
-                </div>
+                    {RoleList.map((R) => (
+                      <MenuItem value={R.roleId}>{R.roleName}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                {RolesAccess.map((R) => {
+                  return <span>{R.roleId}</span>;
+                })}
               </div>
 
               <div className={classes.Row}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      sx={{
-                        color: "#FF0000",
-                        "&.Mui-checked": {
-                          color: "#FF0000",
-                        },
-                      }}
-                    />
-                  }
-                  label="ระบุรายบุคคล"
-                />
+                <span>ระบุรายบุคคล</span>
+                <span
+                  class="material-icons-outlined"
+                  style={{ color: "#FF0000" }}
+                >
+                  add
+                </span>
                 <div
                   style={{
                     display: "flex",
@@ -973,10 +1030,29 @@ export default function Information() {
                   >
                     <Autocomplete
                       multiple
-                      id="tags-outlined"
+                      // disabled={!CheckEmp}
+                      id="Emp"
                       options={EmpList}
-                      getOptionLabel={(option) => option.fistName}
                       filterSelectedOptions
+                      getOptionLabel={(option) => {
+                        //filter value
+                        return `${option.empNo}: ${option.fistName} ${option.lastName}`;
+                      }}
+                      onChange={(e, newValue) => {
+                        console.log(newValue.map((x) => x.empId));
+                        newValue.map((x) => {
+                          if (newValue) {
+                            setEmployeesAccess([
+                              ...EmployeesAccess,
+                              {
+                                empAccessId: null,
+                                empId: x.empId,
+                                deleted: false,
+                              },
+                            ]);
+                          }
+                        });
+                      }}
                       renderInput={(params) => (
                         <TextField {...params} size="small" />
                       )}
@@ -1040,9 +1116,42 @@ export default function Information() {
                 marginRight: 10,
                 width: 120,
               }}
+              onClick={() => save()}
             >
               เผยแพร่
             </Button>
+            <Dialog
+              open={open}
+              fullWidth={true}
+              maxWidth="xs"
+              classes={{ paper: classes.dialogPaper }}
+            >
+              <DialogContent
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "column",
+                }}
+              >
+                <span
+                  style={{ fontSize: 100, color: "#FF0000" }}
+                  class="material-icons-outlined"
+                >
+                  task_alt
+                </span>
+
+                <p
+                  style={{
+                    alignItems: "center",
+                    fontSize: 28,
+                    color: "#FF0000",
+                  }}
+                >
+                  success
+                </p>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </Paper>
