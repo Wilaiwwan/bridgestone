@@ -1,17 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { Paper, InputBase, Button } from "@mui/material";
+import {
+  Paper,
+  InputBase,
+  Button,
+  
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SearchIcon from "@mui/icons-material/Search";
-import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import { styled } from "@mui/material/styles";
 import { useHistory, Link } from "react-router-dom";
 import qs from "qs";
+import moment from "moment";
 import api from "../../Component/api/api";
+import "moment/locale/th";
 
 const drawerHeight = "100%";
 const drawerwidth = "100%";
@@ -32,6 +39,18 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: "6%",
     paddingLeft: "6%",
     paddingBottom: "2%",
+  },
+  Row: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  subject: {
+    width: "30%",
+  },
+  widthContent: {
+    marginTop: 20,
+    width: 250,
   },
 }));
 
@@ -55,28 +74,25 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export default function AllLink() {
+export default function AllRound() {
   const classes = useStyles();
-  const history = useHistory();
   const token = localStorage.getItem("token");
+  const history = useHistory();
 
   const [keyword, setKeyword] = useState("");
-  const [BconnectID, setBconnectID] = useState("");
-  const [BconnectList, setBconnectList] = useState([]);
+  const [RoundList, setRoundList] = useState([]);
+  moment.locale("th");
 
-  const fetchBconnectList = async () => {
+  const fetchRoundList = async () => {
     try {
       const params = qs.stringify({
         ...(keyword && { keyword }),
-        ...(BconnectID && { BconnectID }),
       });
 
-      const result = await api.get(
-        `/api/bconnect/list?${params}`
-      );
+      const result = await api.get(`/api/excellent/head/list?${params}`);
       const _result = result.data.results;
-      setBconnectList(_result);
-      console.log(_result);
+      setRoundList(_result);
+      console.log(result);
     } catch (error) {
       console.log("error => ", error);
     }
@@ -84,18 +100,20 @@ export default function AllLink() {
 
   useEffect(() => {
     if (token) {
-      fetchBconnectList();
+      fetchRoundList();
     } else {
       history.push("/login");
     }
   }, [keyword]);
 
+  
+
   return (
     <div className={classes.root}>
       <Paper elevation={1} style={{ height: "88vh" }}>
         <div class={classes.Padding}>
-          <p style={{ color: "red" }}>B-Connect</p>
-          <h3>ลิงค์ทั้งหมด</h3>
+          <p style={{ color: "red" }}>B-360</p>
+          <h3>พนักงานดีเด่น</h3>
           <div
             style={{
               display: "flex",
@@ -103,12 +121,26 @@ export default function AllLink() {
               marginBottom: 30,
             }}
           >
+            <Button
+              variant="contained"
+              style={{
+                color: "white",
+                backgroundColor: "#FF0000",
+                borderColor: "transparent",
+                marginRight: 40,
+                width: 70,
+              }}
+              size="small"
+              onClick={() => history.push("/AddMember")}
+            >
+              เพิ่มรอบ
+            </Button>
             <div className={classes.search}>
               <SearchIcon style={{ margin: 10 }} />
               <InputBase
                 multiline
                 fullWidth
-                placeholder="ค้นหาชื่อ"
+                placeholder="ค้นหาเรื่อง"
                 onChange={(e) => setKeyword(e.target.value)}
               />
             </div>
@@ -118,39 +150,39 @@ export default function AllLink() {
             <Table stickyHeader size="small" aria-label="customized table">
               <TableHead>
                 <TableRow>
-                  <StyledTableCell align="center">ลำดับ</StyledTableCell>
-                  <StyledTableCell align="center">ชื่อ</StyledTableCell>
-                  <StyledTableCell width="10%" align="center">
-                    ลิงค์ปลายทาง
+                  <StyledTableCell align="center">ปี</StyledTableCell>
+                  <StyledTableCell align="center">เดือน</StyledTableCell>
+                  <StyledTableCell align="center">ชื่อรอบ</StyledTableCell>
+                  <StyledTableCell align="center">
+                    จำนวนพนักงานดีเด่น
                   </StyledTableCell>
-                  <StyledTableCell align="center">กลุ่ม</StyledTableCell>
-                  <StyledTableCell align="center">ผู้เขียน</StyledTableCell>
+                  <StyledTableCell align="center">สถานะ</StyledTableCell>
                   <StyledTableCell align="center">แก้ไข</StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {BconnectList.map((Data, index) => {
+                {RoundList.map((Data, index) => {
                   return (
-                    <StyledTableRow key={Data.bconnectID}>
+                    <StyledTableRow key={Data.contentMainId}>
                       <StyledTableCell align="center">
-                        {index + 1}
+                        {moment(Data.year).format("YYYY")}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {Data.bconnectName}
+                        {moment(Data.month).format("MMMM")}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        <a>{Data.url}</a>
+                        {Data.excellentTitle}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {Data.typeConnectName}
+                        {Data.staffCount}
                       </StyledTableCell>
                       <StyledTableCell align="center">
-                        {Data.createName}
+                        {Data.status ? "เปิด" : "ปิด"}
                       </StyledTableCell>
                       <StyledTableCell align="center">
                         <Link
                           to={{
-                            pathname: `/EditLink/${Data.bconnectID}`,
+                            pathname: `/EditRound/${Data.excellId}`,
                           }}
                         >
                           <Button

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import "./App.css";
 import {
   BrowserRouter as Router,
@@ -24,9 +24,47 @@ import Role from "./Screens/B-Admin/Role";
 import EditUser from "./Screens/B-Admin/EditUser";
 import store from "./redux/store";
 import { Provider } from "react-redux";
+import AllRound from "./Screens/B-360/AllRound";
+import envInstants from "./libs/configs/env";
+import httpClientInstants from "./libs/utils/HttpClient";
+import api, { setDefaultURL } from "./Component/api/api";
 
 function App() {
+  const [isInitEnvError, setInitEnvError] = useState(false);
+  const [isInitEnv, setInitEnv] = useState(false);
+
+  useEffect(() => {
+    const loadEnv = async () => {
+      try {
+        // await timeout(3000);
+        await envInstants.init();
+        // httpClientInstants.setBaseUrl(envInstants.getConfig().baseUrl);
+        // api.defaults.create({
+        //   baseURL: envInstants.getConfig().baseURL,
+        // });
+
+     
+
+        console.log(envInstants);
+
+        console.log(envInstants.getConfig().baseUrl);
+        // setDefaultURL(envInstants.getConfig().baseUrl)
+      } catch (error) {
+        console.log(error);
+        setInitEnvError(true);
+      } finally {
+        setInitEnv(true);
+      }
+    };
+
+    loadEnv();
+  }, []);
+
+  if (!isInitEnv) return "Loading...";
+  if (isInitEnvError) return "Cannot load env !!!";
+  
   return (
+    <Suspense>
     <Provider store={store}>
       <Router>
         <div
@@ -35,6 +73,7 @@ function App() {
             display: "flex",
             flexDirection: "row",
             backgroundColor: "#F7F8FA",
+            height: "100vh",
           }}
         >
           <React.Fragment>
@@ -69,9 +108,14 @@ function App() {
                   path="/EditReward/:id"
                   component={withAuthLayout(AddNewReward)}
                 />
+                <Route path="/RoundList" component={withAuthLayout(AllRound)} />
                 <Route path="/Members" component={withAuthLayout(MemberList)} />
                 <Route
                   path="/AddMember"
+                  component={withAuthLayout(AddMember)}
+                />
+                <Route
+                  path="/EditRound/:id"
                   component={withAuthLayout(AddMember)}
                 />
                 <Route path="/AllLink" component={withAuthLayout(AllLink)} />
@@ -110,6 +154,7 @@ function App() {
         </div>
       </Router>
     </Provider>
+    </Suspense>
   );
 }
 

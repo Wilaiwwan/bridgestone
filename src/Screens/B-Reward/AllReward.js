@@ -62,16 +62,17 @@ export default function AllReward() {
   const token = localStorage.getItem("token");
 
   const [RewardList, setRewardList] = useState([]);
-  const [isBackend, setIsBackend] = useState("");
+  const [keyword, setKeyword] = useState("");
 
   const fetchBRewardList = async () => {
     try {
       const params = qs.stringify({
         isBackend: true,
+        ...(keyword && { keyword }),
       });
 
       const result = await api.get(
-        `${process.env.REACT_APP_BASE_API_DEV}api/bpoint/item/list?${params}`
+        `/api/bpoint/item/list?${params}`
       );
       const _result = result.data.results;
       setRewardList(_result);
@@ -87,11 +88,11 @@ export default function AllReward() {
     } else {
       history.push("/login");
     }
-  }, []);
+  }, [keyword]);
 
   return (
     <div className={classes.root}>
-      <Paper elevation={1}>
+      <Paper elevation={1} style={{ height: "88vh" }}>
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>B-Reward</p>
           <h3>ของรางวัลทั้งหมด</h3>
@@ -104,7 +105,12 @@ export default function AllReward() {
           >
             <div className={classes.search}>
               <SearchIcon style={{ margin: 10 }} />
-              <InputBase multiline fullWidth placeholder="ค้นหา" />
+              <InputBase
+                multiline
+                fullWidth
+                placeholder="ค้นหา"
+                onChange={(e) => setKeyword(e.target.value)}
+              />
             </div>
           </div>
 

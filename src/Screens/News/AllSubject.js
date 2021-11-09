@@ -39,33 +39,21 @@ const useStyles = makeStyles((theme) => ({
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    fontSize: 16,
-    backgroundColor: theme.palette.action.hover,
+    fontSize: 18,
+    // backgroundColor: theme.palette.action.hover,
   },
   [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
+    fontSize: 16,
   },
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
-    // backgroundColor: theme.palette.action.hover,
+    backgroundColor: theme.palette.action.hover,
   },
   // hide last border
   "&:last-child td, &:last-child th": {
     border: 0,
-  },
-}));
-
-const GreenSwitch = styled(Switch)(({ theme }) => ({
-  "& .MuiSwitch-switchBase.Mui-checked": {
-    color: "#FF0000",
-    "&:hover": {
-      backgroundColor: alpha("#FF0000", theme.palette.action.hoverOpacity),
-    },
-  },
-  "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track": {
-    backgroundColor: "#FF0000",
   },
 }));
 
@@ -87,7 +75,7 @@ export default function AllSubject() {
       });
 
       const result = await api.get(
-        `${process.env.REACT_APP_BASE_API_DEV}api/admin/content/list?${params}`
+        `/api/admin/content/list?${params}`
       );
       const _result = result.data.results;
       setAdminContentList(_result);
@@ -103,11 +91,11 @@ export default function AllSubject() {
     } else {
       history.push("/login");
     }
-  }, []);
+  }, [keyword]);
 
   return (
     <div className={classes.root}>
-      <Paper elevation={1}>
+      <Paper elevation={1} style={{ height: "88vh" }}>
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>News/Announcement</p>
           <h3>เรื่องทั้งหมด</h3>
@@ -120,7 +108,12 @@ export default function AllSubject() {
           >
             <div className={classes.search}>
               <SearchIcon style={{ margin: 10 }} />
-              <InputBase multiline fullWidth placeholder="ค้นหาเรื่อง" />
+              <InputBase
+                multiline
+                fullWidth
+                placeholder="ค้นหาเรื่อง"
+                onChange={(e) => setKeyword(e.target.value)}
+              />
             </div>
           </div>
 
@@ -132,7 +125,7 @@ export default function AllSubject() {
                   <StyledTableCell align="center">
                     วันที่สิ้นสุด
                   </StyledTableCell>
-                  <StyledTableCell width="30%" align="center">
+                  <StyledTableCell width="25%" align="center">
                     ชื่อเรื่อง
                   </StyledTableCell>
                   <StyledTableCell align="center">หมวดหมู่</StyledTableCell>

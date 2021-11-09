@@ -8,7 +8,7 @@ const upload = async (files) => {
   }
 
   const result = await api.post(
-    `${process.env.REACT_APP_BASE_API_DEV}/api/upload/file`,
+    `/api/upload/file`,
     formData,
     {
       headers: {

@@ -184,7 +184,7 @@ export default function EditUser() {
       });
 
       const result = await api.get(
-        `${process.env.REACT_APP_BASE_API_DEV}api/employee/list?${params}`
+        `/api/employee/list?${params}`
       );
       const _result = result.data.results[0];
       setEmpNo(_result.empNo);

@@ -1,9 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../Sidebar/css/styles.css";
 import { useHistory } from "react-router-dom";
+import qs from "qs";
+import api from "./api/api";
 
 export default function Header(props) {
   const history = useHistory();
+  const empId = localStorage.getItem("EmpId");
+  const token = localStorage.getItem("token");
+
+  const [FirstName, setFirstName] = useState("");
 
   const handleDrawerToggle = () => {
     props.onDrawerToggle();
@@ -13,6 +19,30 @@ export default function Header(props) {
     localStorage.removeItem("token");
     history.push("/login");
   };
+
+  const fetchEmpData = async () => {
+    try {
+      const params = qs.stringify({
+        ...(empId && { empId }),
+      });
+
+      const result = await api.get(`/api/employee/list?${params}`);
+      const _result = result.data.results[0];
+      setFirstName(_result.fistName);
+
+      console.log(_result);
+    } catch (error) {
+      console.log("error => ", error);
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      fetchEmpData();
+    } else {
+      history.push("/login");
+    }
+  }, [empId]);
 
   return (
     <div style={{ width: "100%", position: "sticky", top: 0, zIndex: 1 }}>
@@ -48,24 +78,24 @@ export default function Header(props) {
                   <a
                     className="nav-link dropdown-toggle"
                     id="navbarDropdown"
-                    href="#"
+                    href="/"
                     role="button"
                     data-bs-toggle="dropdown"
                     aria-haspopup="true"
                     aria-expanded="false"
                   >
-                    V2N Developer
+                    {FirstName}
                   </a>
                   <div
                     className="dropdown-menu dropdown-menu-end"
                     aria-labelledby="navbarDropdown"
                   >
-                    <a className="dropdown-item" href="#!">
+                    {/* <a className="dropdown-item" href="#!">
                       Profile
                     </a>
                     <a className="dropdown-item" href="#!">
                       change password
-                    </a>
+                    </a> */}
                     <div className="dropdown-divider" />
                     <button className="dropdown-item" onClick={handleLogOut}>
                       Log out

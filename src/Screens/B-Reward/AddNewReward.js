@@ -158,10 +158,10 @@ export default function AddNewReward() {
 
   console.log(StartDate, EndDate, GroupItemId);
   const save = async () => {
-    const ItemId = undefined ? null : id;
+    const _ItemId = itemId === undefined ? null : id;
     try {
       const result = await api.post("api/breward/add", {
-        ItemId,
+        ItemId: _ItemId,
         ItemName,
         GroupItemId,
         Point,
@@ -191,7 +191,6 @@ export default function AddNewReward() {
     // setFiles(filteredArray);
   };
 
-
   const fetchBRewardList = async () => {
     try {
       const params = qs.stringify({
@@ -200,7 +199,7 @@ export default function AddNewReward() {
       });
 
       const result = await api.get(
-        `${process.env.REACT_APP_BASE_API_DEV}api/bpoint/item/list?${params}`
+        `/api/bpoint/item/list?${params}`
       );
       const _result = result.data.results[0];
       setItemName(_result.itemName);

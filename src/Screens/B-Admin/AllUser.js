@@ -82,7 +82,7 @@ export default function AllUser() {
       });
 
       const result = await api.get(
-        `${process.env.REACT_APP_BASE_API_DEV}api/employee/list?${params}`
+        `/api/employee/list?${params}`
       );
       const _result = result.data.results;
       setEmpList(_result);
@@ -139,7 +139,7 @@ export default function AllUser() {
 
           <TableContainer
             // component={Paper}
-            sx={{ maxHeight: "62vh" }}
+            sx={{ maxHeight: "60vh" }}
           >
             <Table stickyHeader size="small" aria-label="customized table">
               <TableHead>

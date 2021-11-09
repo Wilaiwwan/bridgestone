@@ -58,6 +58,8 @@ export default function Login() {
         setErr(true);
       }
       localStorage.setItem("token", result.data.results.accessToken);
+      localStorage.setItem("EmpId", result.data.results.empId);
+
       handleRoute();
       console.log(result);
     } catch (error) {

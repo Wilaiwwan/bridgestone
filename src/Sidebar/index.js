@@ -4,7 +4,13 @@ import { makeStyles } from "@mui/styles";
 import Drawer from "@mui/material/Drawer";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { toggle360Sidebar, toggleAdminSidebar, toggleConnectSidebar, toggleNewsSidebar, toggleRewardSidebar } from "../redux/modules/globalSlice";
+import {
+  toggle360Sidebar,
+  toggleAdminSidebar,
+  toggleConnectSidebar,
+  toggleNewsSidebar,
+  toggleRewardSidebar,
+} from "../redux/modules/globalSlice";
 
 const drawerHeight = "100%";
 const drawerWidth = 240;
@@ -17,9 +23,15 @@ const useStyles = makeStyles((theme) => ({
 }));
 export default function Index(props) {
   const classes = useStyles();
-  const { sidebarOpen, sidebarNewsOpen,sidebarRewardOpen,sidebar360Open,sidebarConnectOpen,sidebarAdminOpen } = useSelector((state) => state.global.sidebar);
+  const {
+    sidebarOpen,
+    sidebarNewsOpen,
+    sidebarRewardOpen,
+    sidebar360Open,
+    sidebarConnectOpen,
+    sidebarAdminOpen,
+  } = useSelector((state) => state.global.sidebar);
   const dispatch = useDispatch();
-
 
   // const [OpenNews, setOpenNews] = useState(false);
   // const toggleNews = () => setOpenNews(!OpenNews);
@@ -145,7 +157,9 @@ export default function Index(props) {
                 className="list-group-item list-group-item-action list-group-item-light p-3"
                 href="#!"
                 // onClick={() => toggleReward(!OpenReward)}
-                onClick={() => dispatch(toggleRewardSidebar(!sidebarRewardOpen))}
+                onClick={() =>
+                  dispatch(toggleRewardSidebar(!sidebarRewardOpen))
+                }
               >
                 <span
                   style={{ marginRight: 10 }}
@@ -250,13 +264,13 @@ export default function Index(props) {
                     className="list-group-item list-group-item-action list-group-item-light p-3"
                     exact={true}
                     activeClassName="is-active"
-                    to="/Members"
+                    to="/RoundList"
                     style={{
                       display: "flex",
                       justifyContent: "center",
                     }}
                   >
-                    รายชื่อพนักงานดีเด่น
+                    รอบพนักงานดีเด่น
                   </NavLink>
                   <NavLink
                     className="list-group-item list-group-item-action list-group-item-light p-3"
@@ -276,7 +290,9 @@ export default function Index(props) {
                 style={{ display: "flex", flexDirection: "row" }}
                 className="list-group-item list-group-item-action list-group-item-light p-3"
                 href="#!"
-                onClick={() => dispatch(toggleConnectSidebar(!sidebarConnectOpen))}
+                onClick={() =>
+                  dispatch(toggleConnectSidebar(!sidebarConnectOpen))
+                }
               >
                 <span
                   style={{ marginRight: 10 }}

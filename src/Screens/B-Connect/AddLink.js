@@ -177,7 +177,7 @@ export default function AddLink() {
       });
 
       const result = await api.get(
-        `${process.env.REACT_APP_BASE_API_DEV}api/bconnect/list?${params}`
+        `/api/bconnect/list?${params}`
       );
       const _result = result.data.results[0];
       setBconnectName(_result.bconnectName);
@@ -185,6 +185,7 @@ export default function AddLink() {
       setTypeConnectID(_result.typeConnectID);
       setPath(_result.path);
       setFileId(_result.fileId);
+      setDeleted(_result.deleted);
       console.log(_result);
     } catch (error) {
       console.log("error => ", error);
@@ -198,7 +199,7 @@ export default function AddLink() {
       });
 
       const result = await api.get(
-        `${process.env.REACT_APP_BASE_API_DEV}api/master/list?${params}`
+        `/api/master/list?${params}`
       );
       const _result = result.data.results.typeConnect;
       setTypeConnectList(_result);
@@ -209,11 +210,11 @@ export default function AddLink() {
   };
 
   const save = async () => {
-    const BconnectID = undefined ? null : id;
+    const BId = BconnectID === undefined ? null : id;
     const URL = url;
     try {
       const result = await api.post("api/bconnect/add", {
-        BconnectID,
+        BconnectID: BId,
         BconnectName,
         URL,
         TypeConnectID,

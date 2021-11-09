@@ -5,10 +5,10 @@ const initialState = {
   sidebar: {
     sidebarOpen: true,
 
-    sidebarNewsOpen: false,
-    sidebarRewardOpen: false,
-    sidebar360Open: false,
-    sidebarConnectOpen: false,
+    sidebarNewsOpen: true,
+    sidebarRewardOpen: true,
+    sidebar360Open: true,
+    sidebarConnectOpen: true,
     sidebarAdminOpen: false,
   }
 }

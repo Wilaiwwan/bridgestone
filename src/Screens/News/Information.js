@@ -10,13 +10,13 @@ import {
   Dialog,
   DialogContent,
   Autocomplete,
-  Stack,
 } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+// import {default  as xxx}  from "@ckeditor/ckeditor5-source-editing/src/sourceediting";
 import "./information.css";
 import { alpha, styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
@@ -34,6 +34,7 @@ import pdf from "../../images/pdf.png";
 import xls from "../../images/xls.png";
 import FileUploadService from "../../Services/FileUploadService";
 import moment from "moment";
+import Grid from "@mui/material/Grid";
 
 const drawerHeight = "100%";
 const drawerwidth = "100%";
@@ -107,11 +108,7 @@ class MyUploadAdapter {
     // integration to choose the right communication channel. This example uses
     // a POST request with JSON as a data structure but your configuration
     // could be different.
-    xhr.open(
-      "POST",
-      `${process.env.REACT_APP_BASE_API_DEV}/api/upload/file`,
-      true
-    );
+    xhr.open("POST", `//api/upload/file`, true);
     xhr.setRequestHeader(
       "Authorization",
       `Bearer ${localStorage.getItem("token")}`
@@ -227,31 +224,39 @@ export default function Information() {
   const [EndDate, setEndDate] = useState(new Date());
   const [open, setOpen] = useState(false);
   const [ShowInput, setShowInput] = useState(false);
-  const [FileId, setFileId] = useState("");
+  const [FileId, setFileId] = useState(null);
   const [Path, setPath] = useState("");
   const [ContentTitle, setContentTitle] = useState("");
-  const [CatalogyId, setCatalogyId] = useState("");
-  const [SubCatalogyId, setSubCatalogyId] = useState("");
-  const [isHighlight, setisHighlight] = useState(Boolean);
-  const [TypeContentId, setTypeContentId] = useState("");
+  const [CatalogyId, setCatalogyId] = useState(
+    "f2689a16-1224-4149-853d-9679a7c75ecc"
+  );
+  const [SubCatalogyId, setSubCatalogyId] = useState(
+    "1525287c-06cd-4714-9683-e192f12a7036"
+  );
+  const [isHighlight, setisHighlight] = useState(true);
+  const [TypeContentId, setTypeContentId] = useState("SL");
   const [GalleryFileId, setGalleryFileId] = useState(null);
   const [Point, setPoint] = useState(0);
   const [TextShort, setTextShort] = useState("");
   const [Detail, setDetail] = useState("");
-  const [UrlLink, setUrlLink] = useState("");
+  const [UrlLink, setUrlLink] = useState(null);
   const [Deleted, setDeleted] = useState(false);
-  const [IsPublic, setIsPublic] = useState(Boolean);
+  const [IsPublic, setIsPublic] = useState(true);
   const [EmployeesAccess, setEmployeesAccess] = useState([]);
   const [RolesAccess, setRolesAccess] = useState([]);
-  const [Status, setStatus] = useState(true);
+  const [Status, setStatus] = useState("");
   const [TypeContentList, setTypeContentList] = useState([]);
   const [CatalogyList, setCatalogyList] = useState([]);
   const [empId, setEmpId] = useState("");
   const [EmpList, setEmpList] = useState([]);
   const [RoleList, setRoleList] = useState([]);
-  const [NameRole, setNameRole] = useState([]);
-  console.log(RolesAccess, "RolesAccess");
-  console.log(NameRole, "NameRole");
+  const [NameRole, setNameRole] = useState("");
+  const [EmpFName, setEmpFName] = useState("");
+  const [EmpLName, setEmpLName] = useState("");
+  const [RoleId, setRoleId] = useState("");
+  const [EmpID, setEmpID] = useState("");
+  const [TitleErr, setTitleErr] = useState(false);
+  const [PointErr, setPointErr] = useState(false);
 
   const [Files, setFiles] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
@@ -328,9 +333,7 @@ export default function Information() {
         ...(ContentMainId && { ContentMainId }),
       });
 
-      const result = await api.get(
-        `${process.env.REACT_APP_BASE_API_DEV}api/admin/content/list?${params}`
-      );
+      const result = await api.get(`/api/admin/content/list?${params}`);
       const _result = result.data.results[0];
       setContentTitle(_result.contentTitle);
       setCatalogyId(_result.catalogyId);
@@ -364,11 +367,10 @@ export default function Information() {
         TypeContent: true,
       });
 
-      const result = await api.get(
-        `${process.env.REACT_APP_BASE_API_DEV}api/master/list?${params}`
-      );
+      const result = await api.get(`/api/master/list?${params}`);
       const _result = result.data.results.typeContent;
       setTypeContentList(_result);
+      console.log(_result);
     } catch (error) {
       console.log("error => ", error);
     }
@@ -380,9 +382,7 @@ export default function Information() {
         Catalogy: true,
       });
 
-      const result = await api.get(
-        `${process.env.REACT_APP_BASE_API_DEV}api/master/list?${params}`
-      );
+      const result = await api.get(`/api/master/list?${params}`);
       const _result = result.data.results.catalogy;
       setCatalogyList(_result);
       console.log(result, "==> catagoly");
@@ -397,9 +397,7 @@ export default function Information() {
         ...(empId && { empId }),
       });
 
-      const result = await api.get(
-        `${process.env.REACT_APP_BASE_API_DEV}api/employee/list?${params}`
-      );
+      const result = await api.get(`/api/employee/list?${params}`);
       const _result = result.data.results;
       setEmpList(_result);
       console.log(result, "Emp");
@@ -410,9 +408,7 @@ export default function Information() {
 
   const fetchRoleList = async () => {
     try {
-      const result = await api.get(
-        `${process.env.REACT_APP_BASE_API_DEV}api/setting/role/list`
-      );
+      const result = await api.get(`/api/setting/role/list`);
       const _result = result.data.results;
       setRoleList(_result);
       console.log(result, "==> Role");
@@ -422,40 +418,102 @@ export default function Information() {
   };
 
   const save = async () => {
-    const ContentMainId = undefined ? null : id;
-    const DelEmp = EmployeesAccess.map((e) => ({
-      empAccessId: e.empAccessId,
-      empId: e.empId,
-      deleted: true,
-    }));
-    const DelRole = RolesAccess.map((e) => ({
-      roleAccessId: e.roleAccessId,
-      roleId: e.roleId,
-      deleted: true,
-    }));
-
+    const mainId = ContentMainId === undefined ? null : id;
+    const _status = "P";
+    const body = {
+      ContentMainId: mainId,
+      ContentTitle,
+      CatalogyId,
+      SubCatalogyId,
+      StartDate: moment(StartDate).format("YYYY-MM-DD"),
+      EndDate: moment(EndDate).format("YYYY-MM-DD"),
+      Status: _status,
+      isHighlight,
+      TypeContentId,
+      GalleryFileId,
+      FileId,
+      Point,
+      TextShort,
+      Detail,
+      UrlLink,
+      Deleted: false,
+      IsPublic,
+      EmployeesAccess,
+      RolesAccess,
+    };
     try {
-      const result = await api.post("api/admin/content/add", {
-        ContentMainId,
-        ContentTitle,
-        CatalogyId,
-        SubCatalogyId,
-        StartDate: moment(StartDate).format("YYYY-MM-DD"),
-        EndDate: moment(EndDate).format("YYYY-MM-DD"),
-        Status,
-        isHighlight,
-        TypeContentId,
-        GalleryFileId,
-        FileId,
-        Point,
-        TextShort,
-        Detail,
-        UrlLink,
-        Deleted: false,
-        IsPublic,
-        EmployeesAccess,
-        RolesAccess,
-      });
+      const result = await api.post("api/admin/content/add", body);
+      setOpen(true);
+      setTimeout(() => {
+        history.push(`/AllSubject`);
+      }, 2000);
+      console.log(result);
+    } catch (error) {
+      console.log("error => ", error);
+    }
+  };
+  const Draff = async () => {
+    const mainId = ContentMainId === undefined ? null : id;
+    const _status = "D";
+    const body = {
+      ContentMainId: mainId,
+      ContentTitle,
+      CatalogyId,
+      SubCatalogyId,
+      StartDate: moment(StartDate).format("YYYY-MM-DD"),
+      EndDate: moment(EndDate).format("YYYY-MM-DD"),
+      Status: _status,
+      isHighlight,
+      TypeContentId,
+      GalleryFileId,
+      FileId,
+      Point,
+      TextShort,
+      Detail,
+      UrlLink,
+      Deleted: false,
+      IsPublic,
+      EmployeesAccess,
+      RolesAccess,
+    };
+    try {
+      const result = await api.post("api/admin/content/add", body);
+      setOpen(true);
+      setTimeout(() => {
+        history.push(`/AllSubject`);
+      }, 2000);
+      console.log(result);
+    } catch (error) {
+      console.log("error => ", error);
+    }
+  };
+
+  const Cancel = async () => {
+    const mainId = ContentMainId === undefined ? null : id;
+    const _status = "C";
+    const body = {
+      ContentMainId: mainId,
+      ContentTitle,
+      CatalogyId,
+      SubCatalogyId,
+      StartDate: moment(StartDate).format("YYYY-MM-DD"),
+      EndDate: moment(EndDate).format("YYYY-MM-DD"),
+      Status: _status,
+      isHighlight,
+      TypeContentId,
+      GalleryFileId,
+      FileId,
+      Point,
+      TextShort,
+      Detail,
+      UrlLink,
+      Deleted: false,
+      IsPublic,
+      EmployeesAccess,
+      RolesAccess,
+    };
+    try {
+      const result = await api.post("api/admin/content/add", body);
       setOpen(true);
       setTimeout(() => {
         history.push(`/AllSubject`);
@@ -472,7 +530,6 @@ export default function Information() {
     // const filteredArray = Files.filter((_, i) => i !== index);
     // setFiles(filteredArray);
   };
-
   useEffect(() => {
     if (token) {
       fetchTypContentList();
@@ -494,19 +551,113 @@ export default function Information() {
   const handleCheckBoxPublic = (e) => {
     setIsPublic(e.target.checked);
 
-    setEmployeesAccess([]);
-    setRolesAccess([]);
+    const modifyEmp = EmployeesAccess.map((e) => ({
+      empAccessId: null ? null : e.empAccessId,
+      empId: e.empId,
+      deleted: true,
+    }));
+    const modifyRole = RolesAccess.map((r) => ({
+      roleAccessId: null ? null : r.roleAccessId,
+      roleId: r.roleId,
+      deleted: true,
+    }));
+    setEmployeesAccess(modifyEmp);
+    setRolesAccess(modifyRole);
   };
-  const handleCheckBoxEmp = (e) => {
+
+  const handleChangeRole = (event, newValue) => {
     setIsPublic(false);
-    setRolesAccess([]);
+    setRoleId(event.target.value);
+    setNameRole(newValue.props.children);
   };
-  const handleCheckBoxRole = (e) => {
-    setIsPublic(false);
+
+  const handleChangeEmp = (newValue) => {
+    console.log(newValue);
+    if (newValue) {
+      setIsPublic(false);
+      setEmpID(newValue.empId);
+      setEmpFName(newValue.fistName);
+      setEmpLName(newValue.lastName);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setTitleErr(false);
+    setPointErr(false);
+
+    if (ContentTitle === "") {
+      setTitleErr(true);
+    }
+    // if (Point === 0) {
+    //   setTitleErr(true);
+    // }
+  };
+
+  const SetRolesAccess = () => {
+    if (RoleId) {
+      setRolesAccess([
+        ...RolesAccess,
+        {
+          roleAccessId: null,
+          roleId: RoleId,
+          deleted: false,
+          roleName: NameRole,
+        },
+      ]);
+      setRoleId("");
+    }
+  };
+
+  const SetEmpAccess = () => {
+    if (EmpID) {
+      setEmployeesAccess([
+        ...EmployeesAccess,
+        {
+          empAccessId: null,
+          empId: EmpID,
+          deleted: false,
+          empFirstName: EmpFName,
+          empLastName: EmpLName,
+        },
+      ]);
+      setEmpID("");
+    }
+  };
+
+  const delRole = (id, index) => {
+    const roles = [...RolesAccess];
+    const _role = roles.find(({ roleAccessId }) => roleAccessId === id);
+    if (id) {
+      _role.deleted = true;
+      _role.roleId = null;
+      setRolesAccess([...RolesAccess]);
+    } else {
+      const role = RolesAccess.filter((_, i) => i !== index);
+      setRolesAccess(role);
+    }
+  };
+
+  const delEmp = (id, index) => {
+    const Emps = [...EmployeesAccess];
+    const _Emp = Emps.find(({ empAccessId }) => empAccessId === id);
+    if (id) {
+      _Emp.deleted = true;
+      _Emp.empId = null;
+      setEmployeesAccess([...EmployeesAccess]);
+    } else {
+      const Emp = EmployeesAccess.filter((_, i) => i !== index);
+      setEmployeesAccess(Emp);
+    }
   };
 
   return (
-    <div className={classes.root}>
+    <form
+      className={classes.root}
+      noValidate
+      autoComplete="off"
+      onSubmit={handleSubmit}
+    >
       <Paper elevation={1}>
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>News/Announcement</p>
@@ -525,6 +676,8 @@ export default function Information() {
                 placeholder="หัวข้อเรื่อง"
                 onChange={(e) => setContentTitle(e.target.value)}
                 value={ContentTitle}
+                // required
+                // error={TitleErr}
               />
               <span style={{ color: "gray" }}>
                 หัวข้อเรื่องที่ปรากฏในหน้าข่าวประกาศ
@@ -702,6 +855,8 @@ export default function Information() {
                 editor={ClassicEditor}
                 data={Detail}
                 config={{
+                  // plugins: [xxx],
+                  // toolbar: ["sourceEditing"],
                   extraPlugins: [MyCustomUploadAdapterPlugin],
                 }}
                 // plugins={[ CKFinder]}
@@ -738,6 +893,14 @@ export default function Information() {
                   value={CatalogyId}
                   onChange={(e) => {
                     setCatalogyId(e.target.value);
+
+                    const subs = CatalogyList.find(
+                      (x) => x.catalogyId === e.target.value
+                    )?.subCatalogys;
+
+                    if (subs.length > 0) {
+                      setSubCatalogyId(subs[0].subCatalogyId);
+                    }
                   }}
                   displayEmpty
                   inputProps={{ "aria-label": "Without label" }}
@@ -804,27 +967,32 @@ export default function Information() {
                 placeholder="คะแนน"
                 onChange={(e) => setPoint(e.target.value)}
                 value={Point}
+                type="number"
+                error={PointErr}
+                required
               />
               <span style={{ color: "gray" }}>คะแนนเมื่อกดอ่านข่าวเสร็จ</span>
             </div>
           </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>เว็บไซต์</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
-              <TextField
-                size="small"
-                // placeholder="คะแนน"
-                onChange={(e) => setUrlLink(e.target.value)}
-                value={UrlLink}
-              />
+          {TypeContentId === "DT" ? (
+            <div className={classes.width}>
+              <p className={classes.subject}>เว็บไซต์</p>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  flexGrow: 1,
+                }}
+              >
+                <TextField
+                  size="small"
+                  // placeholder="คะแนน"
+                  onChange={(e) => setUrlLink(e.target.value)}
+                  value={UrlLink}
+                />
+              </div>
             </div>
-          </div>
+          ) : null}
 
           {/* <div className={classes.width}>
             <p className={classes.subject}>อัปโหลด PDF</p>
@@ -923,28 +1091,30 @@ export default function Information() {
               }}
             >
               <span>
-                {Status === "C"
-                  ? "Cancel"
-                  : Status === "D"
-                  ? "Draff"
-                  : "Publish"}
+                {Status
+                  ? Status === "C"
+                    ? "Cancel"
+                    : Status === "D"
+                    ? "Draff"
+                    : Status === "P"
+                    ? "Publish"
+                    : "Draff"
+                  : null}
               </span>
             </div>
           </div>
           <div className={classes.width}>
-            <div className={classes.subject}></div>
+            <p className={classes.subject}>เห็นได้ทุกคน</p>
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
                 flexGrow: 1,
-                justifyContent: "space-between",
-                height: 180,
               }}
             >
               <FormControlLabel
                 style={{
-                  width: 150,
+                  width: 50,
                 }}
                 control={
                   <Checkbox
@@ -956,112 +1126,216 @@ export default function Information() {
                     }}
                   />
                 }
-                label="เห็นได้ทุกคน"
+                label=""
                 checked={IsPublic}
                 onChange={handleCheckBoxPublic}
               />
-
-              <div className={classes.Row}>
-                <span>ระบุตำแหน่ง</span>
-                <span
-                  class="material-icons-outlined"
-                  style={{ color: "#FF0000" }}
-                >
-                  add
-                </span>
-                <FormControl size="small" sx={{ width: 250 }}>
-                  <Select
-                    value={RoleList}
-                    onChange={(e, newValue) => {
-                      console.log(newValue.props.children);
-                      if (newValue) {
-                        setRolesAccess([
-                          ...RolesAccess,
-                          {
-                            roleAccessId: null,
-                            roleId: newValue.props.value,
-                            deleted: false,
-                          },
-                        ]);
-                        // setNameRole([
-                        //   ...NameRole,
-                        //   {
-                        //     name: newValue.props.children,
-                        //     roleId: newValue.props.value,
-                        //   },
-                        // ]);
-                      }
-                    }}
-                    displayEmpty
-                    inputProps={{ "aria-label": "Without label" }}
-                    disableUnderline
-                  >
-                    {RoleList.map((R) => (
-                      <MenuItem value={R.roleId}>{R.roleName}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                {RolesAccess.map((R) => {
-                  return <span>{R.roleId}</span>;
-                })}
-              </div>
-
-              <div className={classes.Row}>
-                <span>ระบุรายบุคคล</span>
-                <span
-                  class="material-icons-outlined"
-                  style={{ color: "#FF0000" }}
-                >
-                  add
-                </span>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    flexGrow: 1,
-                  }}
-                >
-                  <Stack
-                    style={{
-                      maxWidth: 600,
-                      width: 600,
-                    }}
-                  >
-                    <Autocomplete
-                      multiple
-                      // disabled={!CheckEmp}
-                      id="Emp"
-                      options={EmpList}
-                      filterSelectedOptions
-                      getOptionLabel={(option) => {
-                        //filter value
-                        return `${option.empNo}: ${option.fistName} ${option.lastName}`;
-                      }}
-                      onChange={(e, newValue) => {
-                        console.log(newValue.map((x) => x.empId));
-                        newValue.map((x) => {
-                          if (newValue) {
-                            setEmployeesAccess([
-                              ...EmployeesAccess,
-                              {
-                                empAccessId: null,
-                                empId: x.empId,
-                                deleted: false,
-                              },
-                            ]);
-                          }
-                        });
-                      }}
-                      renderInput={(params) => (
-                        <TextField {...params} size="small" />
-                      )}
-                    />
-                  </Stack>
-                </div>
-              </div>
             </div>
           </div>
+
+          <div className={classes.width}>
+            <p className={classes.subject}>ระบุตำแหน่ง</p>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+              }}
+            >
+              <FormControl size="small" sx={{ width: 250 }}>
+                <Select
+                  value={RoleId}
+                  onChange={handleChangeRole}
+                  displayEmpty
+                  inputProps={{ "aria-label": "Without label" }}
+                  disableUnderline
+                >
+                  <MenuItem value="">
+                    <span style={{ color: "#b3b3b3" }}>เพิ่มตำแหน่ง</span>
+                  </MenuItem>
+                  {RoleList.filter(
+                    ({ roleId }) =>
+                      !RolesAccess.map((x) => x.roleId).includes(roleId)
+                  ).map((R) => (
+                    <MenuItem value={R.roleId}>{R.roleName}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <button
+                style={{
+                  borderWidth: 0,
+                  backgroundColor: "transparent",
+                }}
+              >
+                <span
+                  class="material-icons-outlined"
+                  style={{ color: "#FF0000", fontSize: 30, marginLeft: 5 }}
+                  onClick={() => SetRolesAccess()}
+                >
+                  add
+                </span>
+              </button>
+            </div>
+          </div>
+          {RolesAccess.length > 0 ? (
+            <div className={classes.width}>
+              <div className={classes.subject}></div>
+
+              <table
+                id="Role"
+                style={{
+                  border: "1px solid #e0e0e0",
+                  textAlign: "center",
+                  fontWeight: "normal",
+                }}
+              >
+                <thead
+                  style={{
+                    backgroundColor: "#F1F3F9",
+                  }}
+                >
+                  <th style={{ width: 250 }}>ตำแหน่ง</th>
+                  <th style={{ width: 200 }}>ลบ</th>
+                </thead>
+                <tbody>
+                  {RolesAccess.filter((x) => x.deleted === false).map(
+                    (r, index) => {
+                      return (
+                        <tr key={index}>
+                          <td>{r.roleName}</td>
+                          <td>
+                            <button
+                              style={{
+                                borderWidth: 0,
+                                backgroundColor: "transparent",
+                              }}
+                            >
+                              <span
+                                class="material-icons-outlined"
+                                onClick={() => delRole(r.roleAccessId, index)}
+                                style={{ color: "#FF0000" }}
+                              >
+                                delete
+                              </span>
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    }
+                  )}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+
+          <div className={classes.width}>
+            <p className={classes.subject}>ระบุรายบุคคล</p>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+              }}
+            >
+              <Autocomplete
+                disablePortal
+                id="Emp"
+                options={EmpList.filter(
+                  ({ empId }) =>
+                    !EmployeesAccess.map((x) => x.empId).includes(empId)
+                )}
+                sx={{ width: 350 }}
+                getOptionLabel={(option) => {
+                  //filter value
+                  return `${option.empNo}: ${option.fistName} ${option.lastName}`;
+                }}
+                onChange={(e, newValue) => {
+                  console.log(e);
+                  console.log(newValue);
+
+                  if (newValue) {
+                    handleChangeEmp(newValue);
+                  } else {
+                    setEmpId("");
+                  }
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    size="small"
+                    placeholder="เพิ่มบุคคล"
+                  />
+                )}
+              />
+              <button
+                style={{
+                  borderWidth: 0,
+                  backgroundColor: "transparent",
+                }}
+              >
+                <span
+                  class="material-icons-outlined"
+                  style={{ color: "#FF0000", fontSize: 30, marginLeft: 5 }}
+                  onClick={() => SetEmpAccess()}
+                >
+                  add
+                </span>
+              </button>
+            </div>
+          </div>
+          {EmployeesAccess.length > 0 ? (
+            <div className={classes.width}>
+              <div className={classes.subject}></div>
+
+              <table
+                id="Emp"
+                style={{
+                  border: "1px solid #e0e0e0",
+                  textAlign: "center",
+                  fontWeight: "normal",
+                }}
+              >
+                <thead
+                  style={{
+                    backgroundColor: "#F1F3F9",
+                  }}
+                >
+                  <th style={{ width: 250 }}>พนักงาน</th>
+                  <th style={{ width: 200 }}>ลบ</th>
+                </thead>
+                <tbody>
+                  {EmployeesAccess.filter((x) => x.deleted === false).map(
+                    (E, index) => {
+                      return (
+                        <tr key={index}>
+                          <td style={{ textAlign: "left", paddingLeft: 5 }}>
+                            {E.empFirstName}
+                            <span>&nbsp;&nbsp;</span>
+                            {E.empLastName}
+                          </td>
+                          <td>
+                            <button
+                              style={{
+                                borderWidth: 0,
+                                backgroundColor: "transparent",
+                              }}
+                            >
+                              <span
+                                class="material-icons-outlined"
+                                onClick={() => delEmp(E.empAccessId, index)}
+                                style={{ color: "#FF0000" }}
+                              >
+                                delete
+                              </span>
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    }
+                  )}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+
           <div
             style={{
               width: "70%",
@@ -1091,7 +1365,7 @@ export default function Information() {
                 marginRight: 10,
                 width: 120,
               }}
-              onClick={handleRoute}
+              onClick={() => Cancel()}
             >
               ยกเลิก
             </Button>
@@ -1104,6 +1378,7 @@ export default function Information() {
                 marginRight: 10,
                 width: 120,
               }}
+              onClick={() => Draff()}
             >
               บันทึกฉบับร่าง
             </Button>
@@ -1117,6 +1392,7 @@ export default function Information() {
                 width: 120,
               }}
               onClick={() => save()}
+              type="submit"
             >
               เผยแพร่
             </Button>
@@ -1155,6 +1431,6 @@ export default function Information() {
           </div>
         </div>
       </Paper>
-    </div>
+    </form>
   );
 }
