@@ -156,7 +156,7 @@ export default function AllRound() {
                   <StyledTableCell align="center">
                     จำนวนพนักงานดีเด่น
                   </StyledTableCell>
-                  <StyledTableCell align="center">สถานะ</StyledTableCell>
+                  {/* <StyledTableCell align="center">สถานะ</StyledTableCell> */}
                   <StyledTableCell align="center">แก้ไข</StyledTableCell>
                 </TableRow>
               </TableHead>
@@ -176,9 +176,9 @@ export default function AllRound() {
                       <StyledTableCell align="center">
                         {Data.staffCount}
                       </StyledTableCell>
-                      <StyledTableCell align="center">
+                      {/* <StyledTableCell align="center">
                         {Data.status ? "เปิด" : "ปิด"}
-                      </StyledTableCell>
+                      </StyledTableCell> */}
                       <StyledTableCell align="center">
                         <Link
                           to={{

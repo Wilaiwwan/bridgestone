@@ -82,6 +82,7 @@ export default function EditUser() {
   const { id } = useParams();
   const empId = id;
 
+  console.log(id);
   const [EmpNo, setEmpNo] = useState("");
   const [FirstName, setFirstName] = useState("");
   const [LastName, setLastName] = useState("");
@@ -94,7 +95,12 @@ export default function EditUser() {
   const [open, setOpen] = useState(false);
   const [Path, setPath] = useState("");
   const [ShowInput, setShowInput] = useState(false);
-  console.log(FileId);
+  const [EmpNoErr, setEmpNoErr] = useState(false);
+  const [FnameErr, setFnameErr] = useState(false);
+  const [LnameErr, setLnameErr] = useState(false);
+  const [RoleErr, setRoleErr] = useState(false);
+  const [OrgnameErr, setOrgnameErr] = useState(false);
+
   const [Files, setFiles] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
     // accept: "image/*",
@@ -176,6 +182,30 @@ export default function EditUser() {
   const handleRoute = () => {
     history.push("/AllUser");
   };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setEmpNoErr(false);
+    setFnameErr(false);
+    setLnameErr(false);
+    setRoleErr(false);
+    setOrgnameErr(false);
+
+    if (!EmpNo) {
+      setEmpNoErr(true);
+    }
+    if (!FirstName) {
+      setFnameErr(true);
+    }
+    if (!LastName) {
+      setLnameErr(true);
+    }
+    if (!RoleId) {
+      setRoleErr(true);
+    }
+    if (!OrgnameErr) {
+      setOrgnameErr(true);
+    }
+  };
 
   const fetchEmpData = async () => {
     try {
@@ -183,9 +213,7 @@ export default function EditUser() {
         ...(empId && { empId }),
       });
 
-      const result = await api.get(
-        `/api/employee/list?${params}`
-      );
+      const result = await api.get(`/api/employee/list?${params}`);
       const _result = result.data.results[0];
       setEmpNo(_result.empNo);
       setFirstName(_result.fistName);
@@ -216,36 +244,28 @@ export default function EditUser() {
   const save = async () => {
     const EmpId = id;
     const FistName = FirstName;
-    console.log(
-      EmpId,
-      EmpNo,
-      FistName,
-      LastName,
-      DepartmentId,
-      Orgname,
-      RoleId,
-      FileId,
-      Status
-    );
-    try {
-      const result = await api.post("api/employee/update", {
-        EmpId,
-        EmpNo,
-        FistName,
-        LastName,
-        DepartmentId,
-        Orgname,
-        RoleId,
-        FileId,
-        Status,
-      });
-      setOpen(true);
-      setTimeout(() => {
-        history.push(`/AllUser`);
-      }, 2000);
-      console.log(result);
-    } catch (error) {
-      console.log("error => ", error);
+
+    if (EmpNoErr || FnameErr || LnameErr || RoleErr || OrgnameErr) {
+      try {
+        const result = await api.post("api/employee/update", {
+          EmpId,
+          EmpNo,
+          FistName,
+          LastName,
+          DepartmentId,
+          Orgname,
+          RoleId,
+          FileId,
+          Status,
+        });
+        setOpen(true);
+        setTimeout(() => {
+          history.push(`/AllUser`);
+        }, 2000);
+        console.log(result);
+      } catch (error) {
+        console.log("error => ", error);
+      }
     }
   };
 
@@ -259,7 +279,12 @@ export default function EditUser() {
   }, []);
 
   return (
-    <div className={classes.root}>
+    <form
+      className={classes.root}
+      noValidate
+      autoComplete="off"
+      onSubmit={handleSubmit}
+    >
       <Paper elevation={1}>
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>B-Admin</p>
@@ -278,6 +303,8 @@ export default function EditUser() {
                 placeholder="รหัสพนักงาน"
                 onChange={(e) => setEmpNo(e.target.value)}
                 value={EmpNo}
+                required
+                error={EmpNoErr}
               />
             </div>
           </div>
@@ -296,6 +323,8 @@ export default function EditUser() {
                 placeholder="ชื่อ"
                 onChange={(e) => setFirstName(e.target.value)}
                 value={FirstName}
+                required
+                error={FnameErr}
               />
             </div>
           </div>
@@ -313,6 +342,8 @@ export default function EditUser() {
                 placeholder="นามสกุล"
                 onChange={(e) => setLastName(e.target.value)}
                 value={LastName}
+                required
+                error={LnameErr}
               />
             </div>
           </div>
@@ -332,6 +363,8 @@ export default function EditUser() {
                   displayEmpty
                   inputProps={{ "aria-label": "Without label" }}
                   disableUnderline
+                  required
+                  error={RoleErr}
                 >
                   {RoleList.map((Role) => (
                     <MenuItem value={Role.roleId}>{Role.roleName}</MenuItem>
@@ -354,6 +387,8 @@ export default function EditUser() {
                 placeholder="แผนก"
                 onChange={(e) => setOrgname(e.target.value)}
                 value={Orgname}
+                required
+                error={OrgnameErr}
               />
             </div>
           </div>
@@ -511,6 +546,7 @@ export default function EditUser() {
                 width: 120,
               }}
               onClick={() => save()}
+              type="submit"
             >
               บันทึก
             </Button>
@@ -549,6 +585,6 @@ export default function EditUser() {
           </div>
         </div>
       </Paper>
-    </div>
+    </form>
   );
 }

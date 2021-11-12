@@ -27,6 +27,7 @@ import api from "../../Component/api/api";
 import qs from "qs";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+import moment from "moment";
 import MenuItem from "@mui/material/MenuItem";
 
 const drawerHeight = "100%";
@@ -116,15 +117,13 @@ export default function AddMember() {
   const [rowsPerPage, setRowsPerPage] = useState(15);
   const [Status, setStatus] = useState(false);
   const [openAdd, setOpenAdd] = useState(false);
-  const [StartDate, setStartDate] = useState(new Date());
-  const [EndDate, setEndDate] = useState(new Date());
-  const [DeletedR, setDeletedR] = useState(false);
+  const [DeletedR, setDeletedR] = useState(true);
   const [ExcellentTitle, setExcellentTitle] = useState("");
   const [Year, setYear] = useState("");
   const [Month, setMonth] = useState("");
   const STY = Year.toString();
   const STM = Month.toString();
-  const DateParams = STM + "-" + "01" + "-" + STY;
+  const DateParams = STM + "-" + "02" + "-" + STY;
   const [EmpId, setEmpId] = useState("");
   const [Remark, setRemark] = useState("");
   const [DeletedM, setDeletedM] = useState(false);
@@ -132,13 +131,10 @@ export default function AddMember() {
   const [RoundList, setRoundList] = useState([]);
   const [FName, setFName] = useState("");
   const [LName, setLName] = useState("");
-  const [OpenSuccess, setOpenSuccess] = useState(false)
-  console.log(
-    "List=>",
-    RoundList.filter((x) => x.deleted === false).map(
-      (Data, index) => Data.EmpId
-    )
-  );
+  const [OpenSuccess, setOpenSuccess] = useState(false);
+  const [ExcelNameErr, setExcelNameErr] = useState(false);
+  const [YearErr, setYearErr] = useState(false);
+  const [MonthErr, setMonthErr] = useState(false);
 
   const [itemsY, setItemsY] = useState(
     Array.from({ length: 80 }, (_, i) => ({
@@ -153,6 +149,10 @@ export default function AddMember() {
       ).toString(),
     }))
   );
+
+  const handleRoute = () => {
+    history.push("/RoundList");
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -267,17 +267,32 @@ export default function AddMember() {
     // })
     // console.log(body);
   };
+
   const getFirstAndLastDayOfMonth = () => {
     const Dval = new Date(DateParams);
     const lastDate = new Date(Dval.getFullYear(), Dval.getMonth() + 1, 0);
     const firstDate = new Date(Dval.getFullYear(), Dval.getMonth(), 1);
     if (firstDate && lastDate) {
-      // return { firstDate, lastDate };
-      setStartDate(firstDate);
-      setEndDate(lastDate);
-      console.log(firstDate, lastDate);
+      console.log(firstDate, lastDate, "Set Value");
     }
-    AddRound();
+    AddRound(firstDate, lastDate);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setExcelNameErr(false);
+    setYearErr(false);
+    setMonthErr(false);
+
+    if (!ExcellentTitle) {
+      setExcelNameErr(true);
+    }
+    if (!Year) {
+      setYearErr(true);
+    }
+    if (!Month) {
+      setMonthErr(true);
+    }
   };
 
   const fetchEmpList = async () => {
@@ -314,27 +329,30 @@ export default function AddMember() {
     }
   };
 
-  const AddRound = async () => {
+  const AddRound = async (F, L) => {
     const _excellId = id === undefined ? null : id;
+    const First = moment(F).format("YYYY-MM-DD");
+    const Last = moment(L).format("YYYY-MM-DD");
+    if (ExcelNameErr || YearErr || MonthErr) {
+      try {
+        const result = await api.post("api/excellent/head/add", {
+          ExcellId: _excellId,
+          ExcellentTitle,
+          StartDate: First,
+          EndDate: Last,
+          Status: null,
+          Deleted: DeletedR === false ? true : false,
+        });
+        setOpenSuccess(true);
+        setTimeout(() => {
+          history.push(`/RoundList`);
+        }, 2000);
 
-    try {
-      const result = await api.post("api/excellent/head/add", {
-        ExcellId: _excellId,
-        ExcellentTitle,
-        StartDate,
-        EndDate,
-        Status: null,
-        Deleted: DeletedR === false ? true : false,
-      });
-      setOpenSuccess(true);
-      setTimeout(() => {
-        history.push(`/RoundList`);
-      }, 2000);
-
-      AddMember(result.data.results);
-      console.log(result);
-    } catch (error) {
-      console.log("error => ", error);
+        AddMember(result.data.results);
+        console.log(result);
+      } catch (error) {
+        console.log("error => ", error);
+      }
     }
   };
   const AddMember = async (RoundId) => {
@@ -358,7 +376,6 @@ export default function AddMember() {
         console.log("error => ", error);
       }
     }
-    return null;
   };
 
   useEffect(() => {
@@ -372,7 +389,12 @@ export default function AddMember() {
 
   console.log(RoundList);
   return (
-    <div className={classes.root}>
+    <form
+      className={classes.root}
+      noValidate
+      autoComplete="off"
+      onSubmit={handleSubmit}
+    >
       <Paper elevation={1} style={{ height: "88vh" }}>
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>B-360</p>
@@ -391,6 +413,8 @@ export default function AddMember() {
                 // placeholder=""
                 onChange={(e) => setExcellentTitle(e.target.value)}
                 value={ExcellentTitle}
+                required
+                error={ExcelNameErr}
               />
             </div>
           </div>
@@ -412,6 +436,8 @@ export default function AddMember() {
                   inputProps={{ "aria-label": "Without label" }}
                   disableUnderline
                   MenuProps={{ classes: { paper: classes.menuPaper } }}
+                  required
+                  error={YearErr}
                 >
                   {itemsY.map((Y) => (
                     <MenuItem value={Y.value}>{Y.label}</MenuItem>
@@ -436,6 +462,8 @@ export default function AddMember() {
                   displayEmpty
                   inputProps={{ "aria-label": "Without label" }}
                   disableUnderline
+                  required
+                  error={MonthErr}
                 >
                   <MenuItem value={"0" + 1}>มกราคม</MenuItem>
                   <MenuItem value={"0" + 2}>กุมภาพันธ์</MenuItem>
@@ -467,7 +495,7 @@ export default function AddMember() {
               justifyContent: "flex-end",
               flexDirection: "row",
               marginBottom: 20,
-              marginTop: 20,
+              marginTop: 10,
             }}
           >
             <Button
@@ -476,11 +504,12 @@ export default function AddMember() {
                 color: "#FF0000",
                 borderColor: "#FF0000",
                 marginRight: 10,
+                padding: 10,
                 width: 120,
               }}
               onClick={handleDeleteAllStaff}
             >
-              -ลบที่เลือก
+              - ลบที่เลือก
             </Button>
 
             <Button
@@ -490,11 +519,12 @@ export default function AddMember() {
                 backgroundColor: "#FF0000",
                 borderColor: "transparent",
                 marginRight: 10,
+                padding: 10,
                 width: 120,
               }}
               onClick={() => handleClickOpen()}
             >
-              +เพิ่มพนักงาน
+              + เพิ่มพนักงาน
             </Button>
             <Dialog
               open={openAdd}
@@ -578,6 +608,7 @@ export default function AddMember() {
                     color: "black",
                     borderColor: "transparent",
                     backgroundColor: "#F8F9FA",
+                    padding: 10,
                     marginRight: 10,
                     width: 80,
                   }}
@@ -591,6 +622,7 @@ export default function AddMember() {
                     color: "white",
                     backgroundColor: "#FF0000",
                     borderColor: "transparent",
+                    padding: 10,
                     marginRight: 10,
                     width: 80,
                   }}
@@ -602,7 +634,7 @@ export default function AddMember() {
             </Dialog>
           </div>
 
-          <TableContainer sx={{ maxHeight: "20vh" }}>
+          <TableContainer sx={{ maxHeight: "20vh", height: "20vh" }}>
             <Table stickyHeader size="small" aria-label="customized table">
               <TableHead>
                 <TableRow>
@@ -698,7 +730,7 @@ export default function AddMember() {
           <TablePagination
             rowsPerPageOptions={[15, 45, 105]}
             component="div"
-            count={EmpList.length}
+            count={RoundList.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -708,7 +740,7 @@ export default function AddMember() {
             style={{
               width: "70%",
               paddingLeft: "14%",
-              marginTop: 50,
+              marginTop: 45,
             }}
           >
             <Button
@@ -718,9 +750,10 @@ export default function AddMember() {
                 backgroundColor: "#F8F9FA",
                 borderColor: "transparent",
                 marginRight: 10,
+                padding: 10,
                 width: 120,
               }}
-              // onClick={handleRoute}
+              onClick={handleRoute}
             >
               กลับ
             </Button>
@@ -732,9 +765,11 @@ export default function AddMember() {
                 backgroundColor: "#FF0000",
                 borderColor: "transparent",
                 marginRight: 10,
+                padding: 10,
                 width: 120,
               }}
               onClick={() => getFirstAndLastDayOfMonth()}
+              type="submit"
             >
               บันทึก
             </Button>
@@ -773,6 +808,6 @@ export default function AddMember() {
           </div>
         </div>
       </Paper>
-    </div>
+    </form>
   );
 }

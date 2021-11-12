@@ -35,6 +35,7 @@ import xls from "../../images/xls.png";
 import FileUploadService from "../../Services/FileUploadService";
 import moment from "moment";
 import Grid from "@mui/material/Grid";
+import { Title } from "@mui/icons-material";
 
 const drawerHeight = "100%";
 const drawerwidth = "100%";
@@ -441,15 +442,19 @@ export default function Information() {
       EmployeesAccess,
       RolesAccess,
     };
-    try {
-      const result = await api.post("api/admin/content/add", body);
-      setOpen(true);
-      setTimeout(() => {
-        history.push(`/AllSubject`);
-      }, 2000);
-      console.log(result);
-    } catch (error) {
-      console.log("error => ", error);
+    if (TitleErr || PointErr) {
+      try {
+        const result = await api.post("api/admin/content/add", body);
+        setOpen(true);
+        setTimeout(() => {
+          history.push(`/AllSubject`);
+        }, 2000);
+        console.log(result);
+      } catch (error) {
+        console.log("error => ", error);
+      }
+    } else {
+      console.log("not data");
     }
   };
   const Draff = async () => {
@@ -476,15 +481,19 @@ export default function Information() {
       EmployeesAccess,
       RolesAccess,
     };
-    try {
-      const result = await api.post("api/admin/content/add", body);
-      setOpen(true);
-      setTimeout(() => {
-        history.push(`/AllSubject`);
-      }, 2000);
-      console.log(result);
-    } catch (error) {
-      console.log("error => ", error);
+    if (TitleErr || PointErr) {
+      try {
+        const result = await api.post("api/admin/content/add", body);
+        setOpen(true);
+        setTimeout(() => {
+          history.push(`/AllSubject`);
+        }, 2000);
+        console.log(result);
+      } catch (error) {
+        console.log("error => ", error);
+      }
+    } else {
+      console.log("not data");
     }
   };
 
@@ -512,15 +521,19 @@ export default function Information() {
       EmployeesAccess,
       RolesAccess,
     };
-    try {
-      const result = await api.post("api/admin/content/add", body);
-      setOpen(true);
-      setTimeout(() => {
-        history.push(`/AllSubject`);
-      }, 2000);
-      console.log(result);
-    } catch (error) {
-      console.log("error => ", error);
+    if (TitleErr || PointErr) {
+      try {
+        const result = await api.post("api/admin/content/add", body);
+        setOpen(true);
+        setTimeout(() => {
+          history.push(`/AllSubject`);
+        }, 2000);
+        console.log(result);
+      } catch (error) {
+        console.log("error => ", error);
+      }
+    } else {
+      console.log("not data");
     }
   };
 
@@ -589,9 +602,10 @@ export default function Information() {
     if (ContentTitle === "") {
       setTitleErr(true);
     }
-    // if (Point === 0) {
-    //   setTitleErr(true);
-    // }
+    if (Point === 0) {
+      setPointErr(true);
+      console.log("OO");
+    }
   };
 
   const SetRolesAccess = () => {
@@ -676,8 +690,8 @@ export default function Information() {
                 placeholder="หัวข้อเรื่อง"
                 onChange={(e) => setContentTitle(e.target.value)}
                 value={ContentTitle}
-                // required
-                // error={TitleErr}
+                required
+                error={TitleErr}
               />
               <span style={{ color: "gray" }}>
                 หัวข้อเรื่องที่ปรากฏในหน้าข่าวประกาศ
@@ -968,13 +982,13 @@ export default function Information() {
                 onChange={(e) => setPoint(e.target.value)}
                 value={Point}
                 type="number"
-                error={PointErr}
                 required
+                error={PointErr}
               />
               <span style={{ color: "gray" }}>คะแนนเมื่อกดอ่านข่าวเสร็จ</span>
             </div>
           </div>
-          {TypeContentId === "DT" ? (
+          {TypeContentId === "URL" ? (
             <div className={classes.width}>
               <p className={classes.subject}>เว็บไซต์</p>
               <div
@@ -1356,19 +1370,21 @@ export default function Information() {
             >
               กลับ
             </Button>
-            <Button
-              variant="contained"
-              style={{
-                color: "black",
-                backgroundColor: "#F8F9FA",
-                borderColor: "transparent",
-                marginRight: 10,
-                width: 120,
-              }}
-              onClick={() => Cancel()}
-            >
-              ยกเลิก
-            </Button>
+            {ContentMainId ? (
+              <Button
+                variant="contained"
+                style={{
+                  color: "black",
+                  backgroundColor: "#F8F9FA",
+                  borderColor: "transparent",
+                  marginRight: 10,
+                  width: 120,
+                }}
+                onClick={() => Cancel()}
+              >
+                ยกเลิก
+              </Button>
+            ) : null}
             <Button
               variant="contained"
               style={{

@@ -86,11 +86,12 @@ export default function AddLink() {
   const [BconnectName, setBconnectName] = useState("");
   const [url, setURL] = useState("");
   const [FileId, setFileId] = useState(null);
-  const [Deleted, setDeleted] = useState(false);
+  const [Deleted, setDeleted] = useState(true);
   const [open, setOpen] = useState(false);
   const [TypeConnectList, setTypeConnectList] = useState([]);
   const [ShowInput, setShowInput] = useState(false);
   const [Path, setPath] = useState("");
+  const [NameErr, setNameErr] = useState(false);
 
   const [Files, setFiles] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
@@ -176,16 +177,14 @@ export default function AddLink() {
         ...(BconnectID && { BconnectID }),
       });
 
-      const result = await api.get(
-        `/api/bconnect/list?${params}`
-      );
+      const result = await api.get(`/api/bconnect/list?${params}`);
       const _result = result.data.results[0];
       setBconnectName(_result.bconnectName);
       setURL(_result.url);
       setTypeConnectID(_result.typeConnectID);
       setPath(_result.path);
       setFileId(_result.fileId);
-      setDeleted(_result.deleted);
+      setDeleted(_result.deleted === false ? true : false);
       console.log(_result);
     } catch (error) {
       console.log("error => ", error);
@@ -198,9 +197,7 @@ export default function AddLink() {
         TypeConnect: true,
       });
 
-      const result = await api.get(
-        `/api/master/list?${params}`
-      );
+      const result = await api.get(`/api/master/list?${params}`);
       const _result = result.data.results.typeConnect;
       setTypeConnectList(_result);
       console.log(result);
@@ -212,22 +209,24 @@ export default function AddLink() {
   const save = async () => {
     const BId = BconnectID === undefined ? null : id;
     const URL = url;
-    try {
-      const result = await api.post("api/bconnect/add", {
-        BconnectID: BId,
-        BconnectName,
-        URL,
-        TypeConnectID,
-        FileId,
-        Deleted,
-      });
-      setOpen(true);
-      setTimeout(() => {
-        history.push(`/AllLink`);
-      }, 2000);
-      console.log(result);
-    } catch (error) {
-      console.log("error => ", error);
+    if (NameErr) {
+      try {
+        const result = await api.post("api/bconnect/add", {
+          BconnectID: BId,
+          BconnectName,
+          URL,
+          TypeConnectID,
+          FileId,
+          Deleted: Deleted === false ? true : false,
+        });
+        setOpen(true);
+        setTimeout(() => {
+          history.push(`/AllLink`);
+        }, 2000);
+        console.log(result);
+      } catch (error) {
+        console.log("error => ", error);
+      }
     }
   };
 
@@ -246,8 +245,22 @@ export default function AddLink() {
     history.push("/AllLink");
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setNameErr(false);
+
+    if (!BconnectName) {
+      setNameErr(true);
+    }
+  };
+
   return (
-    <div className={classes.root}>
+    <form
+      className={classes.root}
+      noValidate
+      autoComplete="off"
+      onSubmit={handleSubmit}
+    >
       <Paper elevation={1}>
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>B-Connect</p>
@@ -266,6 +279,8 @@ export default function AddLink() {
                 placeholder="ปฏิทินทำงาน ปีพศ. 2564"
                 onChange={(e) => setBconnectName(e.target.value)}
                 value={BconnectName}
+                required
+                error={NameErr}
               />
             </div>
           </div>
@@ -472,6 +487,7 @@ export default function AddLink() {
                 width: 120,
               }}
               onClick={() => save()}
+              type="submit"
             >
               บันทึก
             </Button>
@@ -538,6 +554,6 @@ export default function AddLink() {
           </div>
         </div>
       </Paper>
-    </div>
+    </form>
   );
 }

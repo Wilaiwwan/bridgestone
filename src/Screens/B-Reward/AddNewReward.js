@@ -87,6 +87,8 @@ export default function AddNewReward() {
   const [open, setOpen] = useState(false);
   const [ShowInput, setShowInput] = useState(false);
   const [Path, setPath] = useState("");
+  const [ItemNameErr, setItemNameErr] = useState(false);
+  const [PointErr, setPointErr] = useState(false);
 
   const [Files, setFiles] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
@@ -156,30 +158,31 @@ export default function AddNewReward() {
     </div>
   ));
 
-  console.log(StartDate, EndDate, GroupItemId);
   const save = async () => {
     const _ItemId = itemId === undefined ? null : id;
-    try {
-      const result = await api.post("api/breward/add", {
-        ItemId: _ItemId,
-        ItemName,
-        GroupItemId,
-        Point,
-        Stock,
-        StartDate,
-        EndDate,
-        Description,
-        FileId,
-        Status,
-        Deleted,
-      });
-      setOpen(true);
-      setTimeout(() => {
-        history.push(`/AllReward`);
-      }, 2000);
-      console.log(result);
-    } catch (error) {
-      console.log("error => ", error);
+    if (ItemNameErr || PointErr) {
+      try {
+        const result = await api.post("api/breward/add", {
+          ItemId: _ItemId,
+          ItemName,
+          GroupItemId,
+          Point,
+          Stock,
+          StartDate,
+          EndDate,
+          Description,
+          FileId,
+          Status,
+          Deleted,
+        });
+        setOpen(true);
+        setTimeout(() => {
+          history.push(`/AllReward`);
+        }, 2000);
+        console.log(result);
+      } catch (error) {
+        console.log("error => ", error);
+      }
     }
   };
 
@@ -198,9 +201,7 @@ export default function AddNewReward() {
         ...(itemId && { itemId }),
       });
 
-      const result = await api.get(
-        `/api/bpoint/item/list?${params}`
-      );
+      const result = await api.get(`/api/bpoint/item/list?${params}`);
       const _result = result.data.results[0];
       setItemName(_result.itemName);
       setGroupItemId(_result.groupItemId);
@@ -232,8 +233,26 @@ export default function AddNewReward() {
     history.push("/AllReward");
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setItemNameErr(false);
+    setPointErr(false);
+
+    if (ItemName === "") {
+      setItemNameErr(true);
+    }
+    if (Point === 0) {
+      setPointErr(true);
+    }
+  };
+
   return (
-    <div className={classes.root}>
+    <form
+      className={classes.root}
+      noValidate
+      autoComplete="off"
+      onSubmit={handleSubmit}
+    >
       <Paper elevation={1}>
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>B-Reward</p>
@@ -252,6 +271,8 @@ export default function AddNewReward() {
                 placeholder="Bridgestone Jacket 2020"
                 onChange={(e) => setItemName(e.target.value)}
                 value={ItemName}
+                required
+                error={ItemNameErr}
               ></TextField>
             </div>
           </div>
@@ -416,6 +437,8 @@ export default function AddNewReward() {
                 onChange={(e) => setPoint(e.target.value)}
                 value={Point}
                 type="number"
+                required
+                error={PointErr}
               />
               <span style={{ color: "gray" }}>
                 จำนวนคะแนนเพื่อใช้แลกของรางวัล
@@ -502,6 +525,7 @@ export default function AddNewReward() {
                 width: 120,
               }}
               onClick={() => save()}
+              type="submit"
             >
               บันทึก
             </Button>
@@ -540,6 +564,6 @@ export default function AddNewReward() {
           </div>
         </div>
       </Paper>
-    </div>
+    </form>
   );
 }
