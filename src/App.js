@@ -29,6 +29,8 @@ import envInstants from "./libs/configs/env";
 import httpClientInstants from "./libs/utils/HttpClient";
 import api, { setDefaultURL, setInterceptors } from "./Component/api/api";
 import { useHistory } from "react-router-dom";
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+
 function App() {
   const [isInitEnvError, setInitEnvError] = useState(false);
   const [isInitEnv, setInitEnv] = useState(false);
@@ -67,8 +69,15 @@ function App() {
   if (!isInitEnv) return "Loading...";
   if (isInitEnvError) return "Cannot load env !!!";
 
+  const THEME = createTheme({
+    typography: {
+      "fontFamily": ` sans-serif`,
+    }
+  });
+
   return (
     <Suspense>
+      {/* <ThemeProvider theme={THEME}> */}
       <Provider store={store}>
         <Router>
           <div
@@ -158,6 +167,7 @@ function App() {
           </div>
         </Router>
       </Provider>
+      {/* </ThemeProvider> */}
     </Suspense>
   );
 }
