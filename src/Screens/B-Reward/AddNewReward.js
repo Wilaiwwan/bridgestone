@@ -37,6 +37,8 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: "6%",
     paddingLeft: "6%",
     paddingBottom: "2%",
+    maxHeight: "88vh",
+    overflow: "auto",
   },
   subject: {
     width: "20%",
@@ -80,13 +82,13 @@ export default function AddNewReward() {
   const [GroupItemId, setGroupItemId] = useState(null);
   const [Point, setPoint] = useState(0);
   const [Stock, setStock] = useState("");
-  const [Description, setDescription] = useState("");
-  const [FileId, setFileId] = useState("");
+  const [Description, setDescription] = useState(null);
+  const [FileId, setFileId] = useState(null);
   const [Status, setStatus] = useState(true);
   const [Deleted, setDeleted] = useState(false);
   const [open, setOpen] = useState(false);
   const [ShowInput, setShowInput] = useState(false);
-  const [Path, setPath] = useState("");
+  const [Path, setPath] = useState(null);
   const [ItemNameErr, setItemNameErr] = useState(false);
   const [PointErr, setPointErr] = useState(false);
 
@@ -160,7 +162,7 @@ export default function AddNewReward() {
 
   const save = async () => {
     const _ItemId = itemId === undefined ? null : id;
-    if (ItemNameErr || PointErr) {
+    if (ItemNameErr === false || PointErr === false) {
       try {
         const result = await api.post("api/breward/add", {
           ItemId: _ItemId,
@@ -181,7 +183,7 @@ export default function AddNewReward() {
         }, 2000);
         console.log(result);
       } catch (error) {
-        console.log("error => ", error);
+        console.error("error => ", error);
       }
     }
   };
@@ -212,6 +214,7 @@ export default function AddNewReward() {
       setFileId(_result.fileId);
       setStatus(_result.status);
       setPath(_result.path);
+      setDescription(_result.description);
 
       console.log(result);
     } catch (error) {
@@ -253,7 +256,7 @@ export default function AddNewReward() {
       autoComplete="off"
       onSubmit={handleSubmit}
     >
-      <Paper elevation={1}>
+      <Paper elevation={1} style={{ height: "88vh" }}>
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>B-Reward</p>
           <h3>เพิ่มของรางวัลใหม่</h3>

@@ -333,7 +333,7 @@ export default function AddMember() {
     const _excellId = id === undefined ? null : id;
     const First = moment(F).format("YYYY-MM-DD");
     const Last = moment(L).format("YYYY-MM-DD");
-    if (ExcelNameErr || YearErr || MonthErr) {
+    if (ExcelNameErr === false || YearErr === false || MonthErr === false) {
       try {
         const result = await api.post("api/excellent/head/add", {
           ExcellId: _excellId,
@@ -387,7 +387,6 @@ export default function AddMember() {
     }
   }, [keyword]);
 
-  console.log(RoundList);
   return (
     <form
       className={classes.root}

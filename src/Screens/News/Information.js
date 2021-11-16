@@ -35,7 +35,6 @@ import xls from "../../images/xls.png";
 import FileUploadService from "../../Services/FileUploadService";
 import moment from "moment";
 import Grid from "@mui/material/Grid";
-import { Title } from "@mui/icons-material";
 
 const drawerHeight = "100%";
 const drawerwidth = "100%";
@@ -57,6 +56,8 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: "6%",
     paddingLeft: "6%",
     paddingBottom: "2%",
+    maxHeight: "88vh",
+    overflow: "auto",
   },
   subject: {
     width: "20%",
@@ -442,7 +443,7 @@ export default function Information() {
       EmployeesAccess,
       RolesAccess,
     };
-    if (TitleErr || PointErr) {
+    if (TitleErr === false || PointErr === false) {
       try {
         const result = await api.post("api/admin/content/add", body);
         setOpen(true);
@@ -481,7 +482,7 @@ export default function Information() {
       EmployeesAccess,
       RolesAccess,
     };
-    if (TitleErr || PointErr) {
+    if (TitleErr === false || PointErr === false) {
       try {
         const result = await api.post("api/admin/content/add", body);
         setOpen(true);
@@ -521,7 +522,7 @@ export default function Information() {
       EmployeesAccess,
       RolesAccess,
     };
-    if (TitleErr || PointErr) {
+    if (TitleErr === false || PointErr === false) {
       try {
         const result = await api.post("api/admin/content/add", body);
         setOpen(true);
@@ -604,7 +605,6 @@ export default function Information() {
     }
     if (Point === 0) {
       setPointErr(true);
-      console.log("OO");
     }
   };
 

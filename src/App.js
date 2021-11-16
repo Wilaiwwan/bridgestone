@@ -45,9 +45,9 @@ function App() {
 
      
 
-        console.log(envInstants);
+        // console.log(envInstants);
 
-        console.log(envInstants.getConfig().baseUrl);
+        // console.log(envInstants.getConfig().baseUrl);
         // setDefaultURL(envInstants.getConfig().baseUrl)
       } catch (error) {
         console.log(error);

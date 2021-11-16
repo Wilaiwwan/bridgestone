@@ -66,6 +66,7 @@ export default function Login() {
       console.error(error);
     }
   };
+  console.log(localStorage);
 
   const handleRoute = () => {
     history.push("/AllSubject");
@@ -171,8 +172,8 @@ export default function Login() {
                   marginBottom: 40,
                 }}
               >
-                <FormControlLabel control={<Checkbox />} label="Remember Me" />
-                {/* <span style={{ alignSelf: "center" }}>Forgot Password ?</span> */}
+                {/* <FormControlLabel control={<Checkbox />} label="Remember Me" />
+                <span style={{ alignSelf: "center" }}>Forgot Password ?</span> */}
               </div>
 
               <div className={classes.center}>

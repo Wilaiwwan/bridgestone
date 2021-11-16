@@ -22,7 +22,6 @@ class ENVProvider {
   async init() {
     const response = await fetch("/resources/config.json");
     const results = await response.json();
-    console.log(results);
     this.setConfig(results);
   }
 }

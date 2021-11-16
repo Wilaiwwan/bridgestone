@@ -81,9 +81,7 @@ export default function AllUser() {
         ...(keyword && { keyword }),
       });
 
-      const result = await api.get(
-        `/api/employee/list?${params}`
-      );
+      const result = await api.get(`/api/employee/list?${params}`);
       const _result = result.data.results;
       setEmpList(_result);
       console.log(_result);
@@ -102,7 +100,7 @@ export default function AllUser() {
 
   return (
     <div className={classes.root}>
-      <Paper elevation={1}>
+      <Paper elevation={1} style={{ height: "88vh" }}>
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>B-Admin</p>
           <h3>ผู้ใช้ทั้งหมด</h3>

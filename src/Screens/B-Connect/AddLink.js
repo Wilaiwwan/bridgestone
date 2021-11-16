@@ -44,6 +44,8 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: "6%",
     paddingLeft: "6%",
     paddingBottom: "2%",
+    maxHeight: "88vh",
+    overflow: "auto",
   },
   subject: {
     width: "20%",
@@ -209,7 +211,7 @@ export default function AddLink() {
   const save = async () => {
     const BId = BconnectID === undefined ? null : id;
     const URL = url;
-    if (NameErr) {
+    if (NameErr === false) {
       try {
         const result = await api.post("api/bconnect/add", {
           BconnectID: BId,
