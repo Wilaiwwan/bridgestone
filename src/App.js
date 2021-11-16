@@ -27,23 +27,26 @@ import { Provider } from "react-redux";
 import AllRound from "./Screens/B-360/AllRound";
 import envInstants from "./libs/configs/env";
 import httpClientInstants from "./libs/utils/HttpClient";
-import api, { setDefaultURL } from "./Component/api/api";
-
+import api, { setDefaultURL, setInterceptors } from "./Component/api/api";
+import { useHistory } from "react-router-dom";
 function App() {
   const [isInitEnvError, setInitEnvError] = useState(false);
   const [isInitEnv, setInitEnv] = useState(false);
-
+  // setInterceptors();
+  const history = useHistory();
   useEffect(() => {
     const loadEnv = async () => {
       try {
         // await timeout(3000);
+        // await api.post(`/api/users/user`);
         await envInstants.init();
+
         // httpClientInstants.setBaseUrl(envInstants.getConfig().baseUrl);
         // api.defaults.create({
         //   baseURL: envInstants.getConfig().baseURL,
         // });
 
-     
+
 
         // console.log(envInstants);
 
@@ -52,6 +55,7 @@ function App() {
       } catch (error) {
         console.log(error);
         setInitEnvError(true);
+        history.push("/login");
       } finally {
         setInitEnv(true);
       }
@@ -62,98 +66,98 @@ function App() {
 
   if (!isInitEnv) return "Loading...";
   if (isInitEnvError) return "Cannot load env !!!";
-  
+
   return (
     <Suspense>
-    <Provider store={store}>
-      <Router>
-        <div
-          className="font-face-gm"
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            backgroundColor: "#F7F8FA",
-            height: "100vh",
-          }}
-        >
-          <React.Fragment>
-            <Switch>
-              <div style={{ width: "100%" }}>
-                <Route path="/test" component={test} />
+      <Provider store={store}>
+        <Router>
+          <div
+            className="font-face-gm"
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              backgroundColor: "#F7F8FA",
+              height: "100vh",
+            }}
+          >
+            <React.Fragment>
+              <Switch>
+                <div style={{ width: "100%" }}>
+                  <Route path="/test" component={test} />
 
-                <Route path="/login" component={login} />
-                <Route
-                  path="/AllSubject"
-                  component={withAuthLayout(AllSubject)}
-                />
-                <Route
-                  path="/Information"
-                  component={withAuthLayout(Information)}
-                />
-                <Route
-                  exact
-                  path="/EditInformation/:id"
-                  component={withAuthLayout(Information)}
-                />
-                <Route
-                  path="/AllReward"
-                  component={withAuthLayout(AllReward)}
-                />
-                <Route
-                  path="/AddNewReward"
-                  component={withAuthLayout(AddNewReward)}
-                />
-                <Route
-                  exact
-                  path="/EditReward/:id"
-                  component={withAuthLayout(AddNewReward)}
-                />
-                <Route path="/RoundList" component={withAuthLayout(AllRound)} />
-                <Route path="/Members" component={withAuthLayout(MemberList)} />
-                <Route
-                  path="/AddMember"
-                  component={withAuthLayout(AddMember)}
-                />
-                <Route
-                  path="/EditRound/:id"
-                  component={withAuthLayout(AddMember)}
-                />
-                <Route path="/AllLink" component={withAuthLayout(AllLink)} />
-                <Route path="/AddLink" component={withAuthLayout(AddLink)} />
-                <Route
-                  exact
-                  path="/EditLink/:id"
-                  component={withAuthLayout(AddLink)}
-                />
+                  <Route path="/login" component={login} />
+                  <Route
+                    path="/AllSubject"
+                    component={withAuthLayout(AllSubject)}
+                  />
+                  <Route
+                    path="/Information"
+                    component={withAuthLayout(Information)}
+                  />
+                  <Route
+                    exact
+                    path="/EditInformation/:id"
+                    component={withAuthLayout(Information)}
+                  />
+                  <Route
+                    path="/AllReward"
+                    component={withAuthLayout(AllReward)}
+                  />
+                  <Route
+                    path="/AddNewReward"
+                    component={withAuthLayout(AddNewReward)}
+                  />
+                  <Route
+                    exact
+                    path="/EditReward/:id"
+                    component={withAuthLayout(AddNewReward)}
+                  />
+                  <Route path="/RoundList" component={withAuthLayout(AllRound)} />
+                  <Route path="/Members" component={withAuthLayout(MemberList)} />
+                  <Route
+                    path="/AddMember"
+                    component={withAuthLayout(AddMember)}
+                  />
+                  <Route
+                    path="/EditRound/:id"
+                    component={withAuthLayout(AddMember)}
+                  />
+                  <Route path="/AllLink" component={withAuthLayout(AllLink)} />
+                  <Route path="/AddLink" component={withAuthLayout(AddLink)} />
+                  <Route
+                    exact
+                    path="/EditLink/:id"
+                    component={withAuthLayout(AddLink)}
+                  />
 
-                <Route path="/AllUser" component={withAuthLayout(AllUser)} />
-                <Route
-                  exact
-                  path="/EditUser/:id"
-                  component={withAuthLayout(EditUser)}
-                />
-                <Route
-                  path="/ManagePermissions"
-                  component={withAuthLayout(ManagePermissions)}
-                />
-                <Route
-                  path="/SetPermissions"
-                  component={withAuthLayout(SetPermissions)}
-                />
-                <Route path="/Role" component={withAuthLayout(Role)} />
-                <Route exact path="/">
-                  {localStorage.getItem("token") ? (
-                    <Redirect to="/AllSubject" />
-                  ) : (
-                    <Redirect to="/login" />
-                  )}
-                </Route>
-              </div>
-            </Switch>
-          </React.Fragment>
-        </div>
-      </Router>
-    </Provider>
+                  <Route path="/AllUser" component={withAuthLayout(AllUser)} />
+                  <Route
+                    exact
+                    path="/EditUser/:id"
+                    component={withAuthLayout(EditUser)}
+                  />
+                  <Route
+                    path="/ManagePermissions"
+                    component={withAuthLayout(ManagePermissions)}
+                  />
+                  <Route
+                    path="/SetPermissions"
+                    component={withAuthLayout(SetPermissions)}
+                  />
+                  <Route path="/Role" component={withAuthLayout(Role)} />
+                  <Route exact path="/">
+                    {localStorage.getItem("token") ? (
+                      <Redirect to="/AllSubject" />
+                    ) : (
+                      <Redirect to="/login" />
+                    )}
+                  </Route>
+                </div>
+              </Switch>
+            </React.Fragment>
+          </div>
+        </Router>
+      </Provider>
     </Suspense>
   );
 }
