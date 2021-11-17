@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Paper, InputBase, Button } from "@mui/material";
+import { Paper, InputBase, Button, TablePagination } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SearchIcon from "@mui/icons-material/Search";
 import Table from "@mui/material/Table";
@@ -66,6 +66,9 @@ export default function AllSubject() {
   const [ContentMainId, setContentMainId] = useState("");
   const [AdminContentList, setAdminContentList] = useState([]);
   const [Status, setStatus] = useState(true);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
+  
 
   const fetchAdminContentList = async () => {
     try {
@@ -74,9 +77,7 @@ export default function AllSubject() {
         ...(ContentMainId && { ContentMainId }),
       });
 
-      const result = await api.get(
-        `/api/admin/content/list?${params}`
-      );
+      const result = await api.get(`/api/admin/content/list?${params}`);
       const _result = result.data.results;
       setAdminContentList(_result);
       console.log(_result);
@@ -92,6 +93,15 @@ export default function AllSubject() {
       history.push("/login");
     }
   }, [keyword]);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
 
   return (
     <div className={classes.root}>
@@ -117,7 +127,7 @@ export default function AllSubject() {
             </div>
           </div>
 
-          <TableContainer sx={{ maxHeight: "62vh" }}>
+          <TableContainer sx={{ maxHeight: "58vh",height: "58vh" }}>
             <Table stickyHeader size="small" aria-label="customized table">
               <TableHead>
                 <TableRow>
@@ -135,61 +145,78 @@ export default function AllSubject() {
                   <StyledTableCell align="center">แก้ไข</StyledTableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>
-                {AdminContentList.map((Data, index) => {
-                  return (
-                    <StyledTableRow key={Data.contentMainId}>
-                      <StyledTableCell align="center">
-                        {moment(Data.startDate).format("DD-MM-YYYY")}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {moment(Data.endDate).format("DD-MM-YYYY")}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {Data.contentTitle}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {Data.catalogyName}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {Data.subCatalogyName}
-                      </StyledTableCell>
-                      <StyledTableCell align="left">
-                        {Data.createName}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {Data.status === "C"
-                          ? "Cancel"
-                          : Data.status === "D"
-                          ? "Draff"
-                          : "Publish"}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        <Link
-                          to={{
-                            pathname: `/EditInformation/${Data.contentMainId}`,
-                          }}
-                        >
-                          <Button
-                            variant="contained"
-                            style={{
-                              color: "white",
-                              backgroundColor: "#FF0000",
-                              borderColor: "transparent",
-                              marginRight: 10,
-                              width: 80,
+              {AdminContentList.length > 0 ? (
+                <TableBody>
+                  {(rowsPerPage > 0
+                    ? AdminContentList.slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                    : AdminContentList
+                  ).map((Data, index) => {
+                    return (
+                      <StyledTableRow key={Data.contentMainId}>
+                        <StyledTableCell align="center">
+                          {moment(Data.startDate).format("DD-MM-YYYY")}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {moment(Data.endDate).format("DD-MM-YYYY")}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {Data.contentTitle}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {Data.catalogyName}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {Data.subCatalogyName}
+                        </StyledTableCell>
+                        <StyledTableCell align="left">
+                          {Data.createName}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {Data.status === "C"
+                            ? "Cancel"
+                            : Data.status === "D"
+                            ? "Draff"
+                            : "Publish"}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          <Link
+                            to={{
+                              pathname: `/EditInformation/${Data.contentMainId}`,
                             }}
                           >
-                            เพิ่มเติม
-                          </Button>
-                        </Link>
-                      </StyledTableCell>
-                    </StyledTableRow>
-                  );
-                })}
-              </TableBody>
+                            <Button
+                              variant="contained"
+                              style={{
+                                color: "white",
+                                backgroundColor: "#FF0000",
+                                borderColor: "transparent",
+                                marginRight: 10,
+                                width: 80,
+                              }}
+                            >
+                              เพิ่มเติม
+                            </Button>
+                          </Link>
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    );
+                  })}
+                </TableBody>
+              ) : null}
             </Table>
           </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[15, 45, 105]}
+            component="div"
+            count={AdminContentList.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </div>
       </Paper>
     </div>

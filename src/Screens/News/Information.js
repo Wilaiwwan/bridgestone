@@ -10,6 +10,7 @@ import {
   Dialog,
   DialogContent,
   Autocomplete,
+  CircularProgress,
 } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -246,7 +247,7 @@ export default function Information() {
   const [IsPublic, setIsPublic] = useState(true);
   const [EmployeesAccess, setEmployeesAccess] = useState([]);
   const [RolesAccess, setRolesAccess] = useState([]);
-  const [Status, setStatus] = useState("");
+  const [Status, setStatus] = useState("D");
   const [TypeContentList, setTypeContentList] = useState([]);
   const [CatalogyList, setCatalogyList] = useState([]);
   const [empId, setEmpId] = useState("");
@@ -259,6 +260,9 @@ export default function Information() {
   const [EmpID, setEmpID] = useState("");
   const [TitleErr, setTitleErr] = useState(false);
   const [PointErr, setPointErr] = useState(false);
+  const [LoadingP, setLoadingP] = useState(false);
+  const [LoadingC, setLoadingC] = useState(false);
+  const [LoadingD, setLoadingD] = useState(false);
 
   const [Files, setFiles] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
@@ -420,6 +424,7 @@ export default function Information() {
   };
 
   const save = async () => {
+    setLoadingP(true);
     const mainId = ContentMainId === undefined ? null : id;
     const _status = "P";
     const body = {
@@ -450,15 +455,16 @@ export default function Information() {
         setTimeout(() => {
           history.push(`/AllSubject`);
         }, 2000);
-        console.log(result);
       } catch (error) {
         console.log("error => ", error);
+        setLoadingP(false);
       }
     } else {
-      console.log("not data");
+      setLoadingP(false);
     }
   };
   const Draff = async () => {
+    setLoadingD(true);
     const mainId = ContentMainId === undefined ? null : id;
     const _status = "D";
     const body = {
@@ -489,16 +495,17 @@ export default function Information() {
         setTimeout(() => {
           history.push(`/AllSubject`);
         }, 2000);
-        console.log(result);
       } catch (error) {
         console.log("error => ", error);
+        setLoadingD(false);
       }
     } else {
-      console.log("not data");
+      setLoadingD(false);
     }
   };
 
   const Cancel = async () => {
+    setLoadingC(true);
     const mainId = ContentMainId === undefined ? null : id;
     const _status = "C";
     const body = {
@@ -529,12 +536,12 @@ export default function Information() {
         setTimeout(() => {
           history.push(`/AllSubject`);
         }, 2000);
-        console.log(result);
       } catch (error) {
         console.log("error => ", error);
+        setLoadingC(false);
       }
     } else {
-      console.log("not data");
+      setLoadingC(false);
     }
   };
 
@@ -687,7 +694,6 @@ export default function Information() {
             >
               <TextField
                 size="small"
-                placeholder="หัวข้อเรื่อง"
                 onChange={(e) => setContentTitle(e.target.value)}
                 value={ContentTitle}
                 required
@@ -849,7 +855,6 @@ export default function Information() {
             >
               <TextField
                 size="small"
-                placeholder="หัวข้อเรื่อง"
                 onChange={(e) => setTextShort(e.target.value)}
                 value={TextShort}
               />
@@ -1382,7 +1387,16 @@ export default function Information() {
                 }}
                 onClick={() => Cancel()}
               >
-                ยกเลิก
+                {LoadingC ? (
+                  <CircularProgress
+                    sx={{
+                      color: "black",
+                    }}
+                    size={24}
+                  />
+                ) : (
+                  "ยกเลิก"
+                )}
               </Button>
             ) : null}
             <Button
@@ -1396,7 +1410,16 @@ export default function Information() {
               }}
               onClick={() => Draff()}
             >
-              บันทึกฉบับร่าง
+              {LoadingD ? (
+                <CircularProgress
+                  sx={{
+                    color: "black",
+                  }}
+                  size={24}
+                />
+              ) : (
+                "บันทึกฉบับร่าง"
+              )}
             </Button>
             <Button
               variant="contained"
@@ -1410,7 +1433,16 @@ export default function Information() {
               onClick={() => save()}
               type="submit"
             >
-              เผยแพร่
+              {LoadingP ? (
+                <CircularProgress
+                  sx={{
+                    color: "#FFFFFF",
+                  }}
+                  size={24}
+                />
+              ) : (
+                "เผยแพร่"
+              )}
             </Button>
             <Dialog
               open={open}

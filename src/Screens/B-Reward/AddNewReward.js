@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Paper, TextField, Button, Dialog, DialogContent } from "@mui/material";
+import {
+  Paper,
+  TextField,
+  Button,
+  Dialog,
+  DialogContent,
+  CircularProgress,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { alpha, styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
@@ -91,6 +98,7 @@ export default function AddNewReward() {
   const [Path, setPath] = useState(null);
   const [ItemNameErr, setItemNameErr] = useState(false);
   const [PointErr, setPointErr] = useState(false);
+  const [Loading, setLoading] = useState(false);
 
   const [Files, setFiles] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
@@ -161,30 +169,30 @@ export default function AddNewReward() {
   ));
 
   const save = async () => {
+    setLoading(true);
     const _ItemId = itemId === undefined ? null : id;
-    if (ItemNameErr === false || PointErr === false) {
-      try {
-        const result = await api.post("api/breward/add", {
-          ItemId: _ItemId,
-          ItemName,
-          GroupItemId,
-          Point,
-          Stock,
-          StartDate,
-          EndDate,
-          Description,
-          FileId,
-          Status,
-          Deleted,
-        });
-        setOpen(true);
-        setTimeout(() => {
-          history.push(`/AllReward`);
-        }, 2000);
-        console.log(result);
-      } catch (error) {
-        console.error("error => ", error);
-      }
+    try {
+      const result = await api.post("api/breward/add", {
+        ItemId: _ItemId,
+        ItemName,
+        GroupItemId,
+        Point,
+        Stock,
+        StartDate,
+        EndDate,
+        Description,
+        FileId,
+        Status,
+        Deleted,
+      });
+      setOpen(true);
+      setTimeout(() => {
+        history.push(`/AllReward`);
+      }, 2000);
+      console.log(result);
+    } catch (error) {
+      console.error("error => ", error);
+      setLoading(false);
     }
   };
 
@@ -236,26 +244,23 @@ export default function AddNewReward() {
     history.push("/AllReward");
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSave = (e) => {
     setItemNameErr(false);
     setPointErr(false);
 
-    if (ItemName === "") {
+    if (!ItemName) {
       setItemNameErr(true);
     }
-    if (Point === 0) {
+    if (!Point) {
       setPointErr(true);
+    }
+    if (ItemName && Point) {
+      save();
     }
   };
 
   return (
-    <form
-      className={classes.root}
-      noValidate
-      autoComplete="off"
-      onSubmit={handleSubmit}
-    >
+    <div className={classes.root}>
       <Paper elevation={1} style={{ height: "88vh" }}>
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>B-Reward</p>
@@ -271,7 +276,6 @@ export default function AddNewReward() {
             >
               <TextField
                 size="small"
-                placeholder="Bridgestone Jacket 2020"
                 onChange={(e) => setItemName(e.target.value)}
                 value={ItemName}
                 required
@@ -400,7 +404,6 @@ export default function AddNewReward() {
             >
               <TextField
                 size="small"
-                placeholder="15"
                 type="number"
                 onChange={(e) => setStock(e.target.value)}
                 value={Stock}
@@ -527,10 +530,19 @@ export default function AddNewReward() {
                 marginRight: 10,
                 width: 120,
               }}
-              onClick={() => save()}
+              onClick={() => handleSave()}
               type="submit"
             >
-              บันทึก
+              {Loading ? (
+                <CircularProgress
+                  sx={{
+                    color: "#FFFFFF",
+                  }}
+                  size={24}
+                />
+              ) : (
+                "บันทึก"
+              )}
             </Button>
             <Dialog
               open={open}
@@ -567,6 +579,6 @@ export default function AddNewReward() {
           </div>
         </div>
       </Paper>
-    </form>
+    </div>
   );
 }

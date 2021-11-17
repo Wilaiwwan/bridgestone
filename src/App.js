@@ -71,13 +71,13 @@ function App() {
 
   const THEME = createTheme({
     typography: {
-      "fontFamily": ` sans-serif`,
+      "fontFamily": `Kanit`,
     }
   });
 
   return (
     <Suspense>
-      {/* <ThemeProvider theme={THEME}> */}
+      <ThemeProvider theme={THEME}>
       <Provider store={store}>
         <Router>
           <div
@@ -167,7 +167,7 @@ function App() {
           </div>
         </Router>
       </Provider>
-      {/* </ThemeProvider> */}
+      </ThemeProvider>
     </Suspense>
   );
 }

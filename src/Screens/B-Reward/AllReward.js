@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Paper, InputBase, Button } from "@mui/material";
+import { Paper, InputBase, Button, TablePagination } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled } from "@mui/material/styles";
@@ -63,6 +63,8 @@ export default function AllReward() {
 
   const [RewardList, setRewardList] = useState([]);
   const [keyword, setKeyword] = useState("");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
 
   const fetchBRewardList = async () => {
     try {
@@ -71,9 +73,7 @@ export default function AllReward() {
         ...(keyword && { keyword }),
       });
 
-      const result = await api.get(
-        `/api/bpoint/item/list?${params}`
-      );
+      const result = await api.get(`/api/bpoint/item/list?${params}`);
       const _result = result.data.results;
       setRewardList(_result);
       console.log(_result);
@@ -89,6 +89,15 @@ export default function AllReward() {
       history.push("/login");
     }
   }, [keyword]);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
 
   return (
     <div className={classes.root}>
@@ -114,7 +123,7 @@ export default function AllReward() {
             </div>
           </div>
 
-          <TableContainer sx={{ maxHeight: "62vh" }}>
+          <TableContainer sx={{ maxHeight: "58vh", height: "58vh" }}>
             <Table stickyHeader size="small" aria-label="customized table">
               <TableHead>
                 <TableRow>
@@ -129,54 +138,71 @@ export default function AllReward() {
                   <StyledTableCell align="center">แก้ไข</StyledTableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>
-                {RewardList.map((Data, index) => {
-                  return (
-                    <StyledTableRow key={Data.itemId}>
-                      <StyledTableCell align="center">
-                        {moment(Data.startDate).format("DD-MM-YYYY")}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {moment(Data.endDate).format("DD-MM-YYYY")}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {Data.itemName}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {Data.stock}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {Data.point}
-                      </StyledTableCell>
-                      <StyledTableCell align="left">
-                        {Data.createName}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        <Link
-                          to={{
-                            pathname: `/EditReward/${Data.itemId}`,
-                          }}
-                        >
-                          <Button
-                            variant="contained"
-                            style={{
-                              color: "white",
-                              backgroundColor: "#FF0000",
-                              borderColor: "transparent",
-                              marginRight: 10,
-                              width: 80,
+              {RewardList.length > 0 ? (
+                <TableBody>
+                  {(rowsPerPage > 0
+                    ? RewardList.slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                    : RewardList
+                  ).map((Data, index) => {
+                    return (
+                      <StyledTableRow key={Data.itemId}>
+                        <StyledTableCell align="center">
+                          {moment(Data.startDate).format("DD-MM-YYYY")}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {moment(Data.endDate).format("DD-MM-YYYY")}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {Data.itemName}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {Data.stock}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {Data.point}
+                        </StyledTableCell>
+                        <StyledTableCell align="left">
+                          {Data.createName}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          <Link
+                            to={{
+                              pathname: `/EditReward/${Data.itemId}`,
                             }}
                           >
-                            เพิ่มเติม
-                          </Button>
-                        </Link>
-                      </StyledTableCell>
-                    </StyledTableRow>
-                  );
-                })}
-              </TableBody>
+                            <Button
+                              variant="contained"
+                              style={{
+                                color: "white",
+                                backgroundColor: "#FF0000",
+                                borderColor: "transparent",
+                                marginRight: 10,
+                                width: 80,
+                              }}
+                            >
+                              เพิ่มเติม
+                            </Button>
+                          </Link>
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    );
+                  })}
+                </TableBody>
+              ) : null}
             </Table>
           </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[15, 45, 105]}
+            component="div"
+            count={RewardList.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </div>
       </Paper>
     </div>

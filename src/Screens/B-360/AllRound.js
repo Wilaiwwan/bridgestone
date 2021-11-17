@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Paper,
-  InputBase,
-  Button,
-  
-} from "@mui/material";
+import { Paper, InputBase, Button, TablePagination } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SearchIcon from "@mui/icons-material/Search";
 import Table from "@mui/material/Table";
@@ -81,6 +76,8 @@ export default function AllRound() {
 
   const [keyword, setKeyword] = useState("");
   const [RoundList, setRoundList] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
   moment.locale("th");
 
   const fetchRoundList = async () => {
@@ -106,7 +103,14 @@ export default function AllRound() {
     }
   }, [keyword]);
 
-  
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
 
   return (
     <div className={classes.root}>
@@ -146,7 +150,7 @@ export default function AllRound() {
             </div>
           </div>
 
-          <TableContainer sx={{ maxHeight: "62vh" }}>
+          <TableContainer sx={{ maxHeight: "58vh", height: "58vh" }}>
             <Table stickyHeader size="small" aria-label="customized table">
               <TableHead>
                 <TableRow>
@@ -160,51 +164,68 @@ export default function AllRound() {
                   <StyledTableCell align="center">แก้ไข</StyledTableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>
-                {RoundList.map((Data, index) => {
-                  return (
-                    <StyledTableRow key={Data.contentMainId}>
-                      <StyledTableCell align="center">
-                        {moment(Data.year).format("YYYY")}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {moment(Data.month).format("MMMM")}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {Data.excellentTitle}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {Data.staffCount}
-                      </StyledTableCell>
-                      {/* <StyledTableCell align="center">
+              {RoundList.length > 0 ? (
+                <TableBody>
+                  {(rowsPerPage > 0
+                    ? RoundList.slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                    : RoundList
+                  ).map((Data, index) => {
+                    return (
+                      <StyledTableRow key={Data.contentMainId}>
+                        <StyledTableCell align="center">
+                          {moment(Data.year).format("YYYY")}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {moment(Data.month).format("MMMM")}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {Data.excellentTitle}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {Data.staffCount}
+                        </StyledTableCell>
+                        {/* <StyledTableCell align="center">
                         {Data.status ? "เปิด" : "ปิด"}
                       </StyledTableCell> */}
-                      <StyledTableCell align="center">
-                        <Link
-                          to={{
-                            pathname: `/EditRound/${Data.excellId}`,
-                          }}
-                        >
-                          <Button
-                            variant="contained"
-                            style={{
-                              color: "white",
-                              backgroundColor: "#FF0000",
-                              borderColor: "transparent",
-                              marginRight: 10,
-                              width: 80,
+                        <StyledTableCell align="center">
+                          <Link
+                            to={{
+                              pathname: `/EditRound/${Data.excellId}`,
                             }}
                           >
-                            เพิ่มเติม
-                          </Button>
-                        </Link>
-                      </StyledTableCell>
-                    </StyledTableRow>
-                  );
-                })}
-              </TableBody>
+                            <Button
+                              variant="contained"
+                              style={{
+                                color: "white",
+                                backgroundColor: "#FF0000",
+                                borderColor: "transparent",
+                                marginRight: 10,
+                                width: 80,
+                              }}
+                            >
+                              เพิ่มเติม
+                            </Button>
+                          </Link>
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    );
+                  })}
+                </TableBody>
+              ) : null}
             </Table>
           </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[15, 45, 105]}
+            component="div"
+            count={RoundList.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </div>
       </Paper>
     </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Paper, InputBase, Button } from "@mui/material";
+import { Paper, InputBase, Button, TablePagination } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled } from "@mui/material/styles";
@@ -63,6 +63,8 @@ export default function AllLink() {
   const [keyword, setKeyword] = useState("");
   const [BconnectID, setBconnectID] = useState("");
   const [BconnectList, setBconnectList] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(15);
 
   const fetchBconnectList = async () => {
     try {
@@ -71,9 +73,7 @@ export default function AllLink() {
         ...(BconnectID && { BconnectID }),
       });
 
-      const result = await api.get(
-        `/api/bconnect/list?${params}`
-      );
+      const result = await api.get(`/api/bconnect/list?${params}`);
       const _result = result.data.results;
       setBconnectList(_result);
       console.log(_result);
@@ -89,6 +89,15 @@ export default function AllLink() {
       history.push("/login");
     }
   }, [keyword]);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
 
   return (
     <div className={classes.root}>
@@ -114,7 +123,7 @@ export default function AllLink() {
             </div>
           </div>
 
-          <TableContainer sx={{ maxHeight: "62vh" }}>
+          <TableContainer sx={{ maxHeight: "58vh", height: "58vh" }}>
             <Table stickyHeader size="small" aria-label="customized table">
               <TableHead>
                 <TableRow>
@@ -128,51 +137,68 @@ export default function AllLink() {
                   <StyledTableCell align="center">แก้ไข</StyledTableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>
-                {BconnectList.map((Data, index) => {
-                  return (
-                    <StyledTableRow key={Data.bconnectID}>
-                      <StyledTableCell align="center">
-                        {index + 1}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {Data.bconnectName}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        <a>{Data.url}</a>
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {Data.typeConnectName}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        {Data.createName}
-                      </StyledTableCell>
-                      <StyledTableCell align="center">
-                        <Link
-                          to={{
-                            pathname: `/EditLink/${Data.bconnectID}`,
-                          }}
-                        >
-                          <Button
-                            variant="contained"
-                            style={{
-                              color: "white",
-                              backgroundColor: "#FF0000",
-                              borderColor: "transparent",
-                              marginRight: 10,
-                              width: 80,
+              {BconnectList.length > 0 ? (
+                <TableBody>
+                  {(rowsPerPage > 0
+                    ? BconnectList.slice(
+                        page * rowsPerPage,
+                        page * rowsPerPage + rowsPerPage
+                      )
+                    : BconnectList
+                  ).map((Data, index) => {
+                    return (
+                      <StyledTableRow key={Data.bconnectID}>
+                        <StyledTableCell align="center">
+                          {index + 1}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {Data.bconnectName}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          <a>{Data.url}</a>
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {Data.typeConnectName}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          {Data.createName}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
+                          <Link
+                            to={{
+                              pathname: `/EditLink/${Data.bconnectID}`,
                             }}
                           >
-                            เพิ่มเติม
-                          </Button>
-                        </Link>
-                      </StyledTableCell>
-                    </StyledTableRow>
-                  );
-                })}
-              </TableBody>
+                            <Button
+                              variant="contained"
+                              style={{
+                                color: "white",
+                                backgroundColor: "#FF0000",
+                                borderColor: "transparent",
+                                marginRight: 10,
+                                width: 80,
+                              }}
+                            >
+                              เพิ่มเติม
+                            </Button>
+                          </Link>
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    );
+                  })}
+                </TableBody>
+              ) : null}
             </Table>
           </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[15, 45, 105]}
+            component="div"
+            count={BconnectList.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
         </div>
       </Paper>
     </div>

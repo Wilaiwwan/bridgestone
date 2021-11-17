@@ -7,6 +7,8 @@ import {
   TextField,
   Checkbox,
   FormControlLabel,
+  CircularProgress,
+  
 } from "@mui/material";
 import api from "../Component/api/api";
 import { useHistory } from "react-router-dom";
@@ -47,8 +49,11 @@ export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [Err, setErr] = useState(false);
+  const [LoadingLogin, setLoadingLogin] = useState(false);
 
   const login = async () => {
+    setLoadingLogin(true);
+
     try {
       const result = await api.post("api/users/login", {
         username,
@@ -56,6 +61,7 @@ export default function Login() {
       });
       if (result.data.message !== "Success.") {
         setErr(true);
+        setLoadingLogin(false);
       }
       localStorage.setItem("token", result.data.results.accessToken);
       localStorage.setItem("EmpId", result.data.results.empId);
@@ -64,6 +70,7 @@ export default function Login() {
       console.log(result);
     } catch (error) {
       console.error(error);
+      setLoadingLogin(false);
     }
   };
   console.log(localStorage);
@@ -184,11 +191,20 @@ export default function Login() {
                   style={{
                     backgroundColor: "#FF0000",
                     color: "white",
-                    // textTransform: "lowercase",
+                    width:80
                   }}
                   onClick={login}
                 >
-                  Sign in
+                  {LoadingLogin ? (
+                    <CircularProgress
+                      sx={{
+                        color: "#FFFFFF",
+                      }}
+                      size={24}
+                    />
+                  ) : (
+                    "Sign in"
+                  )}
                 </Button>
               </div>
             </div>

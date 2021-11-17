@@ -125,7 +125,7 @@ export default function AddMember() {
   const STM = Month.toString();
   const DateParams = STM + "-" + "02" + "-" + STY;
   const [EmpId, setEmpId] = useState("");
-  const [Remark, setRemark] = useState("");
+  const [Remark, setRemark] = useState(null);
   const [DeletedM, setDeletedM] = useState(false);
   const [ExcellDetailId, setExcellDetailId] = useState("");
   const [RoundList, setRoundList] = useState([]);
@@ -135,6 +135,7 @@ export default function AddMember() {
   const [ExcelNameErr, setExcelNameErr] = useState(false);
   const [YearErr, setYearErr] = useState(false);
   const [MonthErr, setMonthErr] = useState(false);
+  console.log(RoundList);
 
   const [itemsY, setItemsY] = useState(
     Array.from({ length: 80 }, (_, i) => ({
@@ -186,7 +187,7 @@ export default function AddMember() {
         {
           ExcellDetailId: null,
           EmpId,
-          Remark,
+          remark: Remark,
           ExcellId: null,
           deleted: DeletedM,
           fistName: FName,
