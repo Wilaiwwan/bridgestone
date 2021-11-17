@@ -242,6 +242,7 @@ export default function Information() {
   const [TextShort, setTextShort] = useState("");
   const [Detail, setDetail] = useState("");
   const [UrlLink, setUrlLink] = useState(null);
+  const [EmpNoList, setEmpNoList] = useState([]);
   const [Deleted, setDeleted] = useState(false);
   const [IsPublic, setIsPublic] = useState(true);
   const [EmployeesAccess, setEmployeesAccess] = useState([]);
@@ -354,7 +355,12 @@ export default function Information() {
       setDeleted(_result.deleted);
       setPath(_result.path);
       setIsPublic(_result.isPublic);
-      setEmployeesAccess(_result.employeesAccess);
+
+      const _empNoList = _result.employeesAccess.join("\r\n");
+      console.log(_result.employeesAccess);
+      console.log(_empNoList);
+      setEmpNoList(_empNoList);
+      // setEmployeesAccess(_result.employeesAccess);
       setRolesAccess(_result.rolesAccess);
 
       console.log(result, "==> content");
@@ -422,6 +428,8 @@ export default function Information() {
   const save = async () => {
     const mainId = ContentMainId === undefined ? null : id;
     const _status = "P";
+    const _EmployeesAccess = EmpNoList.split(/\r|\n/);
+
     const body = {
       ContentMainId: mainId,
       ContentTitle,
@@ -440,7 +448,7 @@ export default function Information() {
       UrlLink,
       Deleted: false,
       IsPublic,
-      EmployeesAccess,
+      EmployeesAccess: _EmployeesAccess,
       RolesAccess,
     };
     if (TitleErr === false || PointErr === false) {
@@ -461,6 +469,8 @@ export default function Information() {
   const Draff = async () => {
     const mainId = ContentMainId === undefined ? null : id;
     const _status = "D";
+    const _EmployeesAccess = EmpNoList.split(/\r|\n/);
+
     const body = {
       ContentMainId: mainId,
       ContentTitle,
@@ -479,7 +489,7 @@ export default function Information() {
       UrlLink,
       Deleted: false,
       IsPublic,
-      EmployeesAccess,
+      EmployeesAccess: _EmployeesAccess,
       RolesAccess,
     };
     if (TitleErr === false || PointErr === false) {
@@ -501,6 +511,8 @@ export default function Information() {
   const Cancel = async () => {
     const mainId = ContentMainId === undefined ? null : id;
     const _status = "C";
+    const _EmployeesAccess = EmpNoList.split(/\r|\n/);
+
     const body = {
       ContentMainId: mainId,
       ContentTitle,
@@ -519,7 +531,7 @@ export default function Information() {
       UrlLink,
       Deleted: false,
       IsPublic,
-      EmployeesAccess,
+      EmployeesAccess: _EmployeesAccess,
       RolesAccess,
     };
     if (TitleErr === false || PointErr === false) {
@@ -768,7 +780,7 @@ export default function Information() {
                   <div {...getRootProps()}>
                     <input
                       {...getInputProps()}
-                      // type="file"
+                    // type="file"
                     />
                     {Files.length > 0 ? (
                       <div>{images}</div>
@@ -1109,10 +1121,10 @@ export default function Information() {
                   ? Status === "C"
                     ? "Cancel"
                     : Status === "D"
-                    ? "Draff"
-                    : Status === "P"
-                    ? "Publish"
-                    : "Draff"
+                      ? "Draff"
+                      : Status === "P"
+                        ? "Publish"
+                        : "Draff"
                   : null}
               </span>
             </div>
@@ -1241,7 +1253,48 @@ export default function Information() {
             </div>
           ) : null}
 
+
+          {/* <div className={classes.width}>
+            <p className={classes.subject}>เกริ่นนำ</p>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                flexGrow: 1,
+              }}
+            >
+              <TextField
+                size="small"
+                placeholder="หัวข้อเรื่อง"
+                onChange={(e) => setTextShort(e.target.value)}
+                value={TextShort}
+              />
+            </div>
+          </div> */}
+
           <div className={classes.width}>
+            <p className={classes.subject}>ระบุรายบุคคล</p>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                flexGrow: 1,
+              }}
+            >
+              <TextField
+                size="small"
+                rows={5}
+                onChange={(e) => {
+                  console.log(e.target.value);
+                  setEmpNoList(e.target.value)
+                }}
+                value={EmpNoList}
+                multiline={true}
+              />
+
+            </div>
+          </div>
+          {/* <div className={classes.width}>
             <p className={classes.subject}>ระบุรายบุคคล</p>
             <div
               style={{
@@ -1348,7 +1401,7 @@ export default function Information() {
                 </tbody>
               </table>
             </div>
-          ) : null}
+          ) : null} */}
 
           <div
             style={{
