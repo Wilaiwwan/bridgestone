@@ -80,7 +80,7 @@ export default function AllSubject() {
       const result = await api.get(`/api/admin/content/list?${params}`);
       const _result = result.data.results;
       setAdminContentList(_result);
-      console.log(_result);
+      console.log(result);
     } catch (error) {
       console.log("error => ", error);
     }

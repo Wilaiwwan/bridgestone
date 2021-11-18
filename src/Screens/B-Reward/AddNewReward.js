@@ -133,15 +133,15 @@ export default function AddNewReward() {
       {console.log(file.type)}
 
       {/* <img src={file.preview} style={{ width: "150px" }} alt="preview" /> */}
-      {file.type == "image/png" ? (
+      {file.type === "image/png" ? (
         <img className={classes.imgFileType} src={png} alt="png" />
-      ) : file.type == "text/plain" ? (
+      ) : file.type === "text/plain" ? (
         <img className={classes.imgFileType} src={doc} alt="doc" />
-      ) : file.type == "image/jpeg" ? (
+      ) : file.type === "image/jpeg" ? (
         <img className={classes.imgFileType} src={jpg} alt="jpg" />
-      ) : file.type == "application/pdf" ? (
+      ) : file.type === "application/pdf" ? (
         <img className={classes.imgFileType} src={pdf} alt="pdf" />
-      ) : file.type == "application/vnd.ms-excel" ? (
+      ) : file.type === "application/vnd.ms-excel" ? (
         <img className={classes.imgFileType} src={xls} alt="xls" />
       ) : (
         <img className={classes.imgFileType} src={png} alt="etc" />

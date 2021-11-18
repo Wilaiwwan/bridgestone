@@ -111,7 +111,7 @@ class MyUploadAdapter {
     // integration to choose the right communication channel. This example uses
     // a POST request with JSON as a data structure but your configuration
     // could be different.
-    xhr.open("POST", `//api/upload/file`, true);
+    xhr.open("POST", `${process.env.REACT_APP_BASE_API}/api/upload/file`, true);
     xhr.setRequestHeader(
       "Authorization",
       `Bearer ${localStorage.getItem("token")}`
@@ -188,6 +188,7 @@ function MyCustomUploadAdapterPlugin(editor) {
     return new MyUploadAdapter(loader);
   };
 }
+
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   //   "label + &": {
@@ -299,15 +300,15 @@ export default function Information() {
       {console.log(file.type)}
 
       {/* <img src={file.preview} style={{ width: "150px" }} alt="preview" /> */}
-      {file.type == "image/png" ? (
+      {file.type === "image/png" ? (
         <img className={classes.imgFileType} src={png} alt="png" />
-      ) : file.type == "text/plain" ? (
+      ) : file.type === "text/plain" ? (
         <img className={classes.imgFileType} src={doc} alt="doc" />
-      ) : file.type == "image/jpeg" ? (
+      ) : file.type === "image/jpeg" ? (
         <img className={classes.imgFileType} src={jpg} alt="jpg" />
-      ) : file.type == "application/pdf" ? (
+      ) : file.type === "application/pdf" ? (
         <img className={classes.imgFileType} src={pdf} alt="pdf" />
-      ) : file.type == "application/vnd.ms-excel" ? (
+      ) : file.type === "application/vnd.ms-excel" ? (
         <img className={classes.imgFileType} src={xls} alt="xls" />
       ) : (
         <img className={classes.imgFileType} src={png} alt="etc" />
@@ -367,7 +368,7 @@ export default function Information() {
       // setEmployeesAccess(_result.employeesAccess);
       setRolesAccess(_result.rolesAccess);
 
-      console.log(result, "==> content");
+      console.log(result, "===> content");
     } catch (error) {
       console.log("error => ", error);
     }
@@ -428,35 +429,36 @@ export default function Information() {
       console.log("error => ", error);
     }
   };
+  console.log(!EmpNoList);
 
   const save = async () => {
     setLoadingP(true);
     const mainId = ContentMainId === undefined ? null : id;
     const _status = "P";
-    const _EmployeesAccess = EmpNoList.split(/\r|\n/);
+    if (EmpNoList.length > 0) {
+      const _EmployeesAccess = EmpNoList.split(/\r|\n/);
 
-    const body = {
-      ContentMainId: mainId,
-      ContentTitle,
-      CatalogyId,
-      SubCatalogyId,
-      StartDate: moment(StartDate).format("YYYY-MM-DD"),
-      EndDate: moment(EndDate).format("YYYY-MM-DD"),
-      Status: _status,
-      isHighlight,
-      TypeContentId,
-      GalleryFileId,
-      FileId,
-      Point,
-      TextShort,
-      Detail,
-      UrlLink,
-      Deleted: false,
-      IsPublic,
-      EmployeesAccess: _EmployeesAccess,
-      RolesAccess,
-    };
-    if (TitleErr === false || PointErr === false) {
+      const body = {
+        ContentMainId: mainId,
+        ContentTitle,
+        CatalogyId,
+        SubCatalogyId,
+        StartDate: moment(StartDate).format("YYYY-MM-DD"),
+        EndDate: moment(EndDate).format("YYYY-MM-DD"),
+        Status: _status,
+        isHighlight,
+        TypeContentId,
+        GalleryFileId,
+        FileId,
+        Point,
+        TextShort,
+        Detail,
+        UrlLink,
+        Deleted: false,
+        IsPublic,
+        EmployeesAccess: _EmployeesAccess,
+        RolesAccess,
+      };
       try {
         const result = await api.post("api/admin/content/add", body);
         setOpen(true);
@@ -468,37 +470,67 @@ export default function Information() {
         setLoadingP(false);
       }
     } else {
-      setLoadingP(false);
+      const body = {
+        ContentMainId: mainId,
+        ContentTitle,
+        CatalogyId,
+        SubCatalogyId,
+        StartDate: moment(StartDate).format("YYYY-MM-DD"),
+        EndDate: moment(EndDate).format("YYYY-MM-DD"),
+        Status: _status,
+        isHighlight,
+        TypeContentId,
+        GalleryFileId,
+        FileId,
+        Point,
+        TextShort,
+        Detail,
+        UrlLink,
+        Deleted: false,
+        IsPublic,
+        EmployeesAccess: EmpNoList,
+        RolesAccess,
+      };
+      try {
+        const result = await api.post("api/admin/content/add", body);
+        setOpen(true);
+        setTimeout(() => {
+          history.push(`/AllSubject`);
+        }, 2000);
+      } catch (error) {
+        console.log("error => ", error);
+        setLoadingP(false);
+      }
     }
   };
-  const Draff = async () => {
+  const Draft = async () => {
     setLoadingD(true);
     const mainId = ContentMainId === undefined ? null : id;
     const _status = "D";
-    const _EmployeesAccess = EmpNoList.split(/\r|\n/);
+    if (EmpNoList.length > 0) {
+      const _EmployeesAccess = EmpNoList.split(/\r|\n/);
 
-    const body = {
-      ContentMainId: mainId,
-      ContentTitle,
-      CatalogyId,
-      SubCatalogyId,
-      StartDate: moment(StartDate).format("YYYY-MM-DD"),
-      EndDate: moment(EndDate).format("YYYY-MM-DD"),
-      Status: _status,
-      isHighlight,
-      TypeContentId,
-      GalleryFileId,
-      FileId,
-      Point,
-      TextShort,
-      Detail,
-      UrlLink,
-      Deleted: false,
-      IsPublic,
-      EmployeesAccess: _EmployeesAccess,
-      RolesAccess,
-    };
-    if (TitleErr === false || PointErr === false) {
+      const body = {
+        ContentMainId: mainId,
+        ContentTitle,
+        CatalogyId,
+        SubCatalogyId,
+        StartDate: moment(StartDate).format("YYYY-MM-DD"),
+        EndDate: moment(EndDate).format("YYYY-MM-DD"),
+        Status: _status,
+        isHighlight,
+        TypeContentId,
+        GalleryFileId,
+        FileId,
+        Point,
+        TextShort,
+        Detail,
+        UrlLink,
+        Deleted: false,
+        IsPublic,
+        EmployeesAccess: _EmployeesAccess,
+        RolesAccess,
+      };
       try {
         const result = await api.post("api/admin/content/add", body);
         setOpen(true);
@@ -510,7 +542,37 @@ export default function Information() {
         setLoadingD(false);
       }
     } else {
-      setLoadingD(false);
+      const body = {
+        ContentMainId: mainId,
+        ContentTitle,
+        CatalogyId,
+        SubCatalogyId,
+        StartDate: moment(StartDate).format("YYYY-MM-DD"),
+        EndDate: moment(EndDate).format("YYYY-MM-DD"),
+        Status: _status,
+        isHighlight,
+        TypeContentId,
+        GalleryFileId,
+        FileId,
+        Point,
+        TextShort,
+        Detail,
+        UrlLink,
+        Deleted: false,
+        IsPublic,
+        EmployeesAccess: EmpNoList,
+        RolesAccess,
+      };
+      try {
+        const result = await api.post("api/admin/content/add", body);
+        setOpen(true);
+        setTimeout(() => {
+          history.push(`/AllSubject`);
+        }, 2000);
+      } catch (error) {
+        console.log("error => ", error);
+        setLoadingD(false);
+      }
     }
   };
 
@@ -518,30 +580,30 @@ export default function Information() {
     setLoadingC(true);
     const mainId = ContentMainId === undefined ? null : id;
     const _status = "C";
-    const _EmployeesAccess = EmpNoList.split(/\r|\n/);
+    if (EmpNoList.length > 0) {
+      const _EmployeesAccess = EmpNoList.split(/\r|\n/);
 
-    const body = {
-      ContentMainId: mainId,
-      ContentTitle,
-      CatalogyId,
-      SubCatalogyId,
-      StartDate: moment(StartDate).format("YYYY-MM-DD"),
-      EndDate: moment(EndDate).format("YYYY-MM-DD"),
-      Status: _status,
-      isHighlight,
-      TypeContentId,
-      GalleryFileId,
-      FileId,
-      Point,
-      TextShort,
-      Detail,
-      UrlLink,
-      Deleted: false,
-      IsPublic,
-      EmployeesAccess: _EmployeesAccess,
-      RolesAccess,
-    };
-    if (TitleErr === false || PointErr === false) {
+      const body = {
+        ContentMainId: mainId,
+        ContentTitle,
+        CatalogyId,
+        SubCatalogyId,
+        StartDate: moment(StartDate).format("YYYY-MM-DD"),
+        EndDate: moment(EndDate).format("YYYY-MM-DD"),
+        Status: _status,
+        isHighlight,
+        TypeContentId,
+        GalleryFileId,
+        FileId,
+        Point,
+        TextShort,
+        Detail,
+        UrlLink,
+        Deleted: false,
+        IsPublic,
+        EmployeesAccess: _EmployeesAccess,
+        RolesAccess,
+      };
       try {
         const result = await api.post("api/admin/content/add", body);
         setOpen(true);
@@ -553,7 +615,37 @@ export default function Information() {
         setLoadingC(false);
       }
     } else {
-      setLoadingC(false);
+      const body = {
+        ContentMainId: mainId,
+        ContentTitle,
+        CatalogyId,
+        SubCatalogyId,
+        StartDate: moment(StartDate).format("YYYY-MM-DD"),
+        EndDate: moment(EndDate).format("YYYY-MM-DD"),
+        Status: _status,
+        isHighlight,
+        TypeContentId,
+        GalleryFileId,
+        FileId,
+        Point,
+        TextShort,
+        Detail,
+        UrlLink,
+        Deleted: false,
+        IsPublic,
+        EmployeesAccess: EmpNoList,
+        RolesAccess,
+      };
+      try {
+        const result = await api.post("api/admin/content/add", body);
+        setOpen(true);
+        setTimeout(() => {
+          history.push(`/AllSubject`);
+        }, 2000);
+      } catch (error) {
+        console.log("error => ", error);
+        setLoadingC(false);
+      }
     }
   };
 
@@ -604,26 +696,40 @@ export default function Information() {
     setNameRole(newValue.props.children);
   };
 
-  const handleChangeEmp = (newValue) => {
-    console.log(newValue);
-    if (newValue) {
+  const handleChangeEmp = (e) => {
+    console.log(e);
+    if (e) {
       setIsPublic(false);
-      setEmpID(newValue.empId);
-      setEmpFName(newValue.fistName);
-      setEmpLName(newValue.lastName);
+      setEmpNoList(e.target.value);
     }
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
     setTitleErr(false);
     setPointErr(false);
 
-    if (ContentTitle === "") {
+    if (!ContentTitle) {
       setTitleErr(true);
     }
-    if (Point === 0) {
+    if (!Point) {
       setPointErr(true);
+    }
+    if (ContentTitle && Point) {
+      save();
+    }
+  };
+  const handleDraft = (e) => {
+    setTitleErr(false);
+    setPointErr(false);
+
+    if (!ContentTitle) {
+      setTitleErr(true);
+    }
+    if (!Point) {
+      setPointErr(true);
+    }
+    if (ContentTitle && Point) {
+      Draft();
     }
   };
 
@@ -685,12 +791,7 @@ export default function Information() {
   };
 
   return (
-    <form
-      className={classes.root}
-      noValidate
-      autoComplete="off"
-      onSubmit={handleSubmit}
-    >
+    <div className={classes.root}>
       <Paper elevation={1}>
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>News/Announcement</p>
@@ -786,7 +887,7 @@ export default function Information() {
                   <div {...getRootProps()}>
                     <input
                       {...getInputProps()}
-                    // type="file"
+                      // type="file"
                     />
                     {Files.length > 0 ? (
                       <div>{images}</div>
@@ -1126,10 +1227,10 @@ export default function Information() {
                   ? Status === "C"
                     ? "Cancel"
                     : Status === "D"
-                      ? "Draff"
-                      : Status === "P"
-                        ? "Publish"
-                        : "Draff"
+                    ? "Draff"
+                    : Status === "P"
+                    ? "Publish"
+                    : "Draff"
                   : null}
               </span>
             </div>
@@ -1258,7 +1359,6 @@ export default function Information() {
             </div>
           ) : null}
 
-
           {/* <div className={classes.width}>
             <p className={classes.subject}>เกริ่นนำ</p>
             <div
@@ -1289,14 +1389,10 @@ export default function Information() {
               <TextField
                 size="small"
                 rows={5}
-                onChange={(e) => {
-                  console.log(e.target.value);
-                  setEmpNoList(e.target.value)
-                }}
+                onChange={(e) => handleChangeEmp(e)}
                 value={EmpNoList}
                 multiline={true}
               />
-
             </div>
           </div>
           {/* <div className={classes.width}>
@@ -1461,7 +1557,7 @@ export default function Information() {
                 marginRight: 10,
                 width: 120,
               }}
-              onClick={() => Draff()}
+              onClick={() => handleDraft()}
             >
               {LoadingD ? (
                 <CircularProgress
@@ -1483,7 +1579,7 @@ export default function Information() {
                 marginRight: 10,
                 width: 120,
               }}
-              onClick={() => save()}
+              onClick={() => handleSubmit()}
               type="submit"
             >
               {LoadingP ? (
@@ -1532,6 +1628,6 @@ export default function Information() {
           </div>
         </div>
       </Paper>
-    </form>
+    </div>
   );
 }

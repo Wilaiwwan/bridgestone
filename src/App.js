@@ -8,7 +8,6 @@ import {
 } from "react-router-dom";
 import withAuthLayout from "./HoC/withAuthLayout";
 import AllSubject from "./Screens/News/AllSubject";
-import test from "./test";
 import login from "./Screens/login";
 import Information from "./Screens/News/Information";
 import AllReward from "./Screens/B-Reward/AllReward";
@@ -92,7 +91,6 @@ function App() {
             <React.Fragment>
               <Switch>
                 <div style={{ width: "100%" }}>
-                  <Route path="/test" component={test} />
 
                   <Route path="/login" component={login} />
                   <Route

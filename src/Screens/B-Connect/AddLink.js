@@ -6,6 +6,7 @@ import {
   Button,
   Dialog,
   DialogContent,
+  CircularProgress,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { alpha, styled } from "@mui/material/styles";
@@ -94,6 +95,8 @@ export default function AddLink() {
   const [ShowInput, setShowInput] = useState(false);
   const [Path, setPath] = useState("");
   const [NameErr, setNameErr] = useState(false);
+  const [GroupErr, setGroupErr] = useState(false);
+  const [Loading, setLoading] = useState(false);
 
   const [Files, setFiles] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
@@ -209,26 +212,25 @@ export default function AddLink() {
   };
 
   const save = async () => {
+    setLoading(true);
     const BId = BconnectID === undefined ? null : id;
     const URL = url;
-    if (NameErr === false) {
-      try {
-        const result = await api.post("api/bconnect/add", {
-          BconnectID: BId,
-          BconnectName,
-          URL,
-          TypeConnectID,
-          FileId,
-          Deleted: Deleted === false ? true : false,
-        });
-        setOpen(true);
-        setTimeout(() => {
-          history.push(`/AllLink`);
-        }, 2000);
-        console.log(result);
-      } catch (error) {
-        console.log("error => ", error);
-      }
+    try {
+      const result = await api.post("api/bconnect/add", {
+        BconnectID: BId,
+        BconnectName,
+        URL,
+        TypeConnectID,
+        FileId,
+        Deleted: Deleted === false ? true : false,
+      });
+      setOpen(true);
+      setTimeout(() => {
+        history.push(`/AllLink`);
+      }, 2000);
+    } catch (error) {
+      console.log("error => ", error);
+      setLoading(false);
     }
   };
 
@@ -248,21 +250,22 @@ export default function AddLink() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
     setNameErr(false);
+    setGroupErr(false);
 
     if (!BconnectName) {
       setNameErr(true);
     }
+    if (!TypeConnectID) {
+      setGroupErr(true);
+    }
+    if (BconnectName && TypeConnectID) {
+      save();
+    }
   };
 
   return (
-    <form
-      className={classes.root}
-      noValidate
-      autoComplete="off"
-      onSubmit={handleSubmit}
-    >
+    <div className={classes.root}>
       <Paper elevation={1}>
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>B-Connect</p>
@@ -278,7 +281,6 @@ export default function AddLink() {
             >
               <TextField
                 size="small"
-                placeholder="ปฏิทินทำงาน ปีพศ. 2564"
                 onChange={(e) => setBconnectName(e.target.value)}
                 value={BconnectName}
                 required
@@ -411,6 +413,8 @@ export default function AddLink() {
                   displayEmpty
                   inputProps={{ "aria-label": "Without label" }}
                   disableUnderline
+                  required
+                  error={GroupErr}
                 >
                   {TypeConnectList.map((Type) => (
                     <MenuItem value={Type.typeConnectID}>
@@ -434,8 +438,6 @@ export default function AddLink() {
               <TextareaAutosize
                 aria-label="minimum height"
                 minRows={4}
-                placeholder="https://s3-ap-southeast-1.amazonaws.com/share.mybtmt.com
-                /files/BTMT-Working-Calendar-2021-for-Line-36hr.pdf"
                 style={{ flexGrow: 1, borderColor: "#dbdbdb" }}
                 onChange={(e) => setURL(e.target.value)}
                 value={url}
@@ -488,10 +490,19 @@ export default function AddLink() {
                 marginRight: 10,
                 width: 120,
               }}
-              onClick={() => save()}
+              onClick={() => handleSubmit()}
               type="submit"
             >
-              บันทึก
+              {Loading ? (
+                <CircularProgress
+                  sx={{
+                    color: "#FFFFFF",
+                  }}
+                  size={24}
+                />
+              ) : (
+                "บันทึก"
+              )}
             </Button>
             <Dialog
               open={open}
@@ -556,6 +567,6 @@ export default function AddLink() {
           </div>
         </div>
       </Paper>
-    </form>
+    </div>
   );
 }

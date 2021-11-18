@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Paper, Dialog, DialogContent, Button, TextField } from "@mui/material";
+import {
+  Paper,
+  Dialog,
+  DialogContent,
+  Button,
+  TextField,
+  CircularProgress,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { alpha, styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
@@ -82,7 +89,6 @@ export default function EditUser() {
   const { id } = useParams();
   const empId = id;
 
-  console.log(id);
   const [EmpNo, setEmpNo] = useState("");
   const [FirstName, setFirstName] = useState("");
   const [LastName, setLastName] = useState("");
@@ -100,6 +106,7 @@ export default function EditUser() {
   const [LnameErr, setLnameErr] = useState(false);
   const [RoleErr, setRoleErr] = useState(false);
   const [OrgnameErr, setOrgnameErr] = useState(false);
+  const [Loading, setLoading] = useState(false);
 
   const [Files, setFiles] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
@@ -182,8 +189,7 @@ export default function EditUser() {
   const handleRoute = () => {
     history.push("/AllUser");
   };
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     setEmpNoErr(false);
     setFnameErr(false);
     setLnameErr(false);
@@ -202,8 +208,11 @@ export default function EditUser() {
     if (!RoleId) {
       setRoleErr(true);
     }
-    if (!OrgnameErr) {
+    if (!Orgname) {
       setOrgnameErr(true);
+    }
+    if (EmpNo && FirstName && LastName && RoleId && Orgname) {
+      save();
     }
   };
 
@@ -242,30 +251,30 @@ export default function EditUser() {
   };
 
   const save = async () => {
+    setLoading(true);
     const EmpId = id;
     const FistName = FirstName;
 
-    if (EmpNoErr || FnameErr || LnameErr || RoleErr || OrgnameErr) {
-      try {
-        const result = await api.post("api/employee/update", {
-          EmpId,
-          EmpNo,
-          FistName,
-          LastName,
-          DepartmentId,
-          Orgname,
-          RoleId,
-          FileId,
-          Status,
-        });
-        setOpen(true);
-        setTimeout(() => {
-          history.push(`/AllUser`);
-        }, 2000);
-        console.log(result);
-      } catch (error) {
-        console.log("error => ", error);
-      }
+    try {
+      const result = await api.post("api/employee/update", {
+        EmpId,
+        EmpNo,
+        FistName,
+        LastName,
+        DepartmentId,
+        Orgname,
+        RoleId,
+        FileId,
+        Status,
+      });
+      setOpen(true);
+      setTimeout(() => {
+        history.push(`/AllUser`);
+      }, 2000);
+      console.log(result);
+    } catch (error) {
+      console.log("error => ", error);
+      setLoading(false);
     }
   };
 
@@ -279,11 +288,8 @@ export default function EditUser() {
   }, []);
 
   return (
-    <form
+    <div
       className={classes.root}
-      noValidate
-      autoComplete="off"
-      onSubmit={handleSubmit}
     >
       <Paper elevation={1}>
         <div class={classes.Padding}>
@@ -545,10 +551,19 @@ export default function EditUser() {
                 marginRight: 10,
                 width: 120,
               }}
-              onClick={() => save()}
+              onClick={() => handleSubmit()}
               type="submit"
             >
-              บันทึก
+              {Loading ? (
+                <CircularProgress
+                  sx={{
+                    color: "#FFFFFF",
+                  }}
+                  size={24}
+                />
+              ) : (
+                "บันทึก"
+              )}
             </Button>
             <Dialog
               open={open}
@@ -585,6 +600,6 @@ export default function EditUser() {
           </div>
         </div>
       </Paper>
-    </form>
+    </div>
   );
 }

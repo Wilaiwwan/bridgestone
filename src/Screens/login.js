@@ -8,7 +8,6 @@ import {
   Checkbox,
   FormControlLabel,
   CircularProgress,
-  
 } from "@mui/material";
 import api from "../Component/api/api";
 import { useHistory } from "react-router-dom";

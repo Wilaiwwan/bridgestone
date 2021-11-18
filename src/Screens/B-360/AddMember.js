@@ -12,6 +12,7 @@ import {
   DialogTitle,
   Autocomplete,
   TextareaAutosize,
+  CircularProgress,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { alpha, styled } from "@mui/material/styles";
@@ -135,7 +136,7 @@ export default function AddMember() {
   const [ExcelNameErr, setExcelNameErr] = useState(false);
   const [YearErr, setYearErr] = useState(false);
   const [MonthErr, setMonthErr] = useState(false);
-  console.log(RoundList);
+  const [Loading, setLoading] = useState(false);
 
   const [itemsY, setItemsY] = useState(
     Array.from({ length: 80 }, (_, i) => ({
@@ -210,7 +211,6 @@ export default function AddMember() {
   };
 
   const delStaff = (id, index) => {
-    console.log(id);
     const StaffList = [...RoundList];
     const _StaffList = StaffList.find(({ empId }) => empId === id);
     if (id) {
@@ -280,7 +280,6 @@ export default function AddMember() {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
     setExcelNameErr(false);
     setYearErr(false);
     setMonthErr(false);
@@ -293,6 +292,9 @@ export default function AddMember() {
     }
     if (!Month) {
       setMonthErr(true);
+    }
+    if (ExcellentTitle && Year && Month) {
+      getFirstAndLastDayOfMonth();
     }
   };
 
@@ -331,29 +333,30 @@ export default function AddMember() {
   };
 
   const AddRound = async (F, L) => {
+    setLoading(true);
     const _excellId = id === undefined ? null : id;
     const First = moment(F).format("YYYY-MM-DD");
     const Last = moment(L).format("YYYY-MM-DD");
-    if (ExcelNameErr === false || YearErr === false || MonthErr === false) {
-      try {
-        const result = await api.post("api/excellent/head/add", {
-          ExcellId: _excellId,
-          ExcellentTitle,
-          StartDate: First,
-          EndDate: Last,
-          Status: null,
-          Deleted: DeletedR === false ? true : false,
-        });
-        setOpenSuccess(true);
-        setTimeout(() => {
-          history.push(`/RoundList`);
-        }, 2000);
 
-        AddMember(result.data.results);
-        console.log(result);
-      } catch (error) {
-        console.log("error => ", error);
-      }
+    try {
+      const result = await api.post("api/excellent/head/add", {
+        ExcellId: _excellId,
+        ExcellentTitle,
+        StartDate: First,
+        EndDate: Last,
+        Status: null,
+        Deleted: DeletedR === false ? true : false,
+      });
+      setOpenSuccess(true);
+      setTimeout(() => {
+        history.push(`/RoundList`);
+      }, 2000);
+
+      AddMember(result.data.results);
+      console.log(result);
+    } catch (error) {
+      console.log("error => ", error);
+      setLoading(false)
     }
   };
   const AddMember = async (RoundId) => {
@@ -382,19 +385,16 @@ export default function AddMember() {
   useEffect(() => {
     if (token) {
       fetchEmpList();
-      fetchRoundList();
+      if (excellId) {
+        fetchRoundList();
+      }
     } else {
       history.push("/login");
     }
   }, [keyword]);
 
   return (
-    <form
-      className={classes.root}
-      noValidate
-      autoComplete="off"
-      onSubmit={handleSubmit}
-    >
+    <div className={classes.root}>
       <Paper elevation={1} style={{ height: "88vh" }}>
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>B-360</p>
@@ -410,7 +410,6 @@ export default function AddMember() {
             >
               <TextField
                 size="small"
-                // placeholder=""
                 onChange={(e) => setExcellentTitle(e.target.value)}
                 value={ExcellentTitle}
                 required
@@ -768,10 +767,19 @@ export default function AddMember() {
                 padding: 10,
                 width: 120,
               }}
-              onClick={() => getFirstAndLastDayOfMonth()}
+              onClick={() => handleSubmit()}
               type="submit"
             >
-              บันทึก
+              {Loading ? (
+                <CircularProgress
+                  sx={{
+                    color: "#FFFFFF",
+                  }}
+                  size={24}
+                />
+              ) : (
+                "บันทึก"
+              )}
             </Button>
             <Dialog
               open={OpenSuccess}
@@ -808,6 +816,6 @@ export default function AddMember() {
           </div>
         </div>
       </Paper>
-    </form>
+    </div>
   );
 }
