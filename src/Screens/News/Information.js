@@ -16,8 +16,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-// import {default  as xxx}  from "@ckeditor/ckeditor5-source-editing/src/sourceediting";
+import ClassicEditor from '@ckeditor-custom/build/ckeditor';
 import "./information.css";
 import { alpha, styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
@@ -61,7 +60,8 @@ const useStyles = makeStyles((theme) => ({
     overflow: "auto",
   },
   subject: {
-    width: "20%",
+    // width: "20%",
+    flex: '0 0 140px'
   },
   imgFileType: {
     width: 50,
@@ -811,6 +811,7 @@ export default function Information() {
                 value={ContentTitle}
                 required
                 error={TitleErr}
+              // label=""
               />
               <span style={{ color: "gray" }}>
                 หัวข้อเรื่องที่ปรากฏในหน้าข่าวประกาศ
@@ -887,7 +888,7 @@ export default function Information() {
                   <div {...getRootProps()}>
                     <input
                       {...getInputProps()}
-                      // type="file"
+                    // type="file"
                     />
                     {Files.length > 0 ? (
                       <div>{images}</div>
@@ -979,35 +980,35 @@ export default function Information() {
               style={{
                 display: "flex",
                 flexDirection: "column",
-                flexGrow: 1,
+                // flexGrow: 1,
+                width: '100%'
               }}
             >
               <CKEditor
-                id="editor"
                 editor={ClassicEditor}
-                data={Detail}
-                config={{
-                  // plugins: [xxx],
-                  // toolbar: ["sourceEditing"],
-                  extraPlugins: [MyCustomUploadAdapterPlugin],
-                }}
-                // plugins={[ CKFinder]}
-
-                onReady={(editor) => {
+                data=""
+                config={
+                  {
+                    extraPlugins: [MyCustomUploadAdapterPlugin],
+                    width: '100%',
+                    resize_maxWidth: '100%',
+                  }
+                }
+                onReady={editor => {
                   // You can store the "editor" and use when it is needed.
-                  console.log("Editor is ready to use!", editor);
+                  console.log('Editor is ready to use!', editor);
                 }}
                 onChange={(event, editor) => {
                   const data = editor.getData();
-                  setDetail(data);
                   console.log({ event, editor, data });
                 }}
                 onBlur={(event, editor) => {
-                  console.log("Blur.", editor);
+                  console.log('Blur.', editor);
                 }}
                 onFocus={(event, editor) => {
-                  console.log("Focus.", editor);
+                  console.log('Focus.', editor);
                 }}
+
               />
             </div>
           </div>
@@ -1227,10 +1228,10 @@ export default function Information() {
                   ? Status === "C"
                     ? "Cancel"
                     : Status === "D"
-                    ? "Draff"
-                    : Status === "P"
-                    ? "Publish"
-                    : "Draff"
+                      ? "Draff"
+                      : Status === "P"
+                        ? "Publish"
+                        : "Draff"
                   : null}
               </span>
             </div>

@@ -40,8 +40,9 @@
   }
 }
 
-
-/* 
-.font-face-gm {
-  font-family: "Material Icons" !important;
-} */
+.css-nnbavb {
+  float: left !important;
+}
+.ck-editor__editable {
+  max-width: initial !important;
+}
