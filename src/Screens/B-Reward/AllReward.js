@@ -131,7 +131,7 @@ export default function AllReward() {
                   <StyledTableCell align="center">
                     วันที่สิ้นสุด
                   </StyledTableCell>
-                  <StyledTableCell align="center">Reward</StyledTableCell>
+                  <StyledTableCell align="center">ของรางวัล</StyledTableCell>
                   <StyledTableCell align="center">จำนวน</StyledTableCell>
                   <StyledTableCell align="center">คะแนนแลก</StyledTableCell>
                   <StyledTableCell align="center">ผู้เขียน</StyledTableCell>

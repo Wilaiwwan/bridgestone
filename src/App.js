@@ -28,7 +28,9 @@ import envInstants from "./libs/configs/env";
 import httpClientInstants from "./libs/utils/HttpClient";
 import api, { setDefaultURL, setInterceptors } from "./Component/api/api";
 import { useHistory } from "react-router-dom";
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import AllPoint from "./Screens/B-Point/AllPoint";
+import OrderList from "./Screens/B-Reward/OrderList";
 //test pull vscode
 
 function App() {
@@ -47,8 +49,6 @@ function App() {
         // api.defaults.create({
         //   baseURL: envInstants.getConfig().baseURL,
         // });
-
-
 
         // console.log(envInstants);
 
@@ -71,101 +71,123 @@ function App() {
 
   const THEME = createTheme({
     typography: {
-      "fontFamily": `Kanit`,
-    }
+      fontFamily: `Kanit`,
+    },
   });
 
   return (
     <Suspense>
       <ThemeProvider theme={THEME}>
-      <Provider store={store}>
-        <Router>
-          <div
-            className="font-face-gm"
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              backgroundColor: "#F7F8FA",
-              height: "100vh",
-            }}
-          >
-            <React.Fragment>
-              <Switch>
-                <div style={{ width: "100%" }}>
+        <Provider store={store}>
+          <Router>
+            <div
+              className="font-face-gm"
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                backgroundColor: "#F7F8FA",
+                height: "100vh",
+              }}
+            >
+              <React.Fragment>
+                <Switch>
+                  <div style={{ width: "100%" }}>
+                    <Route path="/login" component={login} />
+                    <Route
+                      path="/AllSubject"
+                      component={withAuthLayout(AllSubject)}
+                    />
+                    <Route
+                      path="/Information"
+                      component={withAuthLayout(Information)}
+                    />
+                    <Route
+                      exact
+                      path="/EditInformation/:id"
+                      component={withAuthLayout(Information)}
+                    />
+                    <Route
+                      path="/Order"
+                      component={withAuthLayout(OrderList)}
+                    />
+                    <Route
+                      path="/AllReward"
+                      component={withAuthLayout(AllReward)}
+                    />
+                    <Route
+                      path="/AddNewReward"
+                      component={withAuthLayout(AddNewReward)}
+                    />
+                    <Route
+                      exact
+                      path="/EditReward/:id"
+                      component={withAuthLayout(AddNewReward)}
+                    />
+                    <Route
+                      path="/RoundList"
+                      component={withAuthLayout(AllRound)}
+                    />
+                    <Route
+                      path="/Members"
+                      component={withAuthLayout(MemberList)}
+                    />
+                    <Route
+                      path="/AddMember"
+                      component={withAuthLayout(AddMember)}
+                    />
+                    <Route
+                      path="/EditRound/:id"
+                      component={withAuthLayout(AddMember)}
+                    />
+                    <Route
+                      path="/AllLink"
+                      component={withAuthLayout(AllLink)}
+                    />
+                    <Route
+                      path="/AddLink"
+                      component={withAuthLayout(AddLink)}
+                    />
+                    <Route
+                      exact
+                      path="/EditLink/:id"
+                      component={withAuthLayout(AddLink)}
+                    />
+                    <Route
+                      path="/AllPoint"
+                      component={withAuthLayout(AllPoint)}
+                    />
 
-                  <Route path="/login" component={login} />
-                  <Route
-                    path="/AllSubject"
-                    component={withAuthLayout(AllSubject)}
-                  />
-                  <Route
-                    path="/Information"
-                    component={withAuthLayout(Information)}
-                  />
-                  <Route
-                    exact
-                    path="/EditInformation/:id"
-                    component={withAuthLayout(Information)}
-                  />
-                  <Route
-                    path="/AllReward"
-                    component={withAuthLayout(AllReward)}
-                  />
-                  <Route
-                    path="/AddNewReward"
-                    component={withAuthLayout(AddNewReward)}
-                  />
-                  <Route
-                    exact
-                    path="/EditReward/:id"
-                    component={withAuthLayout(AddNewReward)}
-                  />
-                  <Route path="/RoundList" component={withAuthLayout(AllRound)} />
-                  <Route path="/Members" component={withAuthLayout(MemberList)} />
-                  <Route
-                    path="/AddMember"
-                    component={withAuthLayout(AddMember)}
-                  />
-                  <Route
-                    path="/EditRound/:id"
-                    component={withAuthLayout(AddMember)}
-                  />
-                  <Route path="/AllLink" component={withAuthLayout(AllLink)} />
-                  <Route path="/AddLink" component={withAuthLayout(AddLink)} />
-                  <Route
-                    exact
-                    path="/EditLink/:id"
-                    component={withAuthLayout(AddLink)}
-                  />
-
-                  <Route path="/AllUser" component={withAuthLayout(AllUser)} />
-                  <Route
-                    exact
-                    path="/EditUser/:id"
-                    component={withAuthLayout(EditUser)}
-                  />
-                  <Route
-                    path="/ManagePermissions"
-                    component={withAuthLayout(ManagePermissions)}
-                  />
-                  <Route
-                    path="/SetPermissions"
-                    component={withAuthLayout(SetPermissions)}
-                  />
-                  <Route path="/Role" component={withAuthLayout(Role)} />
-                  <Route exact path="/">
-                    {localStorage.getItem("token") ? (
-                      <Redirect to="/AllSubject" />
-                    ) : (
-                      <Redirect to="/login" />
-                    )}
-                  </Route>
-                </div>
-              </Switch>
-            </React.Fragment>
-          </div>
-        </Router>
-      </Provider>
+                    <Route
+                      path="/AllUser"
+                      component={withAuthLayout(AllUser)}
+                    />
+                    <Route
+                      exact
+                      path="/EditUser/:id"
+                      component={withAuthLayout(EditUser)}
+                    />
+                    <Route
+                      path="/ManagePermissions"
+                      component={withAuthLayout(ManagePermissions)}
+                    />
+                    <Route
+                      path="/SetPermissions"
+                      component={withAuthLayout(SetPermissions)}
+                    />
+                    <Route path="/Role" component={withAuthLayout(Role)} />
+                    <Route exact path="/">
+                      {localStorage.getItem("token") ? (
+                        <Redirect to="/AllSubject" />
+                      ) : (
+                        <Redirect to="/login" />
+                      )}
+                    </Route>
+                  </div>
+                </Switch>
+              </React.Fragment>
+            </div>
+          </Router>
+        </Provider>
       </ThemeProvider>
     </Suspense>
   );

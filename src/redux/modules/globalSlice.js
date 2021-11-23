@@ -1,7 +1,6 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-
   sidebar: {
     sidebarOpen: true,
 
@@ -9,14 +8,13 @@ const initialState = {
     sidebarRewardOpen: true,
     sidebar360Open: true,
     sidebarConnectOpen: true,
+    sidebarPointOpen: true,
     sidebarAdminOpen: false,
-  }
-}
-
-
+  },
+};
 
 export const globalSlice = createSlice({
-  name: 'global',
+  name: "global",
   initialState: initialState,
   reducers: {
     toggleSidebar: (state, action) => {
@@ -34,16 +32,24 @@ export const globalSlice = createSlice({
     toggleConnectSidebar: (state, action) => {
       state.sidebar.sidebarConnectOpen = action.payload;
     },
+    togglePointSidebar: (state, action) => {
+      state.sidebar.sidebarPointOpen = action.payload;
+    },
     toggleAdminSidebar: (state, action) => {
       state.sidebar.sidebarAdminOpen = action.payload;
     },
-
   },
-
-})
+});
 
 // Action creators are generated for each case reducer function
-export const { toggleSidebar, toggleNewsSidebar, toggleRewardSidebar, toggle360Sidebar, toggleConnectSidebar, toggleAdminSidebar } = globalSlice.actions
+export const {
+  toggleSidebar,
+  toggleNewsSidebar,
+  toggleRewardSidebar,
+  toggle360Sidebar,
+  toggleConnectSidebar,
+  togglePointSidebar,
+  toggleAdminSidebar,
+} = globalSlice.actions;
 
-export default globalSlice.reducer
-
+export default globalSlice.reducer;

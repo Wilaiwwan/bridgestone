@@ -16,7 +16,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from '@ckeditor-custom/build/ckeditor';
+import ClassicEditor from "@ckeditor-custom/build/ckeditor";
 import "./information.css";
 import { alpha, styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
   },
   subject: {
     // width: "20%",
-    flex: '0 0 140px'
+    flex: "0 0 140px",
   },
   imgFileType: {
     width: 50,
@@ -189,7 +189,6 @@ function MyCustomUploadAdapterPlugin(editor) {
   };
 }
 
-
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   //   "label + &": {
   //     marginTop: theme.spacing(3),
@@ -238,7 +237,7 @@ export default function Information() {
     "1525287c-06cd-4714-9683-e192f12a7036"
   );
   const [isHighlight, setisHighlight] = useState(true);
-  const [TypeContentId, setTypeContentId] = useState("SL");
+  const [TypeContentId, setTypeContentId] = useState("DT");
   const [GalleryFileId, setGalleryFileId] = useState(null);
   const [Point, setPoint] = useState(0);
   const [TextShort, setTextShort] = useState("");
@@ -265,7 +264,6 @@ export default function Information() {
   const [LoadingP, setLoadingP] = useState(false);
   const [LoadingC, setLoadingC] = useState(false);
   const [LoadingD, setLoadingD] = useState(false);
-
   const [Files, setFiles] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
     // accept: "image/*",
@@ -429,7 +427,6 @@ export default function Information() {
       console.log("error => ", error);
     }
   };
-  console.log(!EmpNoList);
 
   const save = async () => {
     setLoadingP(true);
@@ -437,7 +434,6 @@ export default function Information() {
     const _status = "P";
     if (EmpNoList.length > 0) {
       const _EmployeesAccess = EmpNoList.split(/\r|\n/);
-
       const body = {
         ContentMainId: mainId,
         ContentTitle,
@@ -456,7 +452,7 @@ export default function Information() {
         UrlLink,
         Deleted: false,
         IsPublic,
-        EmployeesAccess: _EmployeesAccess,
+        EmployeesAccess: _EmployeesAccess === "" ? [] : [],
         RolesAccess,
       };
       try {
@@ -470,6 +466,8 @@ export default function Information() {
         setLoadingP(false);
       }
     } else {
+      console.log(EmpNoList);
+
       const body = {
         ContentMainId: mainId,
         ContentTitle,
@@ -488,7 +486,7 @@ export default function Information() {
         UrlLink,
         Deleted: false,
         IsPublic,
-        EmployeesAccess: EmpNoList,
+        EmployeesAccess: EmpNoList === "" ? [] : [],
         RolesAccess,
       };
       try {
@@ -504,6 +502,7 @@ export default function Information() {
     }
   };
   const Draft = async () => {
+
     setLoadingD(true);
     const mainId = ContentMainId === undefined ? null : id;
     const _status = "D";
@@ -528,7 +527,7 @@ export default function Information() {
         UrlLink,
         Deleted: false,
         IsPublic,
-        EmployeesAccess: _EmployeesAccess,
+        EmployeesAccess: _EmployeesAccess === "" ? [] : [],
         RolesAccess,
       };
       try {
@@ -560,7 +559,7 @@ export default function Information() {
         UrlLink,
         Deleted: false,
         IsPublic,
-        EmployeesAccess: EmpNoList,
+        EmployeesAccess: EmpNoList === "" ? [] : [],
         RolesAccess,
       };
       try {
@@ -601,7 +600,7 @@ export default function Information() {
         UrlLink,
         Deleted: false,
         IsPublic,
-        EmployeesAccess: _EmployeesAccess,
+        EmployeesAccess: _EmployeesAccess === "" ? [] : [],
         RolesAccess,
       };
       try {
@@ -633,7 +632,7 @@ export default function Information() {
         UrlLink,
         Deleted: false,
         IsPublic,
-        EmployeesAccess: EmpNoList,
+        EmployeesAccess: EmpNoList === "" ? [] : [],
         RolesAccess,
       };
       try {
@@ -811,7 +810,7 @@ export default function Information() {
                 value={ContentTitle}
                 required
                 error={TitleErr}
-              // label=""
+                // label=""
               />
               <span style={{ color: "gray" }}>
                 หัวข้อเรื่องที่ปรากฏในหน้าข่าวประกาศ
@@ -888,7 +887,7 @@ export default function Information() {
                   <div {...getRootProps()}>
                     <input
                       {...getInputProps()}
-                    // type="file"
+                      // type="file"
                     />
                     {Files.length > 0 ? (
                       <div>{images}</div>
@@ -981,34 +980,32 @@ export default function Information() {
                 display: "flex",
                 flexDirection: "column",
                 // flexGrow: 1,
-                width: '100%'
+                width: "100%",
               }}
             >
               <CKEditor
                 editor={ClassicEditor}
-                data=""
-                config={
-                  {
-                    extraPlugins: [MyCustomUploadAdapterPlugin],
-                    width: '100%',
-                    resize_maxWidth: '100%',
-                  }
-                }
-                onReady={editor => {
+                data={Detail}
+                config={{
+                  extraPlugins: [MyCustomUploadAdapterPlugin],
+                  width: "100%",
+                  resize_maxWidth: "100%",
+                }}
+                onReady={(editor) => {
                   // You can store the "editor" and use when it is needed.
-                  console.log('Editor is ready to use!', editor);
+                  console.log("Editor is ready to use!", editor);
                 }}
                 onChange={(event, editor) => {
                   const data = editor.getData();
+                  setDetail(data);
                   console.log({ event, editor, data });
                 }}
                 onBlur={(event, editor) => {
-                  console.log('Blur.', editor);
+                  console.log("Blur.", editor);
                 }}
                 onFocus={(event, editor) => {
-                  console.log('Focus.', editor);
+                  console.log("Focus.", editor);
                 }}
-
               />
             </div>
           </div>
@@ -1228,10 +1225,10 @@ export default function Information() {
                   ? Status === "C"
                     ? "Cancel"
                     : Status === "D"
-                      ? "Draff"
-                      : Status === "P"
-                        ? "Publish"
-                        : "Draff"
+                    ? "Draff"
+                    : Status === "P"
+                    ? "Publish"
+                    : "Draff"
                   : null}
               </span>
             </div>

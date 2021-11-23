@@ -10,6 +10,7 @@ import {
   toggleConnectSidebar,
   toggleNewsSidebar,
   toggleRewardSidebar,
+  togglePointSidebar,
 } from "../redux/modules/globalSlice";
 
 const drawerHeight = "100%";
@@ -29,6 +30,7 @@ export default function Index(props) {
     sidebarRewardOpen,
     sidebar360Open,
     sidebarConnectOpen,
+    sidebarPointOpen,
     sidebarAdminOpen,
   } = useSelector((state) => state.global.sidebar);
   const dispatch = useDispatch();
@@ -198,6 +200,18 @@ export default function Index(props) {
                     className="list-group-item list-group-item-action list-group-item-light p-3"
                     exact={true}
                     activeClassName="is-active"
+                    to="/Order"
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    รายการของที่สั่ง
+                  </NavLink>
+                  <NavLink
+                    className="list-group-item list-group-item-action list-group-item-light p-3"
+                    exact={true}
+                    activeClassName="is-active"
                     to="/AllReward"
                     style={{
                       display: "flex",
@@ -350,6 +364,61 @@ export default function Index(props) {
                     }}
                   >
                     เพิ่มลิงค์ใหม่
+                  </NavLink>
+                </div>
+              ) : null}
+              <a
+                style={{ display: "flex", flexDirection: "row" }}
+                className="list-group-item list-group-item-action list-group-item-light p-3"
+                href="#!"
+                onClick={() =>
+                  dispatch(togglePointSidebar(!sidebarPointOpen))
+                }
+              >
+                <span
+                  class="material-icons-outlined"
+                  style={{ marginRight: 10 }}
+                >
+                  sentiment_dissatisfied
+                </span>
+                B-Point
+                {sidebarPointOpen ? (
+                  <span
+                    style={{
+                      display: "flex",
+                      flexGrow: 1,
+                      justifyContent: "end",
+                    }}
+                    className="material-icons-outlined"
+                  >
+                    expand_more
+                  </span>
+                ) : (
+                  <span
+                    style={{
+                      display: "flex",
+                      flexGrow: 1,
+                      justifyContent: "end",
+                    }}
+                    class="material-icons-outlined"
+                  >
+                    chevron_right
+                  </span>
+                )}
+              </a>
+              {sidebarPointOpen ? (
+                <div>
+                  <NavLink
+                    className="list-group-item list-group-item-action list-group-item-light p-3"
+                    exact={true}
+                    activeClassName="is-active"
+                    to="/AllPoint"
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    คะแนนทั้งหมด
                   </NavLink>
                 </div>
               ) : null}
