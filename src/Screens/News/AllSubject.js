@@ -62,6 +62,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
   },
+
   // hide last border
   "&:last-child td, &:last-child th": {
     border: 0,
@@ -290,12 +291,17 @@ export default function AllSubject() {
                           </StyledTableCell>
                         </TableRow>
                       </TableHead>
-                      {AdminContentList.length > 0
-                        ? (rowsPerPage > 0
+                      <TableBody
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        {AdminContentList.length > 0
+                          ? (rowsPerPage > 0
                             ? AdminContentList.slice(
-                                page * rowsPerPage,
-                                page * rowsPerPage + rowsPerPage
-                              )
+                              page * rowsPerPage,
+                              page * rowsPerPage + rowsPerPage
+                            )
                             : AdminContentList
                           ).map((Data, index) => (
                             <Draggable
@@ -304,70 +310,67 @@ export default function AllSubject() {
                               index={index}
                             >
                               {(provided, snapshot) => (
-                                <TableBody
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                >
-                                  <StyledTableRow key={Data.contentMainId}>
-                                    <StyledTableCell align="center">
-                                      {Data.seq}
-                                    </StyledTableCell>
-                                    <StyledTableCell align="center">
-                                      {moment(Data.startDate).format(
-                                        "DD-MM-YYYY"
-                                      )}
-                                    </StyledTableCell>
-                                    <StyledTableCell align="center">
-                                      {moment(Data.endDate).format(
-                                        "DD-MM-YYYY"
-                                      )}
-                                    </StyledTableCell>
-                                    <StyledTableCell align="center">
-                                      {Data.contentTitle}
-                                    </StyledTableCell>
-                                    <StyledTableCell align="center">
-                                      {Data.catalogyName}
-                                    </StyledTableCell>
-                                    <StyledTableCell align="center">
-                                      {Data.subCatalogyName}
-                                    </StyledTableCell>
-                                    <StyledTableCell align="left">
-                                      {Data.createName}
-                                    </StyledTableCell>
-                                    <StyledTableCell align="center">
-                                      {Data.status === "C"
-                                        ? "Cancel"
-                                        : Data.status === "D"
+
+                                <StyledTableRow key={Data.contentMainId}>
+                                  <StyledTableCell align="center">
+                                    {Data.seq}
+                                  </StyledTableCell>
+                                  <StyledTableCell align="center">
+                                    {moment(Data.startDate).format(
+                                      "DD-MM-YYYY"
+                                    )}
+                                  </StyledTableCell>
+                                  <StyledTableCell align="center">
+                                    {moment(Data.endDate).format(
+                                      "DD-MM-YYYY"
+                                    )}
+                                  </StyledTableCell>
+                                  <StyledTableCell align="center">
+                                    {Data.contentTitle}
+                                  </StyledTableCell>
+                                  <StyledTableCell align="center">
+                                    {Data.catalogyName}
+                                  </StyledTableCell>
+                                  <StyledTableCell align="center">
+                                    {Data.subCatalogyName}
+                                  </StyledTableCell>
+                                  <StyledTableCell align="left">
+                                    {Data.createName}
+                                  </StyledTableCell>
+                                  <StyledTableCell align="center">
+                                    {Data.status === "C"
+                                      ? "Cancel"
+                                      : Data.status === "D"
                                         ? "Draff"
                                         : "Publish"}
-                                    </StyledTableCell>
-                                    <StyledTableCell align="center">
-                                      <Link
-                                        to={{
-                                          pathname: `/EditInformation/${Data.contentMainId}`,
+                                  </StyledTableCell>
+                                  <StyledTableCell align="center">
+                                    <Link
+                                      to={{
+                                        pathname: `/EditInformation/${Data.contentMainId}`,
+                                      }}
+                                    >
+                                      <Button
+                                        variant="contained"
+                                        style={{
+                                          color: "white",
+                                          backgroundColor: "#FF0000",
+                                          borderColor: "transparent",
+                                          marginRight: 10,
+                                          width: 80,
                                         }}
                                       >
-                                        <Button
-                                          variant="contained"
-                                          style={{
-                                            color: "white",
-                                            backgroundColor: "#FF0000",
-                                            borderColor: "transparent",
-                                            marginRight: 10,
-                                            width: 80,
-                                          }}
-                                        >
-                                          เพิ่มเติม
-                                        </Button>
-                                      </Link>
-                                    </StyledTableCell>
-                                  </StyledTableRow>
-                                </TableBody>
+                                        เพิ่มเติม
+                                      </Button>
+                                    </Link>
+                                  </StyledTableCell>
+                                </StyledTableRow>
+
                               )}
                             </Draggable>
                           ))
-                        : null}
+                          : null}
+                      </TableBody>
                     </Table>
                   </TableContainer>
 
