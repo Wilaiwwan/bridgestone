@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Paper, InputBase, Button, TablePagination } from "@mui/material";
+import {
+  Paper,
+  InputBase,
+  Button,
+  TablePagination,
+  FormControlLabel,
+  Checkbox,
+  FormControl,
+  Select,
+  CircularProgress,
+  MenuItem,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SearchIcon from "@mui/icons-material/Search";
 import Table from "@mui/material/Table";
@@ -9,11 +20,11 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { alpha, styled } from "@mui/material/styles";
-import Switch from "@mui/material/Switch";
 import { useHistory, Link } from "react-router-dom";
 import qs from "qs";
 import moment from "moment";
 import api from "../../Component/api/api";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const drawerHeight = "100%";
 const drawerwidth = "100%";
@@ -65,26 +76,72 @@ export default function AllSubject() {
   const [keyword, setKeyword] = useState("");
   const [ContentMainId, setContentMainId] = useState("");
   const [AdminContentList, setAdminContentList] = useState([]);
-  const [Status, setStatus] = useState(true);
+  const [isActive, setIsActive] = useState(true);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(15);
-  
+  const [CatalogyId, setCatalogyId] = useState("");
+  const [Loading, setLoading] = useState(false);
+  const [CatalogyList, setCatalogyList] = useState([]);
+  const [selectAdmin, setSelectAdmin] = useState([]);
+  console.log(selectAdmin);
 
   const fetchAdminContentList = async () => {
     try {
       const params = qs.stringify({
         ...(keyword && { keyword }),
         ...(ContentMainId && { ContentMainId }),
+        ...(isActive && { isActive }),
+        ...(CatalogyId && { CatalogyId }),
       });
 
       const result = await api.get(`/api/admin/content/list?${params}`);
       const _result = result.data.results;
-      setAdminContentList(_result);
-      console.log(result);
+
+      var sortedData = [..._result].sort((a, b) => a.seq - b.seq);
+
+      setAdminContentList(sortedData);
     } catch (error) {
       console.log("error => ", error);
     }
   };
+
+  const fetchCatalogyList = async () => {
+    try {
+      const params = qs.stringify({
+        Catalogy: true,
+      });
+
+      const result = await api.get(`/api/master/list?${params}`);
+      const _result = result.data.results.catalogy;
+      setCatalogyList(_result);
+    } catch (error) {
+      console.log("error => ", error);
+    }
+  };
+
+  const save = async () => {
+    setLoading(true);
+    const detail = AdminContentList.map((x, index) => ({
+      contentMainId: x.contentMainId,
+      seq: index + 1,
+    }));
+
+    const data = {
+      detail: detail,
+    };
+    try {
+      const result = await api.post("api/admin/content/seq/edit", data);
+      fetchAdminContentList();
+      setLoading(false);
+    } catch (error) {
+      console.log("error => ", error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCatalogyList();
+  }, []);
 
   useEffect(() => {
     if (token) {
@@ -92,7 +149,7 @@ export default function AllSubject() {
     } else {
       history.push("/login");
     }
-  }, [keyword]);
+  }, [keyword, isActive, CatalogyId]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -101,6 +158,30 @@ export default function AllSubject() {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
+  };
+
+  // a little function to help us with reordering the result
+  const reorder = (list, startIndex, endIndex) => {
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+
+    return result;
+  };
+
+  const onDragEnd = (result) => {
+    // dropped outside the list
+    if (!result.destination) {
+      return;
+    }
+    console.log(result);
+    const items = reorder(
+      AdminContentList,
+      result.source.index,
+      result.destination.index
+    );
+
+    setAdminContentList(items);
   };
 
   return (
@@ -116,6 +197,47 @@ export default function AllSubject() {
               marginBottom: 30,
             }}
           >
+            <FormControlLabel
+              control={
+                <Checkbox
+                  sx={{
+                    color: "#FF0000",
+                    "&.Mui-checked": {
+                      color: "#FF0000",
+                    },
+                  }}
+                  id={"Active"}
+                  checked={isActive}
+                  onChange={(e) => setIsActive(e.target.checked)}
+                />
+              }
+              label="ใช้งาน"
+            />
+            <FormControl
+              size="small"
+              sx={{
+                width: "15%",
+                marginRight: 5,
+              }}
+            >
+              <Select
+                style={{ marginTop: 5 }}
+                value={CatalogyId}
+                onChange={(e) => setCatalogyId(e.target.value)}
+                displayEmpty
+                inputProps={{ "aria-label": "Without label" }}
+                disableUnderline
+              >
+                <MenuItem value="">
+                  <em>หมวดหมู่ทั้งหมด</em>
+                </MenuItem>
+                {CatalogyList.map((Data) => (
+                  <MenuItem value={Data.catalogyId}>
+                    {Data.catalogyName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <div className={classes.search}>
               <SearchIcon style={{ margin: 10 }} />
               <InputBase
@@ -127,96 +249,174 @@ export default function AllSubject() {
             </div>
           </div>
 
-          <TableContainer sx={{ maxHeight: "58vh",height: "58vh" }}>
-            <Table stickyHeader size="small" aria-label="customized table">
-              <TableHead>
-                <TableRow>
-                  <StyledTableCell align="center">วันที่เริ่ม</StyledTableCell>
-                  <StyledTableCell align="center">
-                    วันที่สิ้นสุด
-                  </StyledTableCell>
-                  <StyledTableCell width="25%" align="center">
-                    ชื่อเรื่อง
-                  </StyledTableCell>
-                  <StyledTableCell align="center">หมวดหมู่</StyledTableCell>
-                  <StyledTableCell align="center">หมวดหมู่ย่อย</StyledTableCell>
-                  <StyledTableCell align="center">ผู้เขียน</StyledTableCell>
-                  <StyledTableCell align="center">สถานะ</StyledTableCell>
-                  <StyledTableCell align="center">แก้ไข</StyledTableCell>
-                </TableRow>
-              </TableHead>
-              {AdminContentList.length > 0 ? (
-                <TableBody>
-                  {(rowsPerPage > 0
-                    ? AdminContentList.slice(
-                        page * rowsPerPage,
-                        page * rowsPerPage + rowsPerPage
-                      )
-                    : AdminContentList
-                  ).map((Data, index) => {
-                    return (
-                      <StyledTableRow key={Data.contentMainId}>
-                        <StyledTableCell align="center">
-                          {moment(Data.startDate).format("DD-MM-YYYY")}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          {moment(Data.endDate).format("DD-MM-YYYY")}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          {Data.contentTitle}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          {Data.catalogyName}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          {Data.subCatalogyName}
-                        </StyledTableCell>
-                        <StyledTableCell align="left">
-                          {Data.createName}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          {Data.status === "C"
-                            ? "Cancel"
-                            : Data.status === "D"
-                            ? "Draff"
-                            : "Publish"}
-                        </StyledTableCell>
-                        <StyledTableCell align="center">
-                          <Link
-                            to={{
-                              pathname: `/EditInformation/${Data.contentMainId}`,
-                            }}
-                          >
-                            <Button
-                              variant="contained"
-                              style={{
-                                color: "white",
-                                backgroundColor: "#FF0000",
-                                borderColor: "transparent",
-                                marginRight: 10,
-                                width: 80,
-                              }}
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="droppable">
+              {(provided, snapshot) => (
+                <div {...provided.droppableProps} ref={provided.innerRef}>
+                  <TableContainer sx={{ maxHeight: "57vh", height: "57vh" }}>
+                    <Table
+                      stickyHeader
+                      size="small"
+                      aria-label="customized table"
+                    >
+                      <TableHead>
+                        <TableRow>
+                          <StyledTableCell align="center">
+                            ลำดับ
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            วันที่เริ่ม
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            วันที่สิ้นสุด
+                          </StyledTableCell>
+                          <StyledTableCell width="25%" align="center">
+                            ชื่อเรื่อง
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            หมวดหมู่
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            หมวดหมู่ย่อย
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            ผู้เขียน
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            สถานะ
+                          </StyledTableCell>
+                          <StyledTableCell align="center">
+                            แก้ไข
+                          </StyledTableCell>
+                        </TableRow>
+                      </TableHead>
+                      {AdminContentList.length > 0
+                        ? (rowsPerPage > 0
+                            ? AdminContentList.slice(
+                                page * rowsPerPage,
+                                page * rowsPerPage + rowsPerPage
+                              )
+                            : AdminContentList
+                          ).map((Data, index) => (
+                            <Draggable
+                              key={Data.contentMainId}
+                              draggableId={Data.contentMainId}
+                              index={index}
                             >
-                              เพิ่มเติม
-                            </Button>
-                          </Link>
-                        </StyledTableCell>
-                      </StyledTableRow>
-                    );
-                  })}
-                </TableBody>
-              ) : null}
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[15, 45, 105]}
-            component="div"
-            count={AdminContentList.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
+                              {(provided, snapshot) => (
+                                <TableBody
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                >
+                                  <StyledTableRow key={Data.contentMainId}>
+                                    <StyledTableCell align="center">
+                                      {Data.seq}
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
+                                      {moment(Data.startDate).format(
+                                        "DD-MM-YYYY"
+                                      )}
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
+                                      {moment(Data.endDate).format(
+                                        "DD-MM-YYYY"
+                                      )}
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
+                                      {Data.contentTitle}
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
+                                      {Data.catalogyName}
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
+                                      {Data.subCatalogyName}
+                                    </StyledTableCell>
+                                    <StyledTableCell align="left">
+                                      {Data.createName}
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
+                                      {Data.status === "C"
+                                        ? "Cancel"
+                                        : Data.status === "D"
+                                        ? "Draff"
+                                        : "Publish"}
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
+                                      <Link
+                                        to={{
+                                          pathname: `/EditInformation/${Data.contentMainId}`,
+                                        }}
+                                      >
+                                        <Button
+                                          variant="contained"
+                                          style={{
+                                            color: "white",
+                                            backgroundColor: "#FF0000",
+                                            borderColor: "transparent",
+                                            marginRight: 10,
+                                            width: 80,
+                                          }}
+                                        >
+                                          เพิ่มเติม
+                                        </Button>
+                                      </Link>
+                                    </StyledTableCell>
+                                  </StyledTableRow>
+                                </TableBody>
+                              )}
+                            </Draggable>
+                          ))
+                        : null}
+                    </Table>
+                  </TableContainer>
+
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Button
+              size="small"
+              variant="contained"
+              style={{
+                color: "white",
+                backgroundColor: "#FF0000",
+                borderColor: "transparent",
+                margin: 10,
+                width: 100,
+                height: 35,
+              }}
+              onClick={() => save()}
+            >
+              {Loading ? (
+                <CircularProgress
+                  sx={{
+                    color: "#FFFFFF",
+                  }}
+                  size={24}
+                />
+              ) : (
+                "บันทึกลำดับ"
+              )}
+            </Button>
+            <TablePagination
+              rowsPerPageOptions={[15, 45, 105]}
+              component="div"
+              count={AdminContentList.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </div>
         </div>
       </Paper>
     </div>

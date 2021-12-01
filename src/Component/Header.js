@@ -6,7 +6,6 @@ import api from "./api/api";
 
 export default function Header(props) {
   const history = useHistory();
-  const empId = localStorage.getItem("EmpId");
   const token = localStorage.getItem("token");
 
   const [FirstName, setFirstName] = useState("");
@@ -22,15 +21,10 @@ export default function Header(props) {
 
   const fetchEmpData = async () => {
     try {
-      const params = qs.stringify({
-        ...(empId && { empId }),
-      });
-
-      const result = await api.get(`/api/employee/list?${params}`);
-      const _result = result.data.results[0];
+      const result = await api.post("/api/users/user");
+      const _result = result.data.results;
       setFirstName(_result.fistName);
 
-      console.log(_result);
     } catch (error) {
       console.log("error => ", error);
     }
@@ -42,7 +36,7 @@ export default function Header(props) {
     } else {
       history.push("/login");
     }
-  }, [empId]);
+  }, []);
 
   return (
     <div style={{ width: "100%", position: "sticky", top: 0, zIndex: 1 }}>

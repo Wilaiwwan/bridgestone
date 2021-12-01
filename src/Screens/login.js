@@ -54,7 +54,7 @@ export default function Login() {
     setLoadingLogin(true);
 
     try {
-      const result = await api.post("api/users/login", {
+      const result = await api.post("api/users/admin/login", {
         username,
         password,
       });

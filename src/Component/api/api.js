@@ -2,10 +2,10 @@ import axios from "axios";
 import envInstants from "../../libs/configs/env";
 import { useHistory } from "react-router-dom";
 
-const apiExcept = "/api/users/login";
+const apiExcept = "/api/users/admin/login";
 
 const apiExcept2 = [
-  "/api/users/login",
+  "/api/users/admin/login",
   "/api/users/refreshtoken"
 ]
 
@@ -46,7 +46,9 @@ export default instance;
 
 export function setDefaultURL(url) {
 
-  axios.defaults.baseUrl = url;
+  instance.defaults.baseURL = url;
+
+  // console.log(instance.defaults.baseURL);
 }
 
 

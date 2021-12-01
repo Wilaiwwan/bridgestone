@@ -11,6 +11,7 @@ import {
   toggleNewsSidebar,
   toggleRewardSidebar,
   togglePointSidebar,
+  toggleReportSidebar,
 } from "../redux/modules/globalSlice";
 
 const drawerHeight = "100%";
@@ -31,20 +32,10 @@ export default function Index(props) {
     sidebar360Open,
     sidebarConnectOpen,
     sidebarPointOpen,
+    sidebarReportOpen,
     sidebarAdminOpen,
   } = useSelector((state) => state.global.sidebar);
   const dispatch = useDispatch();
-
-  // const [OpenNews, setOpenNews] = useState(false);
-  // const toggleNews = () => setOpenNews(!OpenNews);
-  // const [OpenReward, setOpenReward] = useState(false);
-  // const toggleReward = () => setOpenReward(!OpenReward);
-  // const [Open360, setOpen360] = useState(false);
-  // const toggle360 = () => setOpen360(!Open360);
-  // const [OpenConnect, setOpenConnect] = useState(false);
-  // const toggleConnect = () => setOpenConnect(!OpenConnect);
-  // const [OpenAdmin, setOpenAdmin] = useState(false);
-  // const toggleAdmin = () => setOpenAdmin(!OpenAdmin);
 
   const handleDrawerClose = () => {
     props.onDrawerClose();
@@ -92,7 +83,6 @@ export default function Index(props) {
                 style={{ display: "flex", flexDirection: "row" }}
                 className="list-group-item list-group-item-action list-group-item-light p-3"
                 href="#!"
-                // onClick={() => toggleNews(!OpenNews)}
                 onClick={() => dispatch(toggleNewsSidebar(!sidebarNewsOpen))}
               >
                 <span
@@ -371,9 +361,7 @@ export default function Index(props) {
                 style={{ display: "flex", flexDirection: "row" }}
                 className="list-group-item list-group-item-action list-group-item-light p-3"
                 href="#!"
-                onClick={() =>
-                  dispatch(togglePointSidebar(!sidebarPointOpen))
-                }
+                onClick={() => dispatch(togglePointSidebar(!sidebarPointOpen))}
               >
                 <span
                   class="material-icons-outlined"
@@ -422,6 +410,61 @@ export default function Index(props) {
                   </NavLink>
                 </div>
               ) : null}
+
+              <a
+                style={{ display: "flex", flexDirection: "row" }}
+                className="list-group-item list-group-item-action list-group-item-light p-3"
+                href="#!"
+                onClick={() => dispatch(toggleReportSidebar(!sidebarReportOpen))}
+              >
+                <span
+                  class="material-icons-outlined"
+                  style={{ marginRight: 10 }}
+                >
+                  summarize
+                </span>
+                B-Report
+                {sidebarReportOpen ? (
+                  <span
+                    style={{
+                      display: "flex",
+                      flexGrow: 1,
+                      justifyContent: "end",
+                    }}
+                    className="material-icons-outlined"
+                  >
+                    expand_more
+                  </span>
+                ) : (
+                  <span
+                    style={{
+                      display: "flex",
+                      flexGrow: 1,
+                      justifyContent: "end",
+                    }}
+                    class="material-icons-outlined"
+                  >
+                    chevron_right
+                  </span>
+                )}
+              </a>
+              {sidebarReportOpen ? (
+                <div>
+                  <NavLink
+                    className="list-group-item list-group-item-action list-group-item-light p-3"
+                    exact={true}
+                    activeClassName="is-active"
+                    to="/Report"
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    รายงาน
+                  </NavLink>
+                </div>
+              ) : null}
+
               <a
                 style={{ display: "flex", flexDirection: "row" }}
                 className="list-group-item list-group-item-action list-group-item-light p-3"
@@ -474,7 +517,7 @@ export default function Index(props) {
                   >
                     ผู้ใช้ทั้งหมด
                   </NavLink>
-                  <NavLink
+                  {/* <NavLink
                     className="list-group-item list-group-item-action list-group-item-light p-3"
                     exact={true}
                     activeClassName="is-active"
@@ -485,8 +528,8 @@ export default function Index(props) {
                     }}
                   >
                     จัดการสิทธิ์
-                  </NavLink>
-                  <NavLink
+                  </NavLink> */}
+                  {/* <NavLink
                     className="list-group-item list-group-item-action list-group-item-light p-3"
                     exact={true}
                     activeClassName="is-active"
@@ -497,8 +540,8 @@ export default function Index(props) {
                     }}
                   >
                     กำหนดสิทธิ์
-                  </NavLink>
-                  <NavLink
+                  </NavLink> */}
+                  {/* <NavLink
                     className="list-group-item list-group-item-action list-group-item-light p-3"
                     exact={true}
                     activeClassName="is-active"
@@ -509,7 +552,7 @@ export default function Index(props) {
                     }}
                   >
                     บทบาท
-                  </NavLink>
+                  </NavLink> */}
                 </div>
               ) : null}
             </div>

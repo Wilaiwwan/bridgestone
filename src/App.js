@@ -31,7 +31,7 @@ import { useHistory } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import AllPoint from "./Screens/B-Point/AllPoint";
 import OrderList from "./Screens/B-Reward/OrderList";
-//test pull vscode
+import ReportExcel from "./Screens/B-Report/Report";
 
 function App() {
   const [isInitEnvError, setInitEnvError] = useState(false);
@@ -41,19 +41,12 @@ function App() {
   useEffect(() => {
     const loadEnv = async () => {
       try {
-        // await timeout(3000);
-        // await api.post(`/api/users/user`);
         await envInstants.init();
-
-        // httpClientInstants.setBaseUrl(envInstants.getConfig().baseUrl);
-        // api.defaults.create({
-        //   baseURL: envInstants.getConfig().baseURL,
-        // });
-
+        httpClientInstants.setBaseUrl(envInstants.getConfig().baseUrl);
+        setDefaultURL(envInstants.getConfig().baseUrl);
         // console.log(envInstants);
 
-        // console.log(envInstants.getConfig().baseUrl);
-        // setDefaultURL(envInstants.getConfig().baseUrl)
+        // console.log(api.defaults.baseURL);
       } catch (error) {
         console.log(error);
         setInitEnvError(true);
@@ -155,6 +148,10 @@ function App() {
                     <Route
                       path="/AllPoint"
                       component={withAuthLayout(AllPoint)}
+                    />
+                    <Route
+                      path="/Report"
+                      component={withAuthLayout(ReportExcel)}
                     />
 
                     <Route

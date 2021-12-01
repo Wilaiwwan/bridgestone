@@ -9,6 +9,7 @@ const initialState = {
     sidebar360Open: true,
     sidebarConnectOpen: true,
     sidebarPointOpen: true,
+    sidebarReportOpen: true,
     sidebarAdminOpen: false,
   },
 };
@@ -35,6 +36,9 @@ export const globalSlice = createSlice({
     togglePointSidebar: (state, action) => {
       state.sidebar.sidebarPointOpen = action.payload;
     },
+    toggleReportSidebar: (state, action) => {
+      state.sidebar.sidebarReportOpen = action.payload;
+    },
     toggleAdminSidebar: (state, action) => {
       state.sidebar.sidebarAdminOpen = action.payload;
     },
@@ -49,6 +53,7 @@ export const {
   toggle360Sidebar,
   toggleConnectSidebar,
   togglePointSidebar,
+  toggleReportSidebar,
   toggleAdminSidebar,
 } = globalSlice.actions;
 

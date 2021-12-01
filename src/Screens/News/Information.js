@@ -502,7 +502,6 @@ export default function Information() {
     }
   };
   const Draft = async () => {
-
     setLoadingD(true);
     const mainId = ContentMainId === undefined ? null : id;
     const _status = "D";
@@ -1167,7 +1166,7 @@ export default function Information() {
             <div>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
-                  // label="Basic example"
+                  inputFormat="dd-MM-yyyy"
                   value={StartDate}
                   onChange={(newValue) => {
                     setStartDate(newValue);
@@ -1184,7 +1183,7 @@ export default function Information() {
             <div>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
-                  // label="Basic example"
+                  inputFormat="dd-MM-yyyy"
                   value={EndDate}
                   onChange={(newValue) => {
                     setEndDate(newValue);

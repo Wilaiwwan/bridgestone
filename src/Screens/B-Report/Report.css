@@ -1,0 +1,33 @@
+#report.table {
+  width: 100%;
+  flex-grow: 1;
+}
+.containerTable {
+  overflow: auto;
+  width: 100%;
+  /* white-space: nowrap; */
+  height: 77vh;
+  max-height: 77vh;
+  min-height: 77vh;
+}
+.layoutTable {
+  table-layout: fixed;
+  min-width: 5%;
+  width: 5%;
+}
+.layoutTable2 {
+  table-layout: fixed;
+  min-width: 10%;
+  width: 20vh;
+}
+.layoutTable3 {
+  table-layout: fixed;
+  min-width: 30%;
+  width: 30%;
+}
+.layoutTable4 {
+  table-layout: fixed;
+  min-width: 40%;
+  max-width: 40%;
+  width: 30%;
+}

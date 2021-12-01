@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Paper, InputBase, Button, TablePagination } from "@mui/material";
+import {
+  Paper,
+  InputBase,
+  Button,
+  TablePagination,
+  FormControl,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled } from "@mui/material/styles";
@@ -65,6 +73,8 @@ export default function AllUser() {
   const [EmpList, setEmpList] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(15);
+  const [RoleList, setRoleList] = useState([]);
+  const [RoleId, setRoleId] = useState("");
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -79,16 +89,30 @@ export default function AllUser() {
     try {
       const params = qs.stringify({
         ...(keyword && { keyword }),
+        ...(RoleId && { RoleId }),
       });
 
       const result = await api.get(`/api/employee/list?${params}`);
       const _result = result.data.results;
       setEmpList(_result);
-      console.log(_result);
     } catch (error) {
       console.log("error => ", error);
     }
   };
+
+  const fetchRoleList = async () => {
+    try {
+      const result = await api.get("api/setting/role/list");
+      const _result = result.data.results;
+      setRoleList(_result);
+    } catch (error) {
+      console.log("error => ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchRoleList();
+  }, []);
 
   useEffect(() => {
     if (token) {
@@ -96,7 +120,7 @@ export default function AllUser() {
     } else {
       history.push("/login");
     }
-  }, [keyword]);
+  }, [keyword, RoleId]);
 
   return (
     <div className={classes.root}>
@@ -108,9 +132,33 @@ export default function AllUser() {
             style={{
               display: "flex",
               justifyContent: "flex-end",
-              marginBottom: 30,
+              marginBottom: 20,
+              alignItems: "center",
             }}
           >
+            <FormControl
+              size="small"
+              sx={{
+                width: "15%",
+                marginRight: 5,
+              }}
+            >
+              <Select
+                style={{ marginTop: 5 }}
+                value={RoleId}
+                onChange={(e) => setRoleId(e.target.value)}
+                displayEmpty
+                inputProps={{ "aria-label": "Without label" }}
+                disableUnderline
+              >
+                <MenuItem value="">
+                  <em>บทบาททั้งหมด</em>
+                </MenuItem>
+                {RoleList.filter((x) => x.roleId !== "1").map((Data) => (
+                  <MenuItem value={Data.roleId}>{Data.roleName}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
             <div className={classes.search}>
               <SearchIcon style={{ margin: 10 }} />
               <InputBase
@@ -137,7 +185,7 @@ export default function AllUser() {
 
           <TableContainer
             // component={Paper}
-            sx={{ maxHeight: "60vh" }}
+            sx={{ maxHeight: "59vh", minHeight: "59vh" }}
           >
             <Table stickyHeader size="small" aria-label="customized table">
               <TableHead>

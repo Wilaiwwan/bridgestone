@@ -97,6 +97,7 @@ export default function AddLink() {
   const [NameErr, setNameErr] = useState(false);
   const [GroupErr, setGroupErr] = useState(false);
   const [Loading, setLoading] = useState(false);
+  const [Seq, setSeq] = useState(0);
 
   const [Files, setFiles] = useState([]);
   const { getRootProps, getInputProps } = useDropzone({
@@ -128,7 +129,6 @@ export default function AddLink() {
   });
 
   const Del = (index) => {
-    console.log(index);
     setFiles([]);
     setFileId(null);
     setPath("");
@@ -190,7 +190,7 @@ export default function AddLink() {
       setPath(_result.path);
       setFileId(_result.fileId);
       setDeleted(_result.deleted === false ? true : false);
-      console.log(_result);
+      setSeq(_result.seq);
     } catch (error) {
       console.log("error => ", error);
     }
@@ -205,7 +205,6 @@ export default function AddLink() {
       const result = await api.get(`/api/master/list?${params}`);
       const _result = result.data.results.typeConnect;
       setTypeConnectList(_result);
-      console.log(result);
     } catch (error) {
       console.log("error => ", error);
     }
@@ -223,6 +222,7 @@ export default function AddLink() {
         TypeConnectID,
         FileId,
         Deleted: Deleted === false ? true : false,
+        Seq: parseInt(Seq, 10),
       });
       setOpen(true);
       setTimeout(() => {
@@ -425,6 +425,24 @@ export default function AddLink() {
               </FormControl>
             </div>
           </div>
+
+          {/* <div className={classes.width}>
+            <p className={classes.subject}>ลำดับ</p>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                flexGrow: 1,
+              }}
+            >
+              <TextField
+                size="small"
+                type="number"
+                onChange={(e) => setSeq(e.target.value)}
+                value={Seq}
+              />
+            </div>
+          </div> */}
 
           <div className={classes.width}>
             <p className={classes.subject}>ลิงค์ปลายทาง</p>

@@ -288,9 +288,7 @@ export default function EditUser() {
   }, []);
 
   return (
-    <div
-      className={classes.root}
-    >
+    <div className={classes.root}>
       <Paper elevation={1}>
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>B-Admin</p>
@@ -372,7 +370,7 @@ export default function EditUser() {
                   required
                   error={RoleErr}
                 >
-                  {RoleList.map((Role) => (
+                  {RoleList.filter((x) => x.roleId !== "1").map((Role) => (
                     <MenuItem value={Role.roleId}>{Role.roleName}</MenuItem>
                   ))}
                 </Select>
