@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Paper, InputBase, Button, TablePagination } from "@mui/material";
+import { Paper, InputBase, Button, TablePagination, Grid } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SearchIcon from "@mui/icons-material/Search";
 import { styled } from "@mui/material/styles";
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     border: "1px solid #e0e0e0",
-    width: "20%",
+    width: "100%",
   },
   Padding: {
     paddingTop: "2%",
@@ -76,7 +76,6 @@ export default function AllReward() {
       const result = await api.get(`/api/bpoint/item/list?${params}`);
       const _result = result.data.results;
       setRewardList(_result);
-      console.log(_result);
     } catch (error) {
       console.log("error => ", error);
     }
@@ -105,23 +104,24 @@ export default function AllReward() {
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>B-Reward</p>
           <h3>ของรางวัลทั้งหมด</h3>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginBottom: 30,
-            }}
+          <Grid
+            container
+            spacing={2}
+            sx={{ justifyContent: { sm: "right" }, marginBottom: 2 }}
+            rowSpacing={1}
           >
-            <div className={classes.search}>
-              <SearchIcon style={{ margin: 10 }} />
-              <InputBase
-                multiline
-                fullWidth
-                placeholder="ค้นหา"
-                onChange={(e) => setKeyword(e.target.value)}
-              />
-            </div>
-          </div>
+            <Grid item xs={7} sm={4} lg={3}>
+              <div className={classes.search}>
+                <SearchIcon style={{ margin: 10 }} />
+                <InputBase
+                  multiline
+                  fullWidth
+                  placeholder="ค้นหา"
+                  onChange={(e) => setKeyword(e.target.value)}
+                />
+              </div>
+            </Grid>
+          </Grid>
 
           <TableContainer sx={{ maxHeight: "58vh", height: "58vh" }}>
             <Table stickyHeader size="small" aria-label="customized table">

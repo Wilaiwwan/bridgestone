@@ -44,13 +44,6 @@ const useStyles = makeStyles((theme) => ({
     width: drawerwidth,
     marginTop: 20,
   },
-  width: {
-    width: "70%",
-    display: "flex",
-    flexDirection: "row",
-    // alignItems: "center",
-    marginTop: 50,
-  },
   Padding: {
     paddingTop: "2%",
     paddingRight: "6%",
@@ -58,10 +51,6 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: "2%",
     maxHeight: "88vh",
     overflow: "auto",
-  },
-  subject: {
-    // width: "20%",
-    flex: "0 0 140px",
   },
   imgFileType: {
     width: 50,
@@ -142,7 +131,6 @@ class MyUploadAdapter {
         );
       }
 
-      console.log(response);
       // If the upload is successful, resolve the upload promise with an object containing
       // at least the "default" URL, pointing to the image on the server.
       // This URL will be used to display the image in the content. Learn more in the
@@ -285,7 +273,6 @@ export default function Information() {
         const result = await FileUploadService.upload(_files);
         const _result = result.data.results.fileId;
         setFileId(_result);
-        console.log(result);
       } catch (error) {
         console.log("Could not upload the file!");
         setFiles([]);
@@ -295,7 +282,6 @@ export default function Information() {
 
   const images = Files.map((file, index) => (
     <div key={index} className={classes.Row}>
-      {console.log(file.type)}
 
       {/* <img src={file.preview} style={{ width: "150px" }} alt="preview" /> */}
       {file.type === "image/png" ? (
@@ -360,13 +346,10 @@ export default function Information() {
       setIsPublic(_result.isPublic);
 
       const _empNoList = _result.employeesAccess.join("\r\n");
-      console.log(_result.employeesAccess);
-      console.log(_empNoList);
       setEmpNoList(_empNoList);
       // setEmployeesAccess(_result.employeesAccess);
       setRolesAccess(_result.rolesAccess);
 
-      console.log(result, "===> content");
     } catch (error) {
       console.log("error => ", error);
     }
@@ -381,7 +364,6 @@ export default function Information() {
       const result = await api.get(`/api/master/list?${params}`);
       const _result = result.data.results.typeContent;
       setTypeContentList(_result);
-      console.log(_result);
     } catch (error) {
       console.log("error => ", error);
     }
@@ -396,7 +378,6 @@ export default function Information() {
       const result = await api.get(`/api/master/list?${params}`);
       const _result = result.data.results.catalogy;
       setCatalogyList(_result);
-      console.log(result, "==> catagoly");
     } catch (error) {
       console.log("error => ", error);
     }
@@ -411,7 +392,6 @@ export default function Information() {
       const result = await api.get(`/api/employee/list?${params}`);
       const _result = result.data.results;
       setEmpList(_result);
-      console.log(result, "Emp");
     } catch (error) {
       console.log("error => ", error);
     }
@@ -422,7 +402,6 @@ export default function Information() {
       const result = await api.get(`/api/setting/role/list`);
       const _result = result.data.results;
       setRoleList(_result);
-      console.log(result, "==> Role");
     } catch (error) {
       console.log("error => ", error);
     }
@@ -466,7 +445,6 @@ export default function Information() {
         setLoadingP(false);
       }
     } else {
-      console.log(EmpNoList);
 
       const body = {
         ContentMainId: mainId,
@@ -695,7 +673,6 @@ export default function Information() {
   };
 
   const handleChangeEmp = (e) => {
-    console.log(e);
     if (e) {
       setIsPublic(false);
       setEmpNoList(e.target.value);
@@ -794,31 +771,37 @@ export default function Information() {
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>News/Announcement</p>
           <h3>เขียนเรื่องใหม่</h3>
-          <div className={classes.width}>
-            <p className={classes.subject}>หัวข้อเรื่อง</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
-              <TextField
-                size="small"
-                onChange={(e) => setContentTitle(e.target.value)}
-                value={ContentTitle}
-                required
-                error={TitleErr}
-                // label=""
-              />
-              <span style={{ color: "gray" }}>
-                หัวข้อเรื่องที่ปรากฏในหน้าข่าวประกาศ
-              </span>
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>รูปประจำเรื่อง</p>
-            <div>
+
+          <Grid container sx={{ marginBottom: 5, marginTop: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>หัวข้อเรื่อง</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <TextField
+                  size="small"
+                  onChange={(e) => setContentTitle(e.target.value)}
+                  value={ContentTitle}
+                  required
+                  error={TitleErr}
+                  // label=""
+                />
+                <span style={{ color: "gray" }}>
+                  หัวข้อเรื่องที่ปรากฏในหน้าข่าวประกาศ
+                </span>
+              </div>
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>รูปประจำเรื่อง</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               {Path && !ShowInput ? (
                 <div className={classes.Row}>
                   <img
@@ -923,146 +906,153 @@ export default function Information() {
                   </div>
                 </div>
               )}
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>ชนิดของเรื่อง</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
-              <FormControl size="small">
-                <Select
-                  value={TypeContentId}
-                  onChange={(e) => setTypeContentId(e.target.value)}
-                  displayEmpty
-                  inputProps={{ "aria-label": "Without label" }}
-                  disableUnderline
-                >
-                  {TypeContentList.map((Type) => (
-                    <MenuItem value={Type.typeContentId}>
-                      {Type.typeContent}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <span style={{ color: "gray" }}>
-                Information คือ คอนเทนต์ประเภทบทความ, Bookview คือคอนเทนต์ประเภท
-                PDF File
-              </span>
-            </div>
-          </div>
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>ชนิดของเรื่อง</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <FormControl size="small">
+                  <Select
+                    value={TypeContentId}
+                    onChange={(e) => setTypeContentId(e.target.value)}
+                    displayEmpty
+                    inputProps={{ "aria-label": "Without label" }}
+                    disableUnderline
+                  >
+                    {TypeContentList.map((Type) => (
+                      <MenuItem value={Type.typeContentId}>
+                        {Type.typeContent}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <span style={{ color: "gray" }}>
+                  Information คือ คอนเทนต์ประเภทบทความ, Bookview
+                  คือคอนเทนต์ประเภท PDF File
+                </span>
+              </div>
+            </Grid>
+          </Grid>
 
-          <div className={classes.width}>
-            <p className={classes.subject}>เกริ่นนำ</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>เกริ่นนำ</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               <TextField
+                sx={{ width: "100%" }}
                 size="small"
                 onChange={(e) => setTextShort(e.target.value)}
                 value={TextShort}
               />
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>รายละเอียด</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                // flexGrow: 1,
-                width: "100%",
-              }}
-            >
-              <CKEditor
-                editor={ClassicEditor}
-                data={Detail}
-                config={{
-                  extraPlugins: [MyCustomUploadAdapterPlugin],
-                  width: "100%",
-                  resize_maxWidth: "100%",
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>รายละเอียด</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
                 }}
-                onReady={(editor) => {
-                  // You can store the "editor" and use when it is needed.
-                  console.log("Editor is ready to use!", editor);
-                }}
-                onChange={(event, editor) => {
-                  const data = editor.getData();
-                  setDetail(data);
-                  console.log({ event, editor, data });
-                }}
-                onBlur={(event, editor) => {
-                  console.log("Blur.", editor);
-                }}
-                onFocus={(event, editor) => {
-                  console.log("Focus.", editor);
-                }}
-              />
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>หมวดหมู่</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
-              <FormControl size="small">
-                <Select
-                  value={CatalogyId}
-                  onChange={(e) => {
-                    setCatalogyId(e.target.value);
-
-                    const subs = CatalogyList.find(
-                      (x) => x.catalogyId === e.target.value
-                    )?.subCatalogys;
-
-                    if (subs.length > 0) {
-                      setSubCatalogyId(subs[0].subCatalogyId);
-                    }
+              >
+                <CKEditor
+                  editor={ClassicEditor}
+                  data={Detail}
+                  config={{
+                    extraPlugins: [MyCustomUploadAdapterPlugin],
+                    width: "100%",
+                    resize_maxWidth: "100%",
                   }}
-                  displayEmpty
-                  inputProps={{ "aria-label": "Without label" }}
-                  disableUnderline
-                >
-                  {CatalogyList.map((Cata) => (
-                    <MenuItem value={Cata.catalogyId}>
-                      {Cata.catalogyName}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <span style={{ color: "gray" }}>หมวดหมู่ของข่าวประกาศ</span>
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>หมวดหมู่รอง</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
-              <FormControl size="small">
-                <Select
-                  value={SubCatalogyId}
-                  onChange={(e) => setSubCatalogyId(e.target.value)}
-                  displayEmpty
-                  inputProps={{ "aria-label": "Without label" }}
-                  disableUnderline
-                >
-                  {/* {CatalogyList.map((x) => x.subCatalogys)
+                  onReady={(editor) => {
+                    // You can store the "editor" and use when it is needed.
+                    console.log("Editor is ready to use!", editor);
+                  }}
+                  onChange={(event, editor) => {
+                    const data = editor.getData();
+                    setDetail(data);
+                    console.log({ event, editor, data });
+                  }}
+                  onBlur={(event, editor) => {
+                    console.log("Blur.", editor);
+                  }}
+                  onFocus={(event, editor) => {
+                    console.log("Focus.", editor);
+                  }}
+                />
+              </div>
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>หมวดหมู่</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <FormControl size="small">
+                  <Select
+                    value={CatalogyId}
+                    onChange={(e) => {
+                      setCatalogyId(e.target.value);
+
+                      const subs = CatalogyList.find(
+                        (x) => x.catalogyId === e.target.value
+                      )?.subCatalogys;
+
+                      if (subs.length > 0) {
+                        setSubCatalogyId(subs[0].subCatalogyId);
+                      }
+                    }}
+                    displayEmpty
+                    inputProps={{ "aria-label": "Without label" }}
+                    disableUnderline
+                  >
+                    {CatalogyList.map((Cata) => (
+                      <MenuItem value={Cata.catalogyId}>
+                        {Cata.catalogyName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <span style={{ color: "gray" }}>หมวดหมู่ของข่าวประกาศ</span>
+              </div>
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>หมวดหมู่รอง</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <FormControl size="small">
+                  <Select
+                    value={SubCatalogyId}
+                    onChange={(e) => setSubCatalogyId(e.target.value)}
+                    displayEmpty
+                    inputProps={{ "aria-label": "Without label" }}
+                    disableUnderline
+                  >
+                    {/* {CatalogyList.map((x) => x.subCatalogys)
                     .filter((x) => x.catalogyId === CatalogyId)
                     .map((sub) => (
                       <MenuItem value={sub.subCatalogyId}>
@@ -1070,100 +1060,71 @@ export default function Information() {
                       </MenuItem>
                     ))} */}
 
-                  {CatalogyList.find(
-                    (x) => x.catalogyId === CatalogyId
-                  )?.subCatalogys.map((sub) => (
-                    <MenuItem value={sub.subCatalogyId}>
-                      {sub.subcatalogyName}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <span style={{ color: "gray" }}>หมวดหมู่รองของข่าวประกาศ</span>
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>คะแนนของรางวัล</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
-              <TextField
-                size="small"
-                placeholder="คะแนน"
-                onChange={(e) => setPoint(e.target.value)}
-                value={Point}
-                type="number"
-                required
-                error={PointErr}
-              />
-              <span style={{ color: "gray" }}>คะแนนเมื่อกดอ่านข่าวเสร็จ</span>
-            </div>
-          </div>
-          {TypeContentId === "URL" ? (
-            <div className={classes.width}>
-              <p className={classes.subject}>เว็บไซต์</p>
+                    {CatalogyList.find(
+                      (x) => x.catalogyId === CatalogyId
+                    )?.subCatalogys.map((sub) => (
+                      <MenuItem value={sub.subCatalogyId}>
+                        {sub.subcatalogyName}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <span style={{ color: "gray" }}>หมวดหมู่รองของข่าวประกาศ</span>
+              </div>
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>คะแนนของรางวัล</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               <div
                 style={{
                   display: "flex",
                   flexDirection: "column",
-                  flexGrow: 1,
                 }}
               >
                 <TextField
                   size="small"
-                  // placeholder="คะแนน"
-                  onChange={(e) => setUrlLink(e.target.value)}
-                  value={UrlLink}
+                  placeholder="คะแนน"
+                  onChange={(e) => setPoint(e.target.value)}
+                  value={Point}
+                  type="number"
+                  required
+                  error={PointErr}
                 />
+                <span style={{ color: "gray" }}>คะแนนเมื่อกดอ่านข่าวเสร็จ</span>
               </div>
-            </div>
-          ) : null}
-
-          {/* <div className={classes.width}>
-            <p className={classes.subject}>อัปโหลด PDF</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
-              <div {...getRootProps()}>
-                <input
-                  {...getInputProps()}
-                  // type="file"
-                />
+            </Grid>
+          </Grid>
+          {TypeContentId === "URL" ? (
+            <Grid container sx={{ marginBottom: 5 }}>
+              <Grid item xs={12} sm={2.5} lg={2}>
+                <p>เว็บไซต์</p>
+              </Grid>
+              <Grid item xs={12} sm={9.5} lg={7}>
                 <div
                   style={{
-                    border: "4px dotted #FF0000 ",
-                    width: 150,
-                    height: 150,
-                    borderRadius: 10,
                     display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
+                    flexDirection: "column",
                   }}
                 >
-                  <span
-                    style={{ color: "#FF0000", fontSize: 50 }}
-                    class="material-icons-outlined"
-                  >
-                    add
-                  </span>
+                  <TextField
+                    size="small"
+                    // placeholder="คะแนน"
+                    onChange={(e) => setUrlLink(e.target.value)}
+                    value={UrlLink}
+                  />
                 </div>
-              </div>
-              <div>{images}</div>
-              <span style={{ color: "gray" }}>ขนาดไฟล์ไม่เกิน 1 MB.</span>
-            </div>
-          </div> */}
+              </Grid>
+            </Grid>
+          ) : null}
 
-          <div className={classes.width}>
-            <p className={classes.subject}>วันที่เริ่ม</p>
-            <div>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>วันที่เริ่ม</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
                   inputFormat="dd-MM-yyyy"
@@ -1176,11 +1137,13 @@ export default function Information() {
                   )}
                 />
               </LocalizationProvider>
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>วันที่สิ้นสุด</p>
-            <div>
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>วันที่สิ้นสุด</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
                   inputFormat="dd-MM-yyyy"
@@ -1193,32 +1156,31 @@ export default function Information() {
                   )}
                 />
               </LocalizationProvider>
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>โชว์บนสไลด์</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
-              <GreenSwitch
-                checked={isHighlight}
-                onChange={(e) => setisHighlight(e.target.checked)}
-              />
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>สถานะ</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>โชว์บนสไลด์</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <GreenSwitch
+                  checked={isHighlight}
+                  onChange={(e) => setisHighlight(e.target.checked)}
+                />
+              </div>
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>สถานะ</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               <span>
                 {Status
                   ? Status === "C"
@@ -1230,298 +1192,163 @@ export default function Information() {
                     : "Draff"
                   : null}
               </span>
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>เห็นได้ทุกคน</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
-              <FormControlLabel
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>เห็นได้ทุกคน</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
+              <div
                 style={{
-                  width: 50,
-                }}
-                control={
-                  <Checkbox
-                    sx={{
-                      color: "#FF0000",
-                      "&.Mui-checked": {
-                        color: "#FF0000",
-                      },
-                    }}
-                  />
-                }
-                label=""
-                checked={IsPublic}
-                onChange={handleCheckBoxPublic}
-              />
-            </div>
-          </div>
-
-          <div className={classes.width}>
-            <p className={classes.subject}>ระบุตำแหน่ง</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-              }}
-            >
-              <FormControl size="small" sx={{ width: 250 }}>
-                <Select
-                  value={RoleId}
-                  onChange={handleChangeRole}
-                  displayEmpty
-                  inputProps={{ "aria-label": "Without label" }}
-                  disableUnderline
-                >
-                  <MenuItem value="">
-                    <span style={{ color: "#b3b3b3" }}>เพิ่มตำแหน่ง</span>
-                  </MenuItem>
-                  {RoleList.filter(
-                    ({ roleId }) =>
-                      !RolesAccess.map((x) => x.roleId).includes(roleId)
-                  ).map((R) => (
-                    <MenuItem value={R.roleId}>{R.roleName}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <button
-                style={{
-                  borderWidth: 0,
-                  backgroundColor: "transparent",
+                  display: "flex",
+                  flexDirection: "column",
                 }}
               >
-                <span
-                  class="material-icons-outlined"
-                  style={{ color: "#FF0000", fontSize: 30, marginLeft: 5 }}
-                  onClick={() => SetRolesAccess()}
-                >
-                  add
-                </span>
-              </button>
-            </div>
-          </div>
-          {RolesAccess.length > 0 ? (
-            <div className={classes.width}>
-              <div className={classes.subject}></div>
-
-              <table
-                id="Role"
-                style={{
-                  border: "1px solid #e0e0e0",
-                  textAlign: "center",
-                  fontWeight: "normal",
-                }}
-              >
-                <thead
+                <FormControlLabel
                   style={{
-                    backgroundColor: "#F1F3F9",
+                    width: 50,
+                  }}
+                  control={
+                    <Checkbox
+                      sx={{
+                        color: "#FF0000",
+                        "&.Mui-checked": {
+                          color: "#FF0000",
+                        },
+                      }}
+                    />
+                  }
+                  label=""
+                  checked={IsPublic}
+                  onChange={handleCheckBoxPublic}
+                />
+              </div>
+            </Grid>
+          </Grid>
+
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>ระบุตำแหน่ง</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                }}
+              >
+                <FormControl size="small" sx={{ width: 250 }}>
+                  <Select
+                    value={RoleId}
+                    onChange={handleChangeRole}
+                    displayEmpty
+                    inputProps={{ "aria-label": "Without label" }}
+                    disableUnderline
+                  >
+                    <MenuItem value="">
+                      <span style={{ color: "#b3b3b3" }}>เพิ่มตำแหน่ง</span>
+                    </MenuItem>
+                    {RoleList.filter(
+                      ({ roleId }) =>
+                        !RolesAccess.map((x) => x.roleId).includes(roleId)
+                    ).map((R) => (
+                      <MenuItem value={R.roleId}>{R.roleName}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <button
+                  style={{
+                    borderWidth: 0,
+                    backgroundColor: "transparent",
                   }}
                 >
-                  <th style={{ width: 250 }}>ตำแหน่ง</th>
-                  <th style={{ width: 200 }}>ลบ</th>
-                </thead>
-                <tbody>
-                  {RolesAccess.filter((x) => x.deleted === false).map(
-                    (r, index) => {
-                      return (
-                        <tr key={index}>
-                          <td>{r.roleName}</td>
-                          <td>
-                            <button
-                              style={{
-                                borderWidth: 0,
-                                backgroundColor: "transparent",
-                              }}
-                            >
-                              <span
-                                class="material-icons-outlined"
-                                onClick={() => delRole(r.roleAccessId, index)}
-                                style={{ color: "#FF0000" }}
+                  <span
+                    class="material-icons-outlined"
+                    style={{ color: "#FF0000", fontSize: 30, marginLeft: 5 }}
+                    onClick={() => SetRolesAccess()}
+                  >
+                    add
+                  </span>
+                </button>
+              </div>
+            </Grid>
+          </Grid>
+          {RolesAccess.length > 0 ? (
+            <Grid container sx={{ marginBottom: 5 }}>
+              <Grid item xs={12} sm={2.5} lg={2}>
+                <div></div>
+              </Grid>
+
+              <Grid item xs={12} sm={9.5} lg={7}>
+                <table
+                  id="Role"
+                  style={{
+                    border: "1px solid #e0e0e0",
+                    textAlign: "center",
+                    fontWeight: "normal",
+                  }}
+                >
+                  <thead
+                    style={{
+                      backgroundColor: "#F1F3F9",
+                    }}
+                  >
+                    <th style={{ width: 250 }}>ตำแหน่ง</th>
+                    <th style={{ width: 200 }}>ลบ</th>
+                  </thead>
+                  <tbody>
+                    {RolesAccess.filter((x) => x.deleted === false).map(
+                      (r, index) => {
+                        return (
+                          <tr key={index}>
+                            <td>{r.roleName}</td>
+                            <td>
+                              <button
+                                style={{
+                                  borderWidth: 0,
+                                  backgroundColor: "transparent",
+                                }}
                               >
-                                delete
-                              </span>
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    }
-                  )}
-                </tbody>
-              </table>
-            </div>
+                                <span
+                                  class="material-icons-outlined"
+                                  onClick={() => delRole(r.roleAccessId, index)}
+                                  style={{ color: "#FF0000" }}
+                                >
+                                  delete
+                                </span>
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      }
+                    )}
+                  </tbody>
+                </table>
+              </Grid>
+            </Grid>
           ) : null}
 
-          {/* <div className={classes.width}>
-            <p className={classes.subject}>เกริ่นนำ</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>ระบุรายบุคคล</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               <TextField
-                size="small"
-                placeholder="หัวข้อเรื่อง"
-                onChange={(e) => setTextShort(e.target.value)}
-                value={TextShort}
-              />
-            </div>
-          </div> */}
-
-          <div className={classes.width}>
-            <p className={classes.subject}>ระบุรายบุคคล</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
-              <TextField
+                sx={{ width: "100%" }}
                 size="small"
                 rows={5}
                 onChange={(e) => handleChangeEmp(e)}
                 value={EmpNoList}
                 multiline={true}
               />
-            </div>
-          </div>
-          {/* <div className={classes.width}>
-            <p className={classes.subject}>ระบุรายบุคคล</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-              }}
-            >
-              <Autocomplete
-                disablePortal
-                id="Emp"
-                options={EmpList.filter(
-                  ({ empId }) =>
-                    !EmployeesAccess.map((x) => x.empId).includes(empId)
-                )}
-                sx={{ width: 350 }}
-                getOptionLabel={(option) => {
-                  //filter value
-                  return `${option.empNo}: ${option.fistName} ${option.lastName}`;
-                }}
-                onChange={(e, newValue) => {
-                  console.log(e);
-                  console.log(newValue);
+            </Grid>
+          </Grid>
 
-                  if (newValue) {
-                    handleChangeEmp(newValue);
-                  } else {
-                    setEmpId("");
-                  }
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    size="small"
-                    placeholder="เพิ่มบุคคล"
-                  />
-                )}
-              />
-              <button
-                style={{
-                  borderWidth: 0,
-                  backgroundColor: "transparent",
-                }}
-              >
-                <span
-                  class="material-icons-outlined"
-                  style={{ color: "#FF0000", fontSize: 30, marginLeft: 5 }}
-                  onClick={() => SetEmpAccess()}
-                >
-                  add
-                </span>
-              </button>
-            </div>
-          </div>
-          {EmployeesAccess.length > 0 ? (
-            <div className={classes.width}>
-              <div className={classes.subject}></div>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2} />
 
-              <table
-                id="Emp"
-                style={{
-                  border: "1px solid #e0e0e0",
-                  textAlign: "center",
-                  fontWeight: "normal",
-                }}
-              >
-                <thead
-                  style={{
-                    backgroundColor: "#F1F3F9",
-                  }}
-                >
-                  <th style={{ width: 250 }}>พนักงาน</th>
-                  <th style={{ width: 200 }}>ลบ</th>
-                </thead>
-                <tbody>
-                  {EmployeesAccess.filter((x) => x.deleted === false).map(
-                    (E, index) => {
-                      return (
-                        <tr key={index}>
-                          <td style={{ textAlign: "left", paddingLeft: 5 }}>
-                            {E.empFirstName}
-                            <span>&nbsp;&nbsp;</span>
-                            {E.empLastName}
-                          </td>
-                          <td>
-                            <button
-                              style={{
-                                borderWidth: 0,
-                                backgroundColor: "transparent",
-                              }}
-                            >
-                              <span
-                                class="material-icons-outlined"
-                                onClick={() => delEmp(E.empAccessId, index)}
-                                style={{ color: "#FF0000" }}
-                              >
-                                delete
-                              </span>
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    }
-                  )}
-                </tbody>
-              </table>
-            </div>
-          ) : null} */}
-
-          <div
-            style={{
-              width: "70%",
-              paddingLeft: "14%",
-              marginTop: 100,
-            }}
-          >
-            <Button
-              variant="contained"
-              style={{
-                color: "black",
-                backgroundColor: "#F8F9FA",
-                borderColor: "transparent",
-                marginRight: 10,
-                width: 120,
-              }}
-              onClick={handleRoute}
-            >
-              กลับ
-            </Button>
-            {ContentMainId ? (
+            <Grid item xs={12} sm={9.5} lg={6}>
               <Button
                 variant="contained"
                 style={{
@@ -1531,9 +1358,46 @@ export default function Information() {
                   marginRight: 10,
                   width: 120,
                 }}
-                onClick={() => Cancel()}
+                onClick={handleRoute}
               >
-                {LoadingC ? (
+                กลับ
+              </Button>
+              {ContentMainId ? (
+                <Button
+                  variant="contained"
+                  style={{
+                    color: "black",
+                    backgroundColor: "#F8F9FA",
+                    borderColor: "transparent",
+                    marginRight: 10,
+                    width: 120,
+                  }}
+                  onClick={() => Cancel()}
+                >
+                  {LoadingC ? (
+                    <CircularProgress
+                      sx={{
+                        color: "black",
+                      }}
+                      size={24}
+                    />
+                  ) : (
+                    "ยกเลิก"
+                  )}
+                </Button>
+              ) : null}
+              <Button
+                variant="contained"
+                style={{
+                  color: "black",
+                  borderColor: "transparent",
+                  backgroundColor: "#F8F9FA",
+                  marginRight: 10,
+                  width: 120,
+                }}
+                onClick={() => handleDraft()}
+              >
+                {LoadingD ? (
                   <CircularProgress
                     sx={{
                       color: "black",
@@ -1541,55 +1405,33 @@ export default function Information() {
                     size={24}
                   />
                 ) : (
-                  "ยกเลิก"
+                  "บันทึกฉบับร่าง"
                 )}
               </Button>
-            ) : null}
-            <Button
-              variant="contained"
-              style={{
-                color: "black",
-                borderColor: "transparent",
-                backgroundColor: "#F8F9FA",
-                marginRight: 10,
-                width: 120,
-              }}
-              onClick={() => handleDraft()}
-            >
-              {LoadingD ? (
-                <CircularProgress
-                  sx={{
-                    color: "black",
-                  }}
-                  size={24}
-                />
-              ) : (
-                "บันทึกฉบับร่าง"
-              )}
-            </Button>
-            <Button
-              variant="contained"
-              style={{
-                color: "white",
-                backgroundColor: "#FF0000",
-                borderColor: "transparent",
-                marginRight: 10,
-                width: 120,
-              }}
-              onClick={() => handleSubmit()}
-              type="submit"
-            >
-              {LoadingP ? (
-                <CircularProgress
-                  sx={{
-                    color: "#FFFFFF",
-                  }}
-                  size={24}
-                />
-              ) : (
-                "เผยแพร่"
-              )}
-            </Button>
+              <Button
+                variant="contained"
+                style={{
+                  color: "white",
+                  backgroundColor: "#FF0000",
+                  borderColor: "transparent",
+                  marginRight: 10,
+                  width: 120,
+                }}
+                onClick={() => handleSubmit()}
+                type="submit"
+              >
+                {LoadingP ? (
+                  <CircularProgress
+                    sx={{
+                      color: "#FFFFFF",
+                    }}
+                    size={24}
+                  />
+                ) : (
+                  "เผยแพร่"
+                )}
+              </Button>
+            </Grid>
             <Dialog
               open={open}
               fullWidth={true}
@@ -1622,7 +1464,7 @@ export default function Information() {
                 </p>
               </DialogContent>
             </Dialog>
-          </div>
+          </Grid>
         </div>
       </Paper>
     </div>

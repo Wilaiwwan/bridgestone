@@ -36,7 +36,6 @@ import ReportExcel from "./Screens/B-Report/Report";
 function App() {
   const [isInitEnvError, setInitEnvError] = useState(false);
   const [isInitEnv, setInitEnv] = useState(false);
-  // setInterceptors();
   const history = useHistory();
   useEffect(() => {
     const loadEnv = async () => {
@@ -44,9 +43,7 @@ function App() {
         await envInstants.init();
         httpClientInstants.setBaseUrl(envInstants.getConfig().baseUrl);
         setDefaultURL(envInstants.getConfig().baseUrl);
-        // console.log(envInstants);
 
-        // console.log(api.defaults.baseURL);
       } catch (error) {
         console.log(error);
         setInitEnvError(true);

@@ -20,6 +20,7 @@ import TableRow from "@mui/material/TableRow";
 import { useHistory, Link } from "react-router-dom";
 import api from "../../Component/api/api";
 import qs from "qs";
+import Grid from "@mui/material/Grid";
 
 const drawerHeight = "100%";
 const drawerwidth = "100%";
@@ -33,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     border: "1px solid #e0e0e0",
-    width: "20%",
+    width: "100%",
     marginRight: 20,
   },
   Padding: {
@@ -128,46 +129,47 @@ export default function AllUser() {
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>B-Admin</p>
           <h3>ผู้ใช้ทั้งหมด</h3>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginBottom: 20,
-              alignItems: "center",
-            }}
+          <Grid
+            container
+            spacing={2}
+            sx={{ justifyContent: { sm: "right" }, marginBottom: 2 }}
+            rowSpacing={1}
           >
-            <FormControl
-              size="small"
-              sx={{
-                width: "15%",
-                marginRight: 5,
-              }}
-            >
-              <Select
-                style={{ marginTop: 5 }}
-                value={RoleId}
-                onChange={(e) => setRoleId(e.target.value)}
-                displayEmpty
-                inputProps={{ "aria-label": "Without label" }}
-                disableUnderline
+            <Grid item xs={7} sm={4} lg={2}>
+              <FormControl
+                size="small"
+                sx={{
+                  width: "100%",
+                }}
               >
-                <MenuItem value="">
-                  <em>บทบาททั้งหมด</em>
-                </MenuItem>
-                {RoleList.filter((x) => x.roleId !== "1").map((Data) => (
-                  <MenuItem value={Data.roleId}>{Data.roleName}</MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <div className={classes.search}>
-              <SearchIcon style={{ margin: 10 }} />
-              <InputBase
-                multiline
-                fullWidth
-                placeholder="ค้นหา"
-                onChange={(e) => setKeyword(e.target.value)}
-              />
-            </div>
+                <Select
+                  style={{ marginTop: 5 }}
+                  value={RoleId}
+                  onChange={(e) => setRoleId(e.target.value)}
+                  displayEmpty
+                  inputProps={{ "aria-label": "Without label" }}
+                  disableUnderline
+                >
+                  <MenuItem value="">
+                    <em>บทบาททั้งหมด</em>
+                  </MenuItem>
+                  {RoleList.filter((x) => x.roleId !== "1").map((Data) => (
+                    <MenuItem value={Data.roleId}>{Data.roleName}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={7} sm={4} lg={3}>
+              <div className={classes.search}>
+                <SearchIcon style={{ margin: 10 }} />
+                <InputBase
+                  multiline
+                  fullWidth
+                  placeholder="ค้นหา"
+                  onChange={(e) => setKeyword(e.target.value)}
+                />
+              </div>
+            </Grid>
             {/* <Button
               variant="contained"
               style={{
@@ -181,7 +183,7 @@ export default function AllUser() {
             >
               เพิ่มผู้ใช้งาน
             </Button> */}
-          </div>
+          </Grid>
 
           <TableContainer
             // component={Paper}

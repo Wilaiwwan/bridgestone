@@ -10,6 +10,7 @@ import {
   Select,
   CircularProgress,
   MenuItem,
+  Grid,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SearchIcon from "@mui/icons-material/Search";
@@ -38,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     border: "1px solid #e0e0e0",
-    width: "20%",
+    width: "100%",
   },
   Padding: {
     paddingTop: "2%",
@@ -84,7 +85,6 @@ export default function AllSubject() {
   const [Loading, setLoading] = useState(false);
   const [CatalogyList, setCatalogyList] = useState([]);
   const [selectAdmin, setSelectAdmin] = useState([]);
-  console.log(selectAdmin);
 
   const fetchAdminContentList = async () => {
     try {
@@ -175,7 +175,6 @@ export default function AllSubject() {
     if (!result.destination) {
       return;
     }
-    console.log(result);
     const items = reorder(
       AdminContentList,
       result.source.index,
@@ -191,64 +190,69 @@ export default function AllSubject() {
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>News/Announcement</p>
           <h3>เรื่องทั้งหมด</h3>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginBottom: 30,
-            }}
+          <Grid
+            container
+            spacing={2}
+            sx={{ justifyContent: { sm: "right" }, marginBottom: 2 }}
+            rowSpacing={1}
           >
-            <FormControlLabel
-              control={
-                <Checkbox
-                  sx={{
-                    color: "#FF0000",
-                    "&.Mui-checked": {
+            <Grid item xs={7} sm={2.5} lg={1}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    sx={{
                       color: "#FF0000",
-                    },
-                  }}
-                  id={"Active"}
-                  checked={isActive}
-                  onChange={(e) => setIsActive(e.target.checked)}
-                />
-              }
-              label="ใช้งาน"
-            />
-            <FormControl
-              size="small"
-              sx={{
-                width: "15%",
-                marginRight: 5,
-              }}
-            >
-              <Select
-                style={{ marginTop: 5 }}
-                value={CatalogyId}
-                onChange={(e) => setCatalogyId(e.target.value)}
-                displayEmpty
-                inputProps={{ "aria-label": "Without label" }}
-                disableUnderline
-              >
-                <MenuItem value="">
-                  <em>หมวดหมู่ทั้งหมด</em>
-                </MenuItem>
-                {CatalogyList.map((Data) => (
-                  <MenuItem value={Data.catalogyId}>
-                    {Data.catalogyName}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <div className={classes.search}>
-              <SearchIcon style={{ margin: 10 }} />
-              <InputBase
-                multiline
-                fullWidth
-                placeholder="ค้นหาเรื่อง"
-                onChange={(e) => setKeyword(e.target.value)}
+                      "&.Mui-checked": {
+                        color: "#FF0000",
+                      },
+                    }}
+                    id={"Active"}
+                    checked={isActive}
+                    onChange={(e) => setIsActive(e.target.checked)}
+                  />
+                }
+                label="ใช้งาน"
               />
-            </div>
-          </div>
+            </Grid>
+            <Grid item xs={7} sm={4} lg={2}>
+              <FormControl
+                size="small"
+                sx={{
+                  width: "100%",
+                  marginRight: 5,
+                }}
+              >
+                <Select
+                  style={{ marginTop: 5 }}
+                  value={CatalogyId}
+                  onChange={(e) => setCatalogyId(e.target.value)}
+                  displayEmpty
+                  inputProps={{ "aria-label": "Without label" }}
+                  disableUnderline
+                >
+                  <MenuItem value="">
+                    <em>หมวดหมู่ทั้งหมด</em>
+                  </MenuItem>
+                  {CatalogyList.map((Data) => (
+                    <MenuItem value={Data.catalogyId}>
+                      {Data.catalogyName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={7} sm={4} lg={3}>
+              <div className={classes.search}>
+                <SearchIcon style={{ margin: 10 }} />
+                <InputBase
+                  multiline
+                  fullWidth
+                  placeholder="ค้นหาเรื่อง"
+                  onChange={(e) => setKeyword(e.target.value)}
+                />
+              </div>
+            </Grid>
+          </Grid>
 
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="droppable">
@@ -291,84 +295,83 @@ export default function AllSubject() {
                           </StyledTableCell>
                         </TableRow>
                       </TableHead>
-                      <TableBody
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
+                      <TableBody>
                         {AdminContentList.length > 0
                           ? (rowsPerPage > 0
-                            ? AdminContentList.slice(
-                              page * rowsPerPage,
-                              page * rowsPerPage + rowsPerPage
-                            )
-                            : AdminContentList
-                          ).map((Data, index) => (
-                            <Draggable
-                              key={Data.contentMainId}
-                              draggableId={Data.contentMainId}
-                              index={index}
-                            >
-                              {(provided, snapshot) => (
-
-                                <StyledTableRow key={Data.contentMainId}>
-                                  <StyledTableCell align="center">
-                                    {Data.seq}
-                                  </StyledTableCell>
-                                  <StyledTableCell align="center">
-                                    {moment(Data.startDate).format(
-                                      "DD-MM-YYYY"
-                                    )}
-                                  </StyledTableCell>
-                                  <StyledTableCell align="center">
-                                    {moment(Data.endDate).format(
-                                      "DD-MM-YYYY"
-                                    )}
-                                  </StyledTableCell>
-                                  <StyledTableCell align="center">
-                                    {Data.contentTitle}
-                                  </StyledTableCell>
-                                  <StyledTableCell align="center">
-                                    {Data.catalogyName}
-                                  </StyledTableCell>
-                                  <StyledTableCell align="center">
-                                    {Data.subCatalogyName}
-                                  </StyledTableCell>
-                                  <StyledTableCell align="left">
-                                    {Data.createName}
-                                  </StyledTableCell>
-                                  <StyledTableCell align="center">
-                                    {Data.status === "C"
-                                      ? "Cancel"
-                                      : Data.status === "D"
+                              ? AdminContentList.slice(
+                                  page * rowsPerPage,
+                                  page * rowsPerPage + rowsPerPage
+                                )
+                              : AdminContentList
+                            ).map((Data, index) => (
+                              <Draggable
+                                key={Data.contentMainId}
+                                draggableId={Data.contentMainId}
+                                index={index}
+                              >
+                                {(provided, snapshot) => (
+                                  <StyledTableRow
+                                    key={Data.contentMainId}
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                  >
+                                    <StyledTableCell align="center">
+                                      {Data.seq}
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
+                                      {moment(Data.startDate).format(
+                                        "DD-MM-YYYY"
+                                      )}
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
+                                      {moment(Data.endDate).format(
+                                        "DD-MM-YYYY"
+                                      )}
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
+                                      {Data.contentTitle}
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
+                                      {Data.catalogyName}
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
+                                      {Data.subCatalogyName}
+                                    </StyledTableCell>
+                                    <StyledTableCell align="left">
+                                      {Data.createName}
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
+                                      {Data.status === "C"
+                                        ? "Cancel"
+                                        : Data.status === "D"
                                         ? "Draff"
                                         : "Publish"}
-                                  </StyledTableCell>
-                                  <StyledTableCell align="center">
-                                    <Link
-                                      to={{
-                                        pathname: `/EditInformation/${Data.contentMainId}`,
-                                      }}
-                                    >
-                                      <Button
-                                        variant="contained"
-                                        style={{
-                                          color: "white",
-                                          backgroundColor: "#FF0000",
-                                          borderColor: "transparent",
-                                          marginRight: 10,
-                                          width: 80,
+                                    </StyledTableCell>
+                                    <StyledTableCell align="center">
+                                      <Link
+                                        to={{
+                                          pathname: `/EditInformation/${Data.contentMainId}`,
                                         }}
                                       >
-                                        เพิ่มเติม
-                                      </Button>
-                                    </Link>
-                                  </StyledTableCell>
-                                </StyledTableRow>
-
-                              )}
-                            </Draggable>
-                          ))
+                                        <Button
+                                          variant="contained"
+                                          style={{
+                                            color: "white",
+                                            backgroundColor: "#FF0000",
+                                            borderColor: "transparent",
+                                            marginRight: 10,
+                                            width: 80,
+                                          }}
+                                        >
+                                          เพิ่มเติม
+                                        </Button>
+                                      </Link>
+                                    </StyledTableCell>
+                                  </StyledTableRow>
+                                )}
+                              </Draggable>
+                            ))
                           : null}
                       </TableBody>
                     </Table>

@@ -6,6 +6,7 @@ import {
   Button,
   TextField,
   CircularProgress,
+  Grid,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { alpha, styled } from "@mui/material/styles";
@@ -44,16 +45,8 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: "6%",
     paddingLeft: "6%",
     paddingBottom: "2%",
-  },
-  widthInput: {
-    width: "70%",
-    display: "flex",
-    flexDirection: "row",
-    // alignItems: "center",
-    marginTop: 50,
-  },
-  subject: {
-    width: "20%",
+    maxHeight: "88vh",
+    overflow: "auto",
   },
   imgFileType: {
     width: 50,
@@ -129,16 +122,13 @@ export default function EditUser() {
         const result = await FileUploadService.upload(_files);
         const _result = result.data.results.fileId;
         setFileId(_result);
-        console.log(result);
       } catch (error) {
-        console.log("Could not upload the file!");
         setFiles([]);
       }
     },
   });
 
   const Del = (index) => {
-    console.log(index);
     setFiles([]);
     setFileId(null);
     setPath("");
@@ -148,7 +138,6 @@ export default function EditUser() {
 
   const images = Files.map((file, index) => (
     <div key={index} className={classes.Row}>
-      {console.log(file.type)}
 
       {/* <img src={file.preview} style={{ width: "150px" }} alt="preview" /> */}
       {file.type == "image/png" ? (
@@ -233,7 +222,6 @@ export default function EditUser() {
       setFileId(_result.fileId);
       setStatus(_result.status);
       setPath(_result.path);
-      console.log(_result);
     } catch (error) {
       console.log("error => ", error);
     }
@@ -244,7 +232,6 @@ export default function EditUser() {
       const result = await api.get("api/setting/role/list");
       const _result = result.data.results;
       setRoleList(_result);
-      console.log(_result);
     } catch (error) {
       console.log("error => ", error);
     }
@@ -271,7 +258,6 @@ export default function EditUser() {
       setTimeout(() => {
         history.push(`/AllUser`);
       }, 2000);
-      console.log(result);
     } catch (error) {
       console.log("error => ", error);
       setLoading(false);
@@ -293,16 +279,13 @@ export default function EditUser() {
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>B-Admin</p>
           <h3>แก้ไขผู้ใช้</h3>
-          <div className={classes.widthInput}>
-            <p className={classes.subject}>รหัสพนักงาน</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>รหัสพนักงาน</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               <TextField
+                sx={{ width: "100%" }}
                 size="small"
                 placeholder="รหัสพนักงาน"
                 onChange={(e) => setEmpNo(e.target.value)}
@@ -310,19 +293,16 @@ export default function EditUser() {
                 required
                 error={EmpNoErr}
               />
-            </div>
-          </div>
+            </Grid>
+          </Grid>
 
-          <div className={classes.widthInput}>
-            <p className={classes.subject}>ชื่อ</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>ชื่อ</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               <TextField
+                sx={{ width: "100%" }}
                 size="small"
                 placeholder="ชื่อ"
                 onChange={(e) => setFirstName(e.target.value)}
@@ -330,18 +310,15 @@ export default function EditUser() {
                 required
                 error={FnameErr}
               />
-            </div>
-          </div>
-          <div className={classes.widthInput}>
-            <p className={classes.subject}>นามสกุล</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>นามสกุล</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               <TextField
+                sx={{ width: "100%" }}
                 size="small"
                 placeholder="นามสกุล"
                 onChange={(e) => setLastName(e.target.value)}
@@ -349,18 +326,14 @@ export default function EditUser() {
                 required
                 error={LnameErr}
               />
-            </div>
-          </div>
-          <div className={classes.widthInput}>
-            <p className={classes.subject}>บทบาท</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
-              <FormControl size="small">
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>บทบาท</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
+              <FormControl size="small" sx={{ width: "100%" }}>
                 <Select
                   value={RoleId}
                   onChange={(e) => setRoleId(e.target.value)}
@@ -375,18 +348,15 @@ export default function EditUser() {
                   ))}
                 </Select>
               </FormControl>
-            </div>
-          </div>
-          <div className={classes.widthInput}>
-            <p className={classes.subject}>แผนก</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>แผนก</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               <TextField
+                sx={{ width: "100%" }}
                 size="small"
                 placeholder="แผนก"
                 onChange={(e) => setOrgname(e.target.value)}
@@ -394,10 +364,12 @@ export default function EditUser() {
                 required
                 error={OrgnameErr}
               />
-            </div>
-          </div>
-          <div className={classes.widthInput}>
-            <p className={classes.subject}>รูปภาพ</p>
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>รูปภาพ</p>
+            </Grid>
             <div>
               {Path && !ShowInput ? (
                 <div className={classes.Row}>
@@ -504,65 +476,60 @@ export default function EditUser() {
                 </div>
               )}
             </div>
-          </div>
-          <div className={classes.widthInput}>
-            <p className={classes.subject}>สถานะ</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
+          </Grid>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>สถานะ</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               <GreenSwitch
                 checked={Status}
                 onChange={(e) => setStatus(e.target.checked)}
               />
-            </div>
-          </div>
-          <div
-            style={{
-              width: "70%",
-              paddingLeft: "14%",
-              marginTop: 50,
-            }}
-          >
-            <Button
-              variant="contained"
-              style={{
-                color: "black",
-                backgroundColor: "#F8F9FA",
-                borderColor: "transparent",
-                marginRight: 10,
-                width: 120,
-              }}
-              onClick={handleRoute}
-            >
-              กลับ
-            </Button>
-            <Button
-              variant="contained"
-              style={{
-                color: "white",
-                backgroundColor: "#FF0000",
-                borderColor: "transparent",
-                marginRight: 10,
-                width: 120,
-              }}
-              onClick={() => handleSubmit()}
-              type="submit"
-            >
-              {Loading ? (
-                <CircularProgress
-                  sx={{
-                    color: "#FFFFFF",
-                  }}
-                  size={24}
-                />
-              ) : (
-                "บันทึก"
-              )}
-            </Button>
+            </Grid>
+          </Grid>
+
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2} />
+
+            <Grid item xs={12} sm={9.5} lg={6}>
+              <Button
+                variant="contained"
+                style={{
+                  color: "black",
+                  backgroundColor: "#F8F9FA",
+                  borderColor: "transparent",
+                  marginRight: 10,
+                  width: 120,
+                }}
+                onClick={handleRoute}
+              >
+                กลับ
+              </Button>
+              <Button
+                variant="contained"
+                style={{
+                  color: "white",
+                  backgroundColor: "#FF0000",
+                  borderColor: "transparent",
+                  marginRight: 10,
+                  width: 120,
+                }}
+                onClick={() => handleSubmit()}
+                type="submit"
+              >
+                {Loading ? (
+                  <CircularProgress
+                    sx={{
+                      color: "#FFFFFF",
+                    }}
+                    size={24}
+                  />
+                ) : (
+                  "บันทึก"
+                )}
+              </Button>
+            </Grid>
             <Dialog
               open={open}
               fullWidth={true}
@@ -595,7 +562,7 @@ export default function EditUser() {
                 </p>
               </DialogContent>
             </Dialog>
-          </div>
+          </Grid>
         </div>
       </Paper>
     </div>

@@ -9,21 +9,9 @@ import qs from "qs";
 import api from "../../Component/api/api";
 import { useHistory } from "react-router-dom";
 import "./Report.css";
+import Grid from "@mui/material/Grid";
 
-const drawerHeight = "100%";
-const drawerwidth = "100%";
 const useStyles = makeStyles((theme) => ({
-  root: {
-    height: drawerHeight,
-    width: drawerwidth,
-    marginTop: 20,
-  },
-  search: {
-    display: "flex",
-    alignItems: "center",
-    border: "1px solid #e0e0e0",
-    width: "100%",
-  },
   input: {
     padding: 10,
     margin: 5,
@@ -111,24 +99,18 @@ export default function ReportExcel() {
   }, []);
 
   return (
-    <div className={classes.root}>
-      <Paper elevation={1} style={{ height: "88vh" }}>
-        <div
-          style={{
-            width: "100%",
-            padding: 20,
-            display: "flex",
-            flexDirection: "row",
-          }}
-          className={classes.wrapRow}
-        >
+    <Grid container md={12}>
+      <Paper
+        elevation={1}
+        sx={{ height: "88vh", width: { lg: "100%" }, marginTop: 2.5 }}
+      >
+        <Grid item xs={12}>
           <table
             id="table_Button"
             style={{
               border: "1px solid #e0e0e0",
               width: "100%",
               minWidth: "100%",
-              height: "83vh",
             }}
           >
             <td
@@ -278,7 +260,11 @@ export default function ReportExcel() {
                   ดาวน์โหลด
                 </Button>
               </tr>
-              <tr>
+              <tr
+                style={{
+                  display: "flex",
+                }}
+              >
                 <div className="containerTable">
                   {ReportList?.length > 0 ? (
                     <table id="report" className="table">
@@ -294,7 +280,9 @@ export default function ReportExcel() {
                         <tr>
                           <th className="layoutTable">#</th>
                           <th className="layoutTable2">วันที่</th>
+                          <th className="layoutTable2">รหัสพนักงาน</th>
                           <th className="layoutTable3">ชื่อ-นามสกุล</th>
+                          <th className="layoutTable3">แผนก</th>
                           <th className="layoutTable4">รายละเอียด</th>
                           <th className="layoutTable2">คะแนน</th>
                           <th className="layoutTable2">คะแนนคงเหลือ</th>
@@ -323,11 +311,15 @@ export default function ReportExcel() {
                                     "DD-MM-YYYY"
                                   )}
                                 </td>
-                                <td>
+                                <td>{ReportData.empNo}</td>
+
+                                <td align="left">
                                   {ReportData.empFirstname}
                                   <span>&nbsp;&nbsp;</span>
                                   {ReportData.empLastname}
                                 </td>
+                                <td>{ReportData.orgname}</td>
+
                                 <td>{ReportData.description}</td>
                                 <td>{ReportData.point}</td>
                                 <td>{ReportData.balancePoint}</td>
@@ -352,8 +344,8 @@ export default function ReportExcel() {
               </tr>
             </td>
           </table>
-        </div>
+        </Grid>
       </Paper>
-    </div>
+    </Grid>
   );
 }

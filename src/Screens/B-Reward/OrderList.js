@@ -10,6 +10,7 @@ import {
   DialogTitle,
   TextareaAutosize,
   CircularProgress,
+  Grid,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SearchIcon from "@mui/icons-material/Search";
@@ -37,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     border: "1px solid #e0e0e0",
-    width: "20%",
+    width: "100%",
   },
   Padding: {
     paddingTop: "2%",
@@ -83,6 +84,7 @@ export default function OrderList() {
   const [Remark, setRemark] = useState(null);
   const [saleNo, setSaleNo] = useState(null);
   const [Name, setName] = useState(null);
+  const [Org, setOrg] = useState(null);
   const [item, setItem] = useState(null);
   const [SalesHeadId, setSalesHeadId] = useState(null);
   const [ItemId, setItemId] = useState(null);
@@ -102,7 +104,6 @@ export default function OrderList() {
       const result = await api.get(`/api/bpoint/salehead/list?${params}`);
       const _result = result.data.results;
       setOrderList(_result);
-      console.log(_result);
     } catch (error) {
       console.log("error => ", error);
     }
@@ -175,6 +176,7 @@ export default function OrderList() {
     setOpenAdd(true);
     setName(results.firstname + " " + results.lastname);
     setItem(results.itemName);
+    setOrg(results.orgname);
   };
 
   const handleClose = () => {
@@ -195,23 +197,24 @@ export default function OrderList() {
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>B-Reward</p>
           <h3>รายการของที่สั่งทั้งหมด</h3>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginBottom: 30,
-            }}
+          <Grid
+            container
+            spacing={2}
+            sx={{ justifyContent: { sm: "right" }, marginBottom: 2 }}
+            rowSpacing={1}
           >
-            <div className={classes.search}>
-              <SearchIcon style={{ margin: 10 }} />
-              <InputBase
-                multiline
-                fullWidth
-                placeholder="ค้นหา"
-                onChange={(e) => setKeyword(e.target.value)}
-              />
-            </div>
-          </div>
+            <Grid item xs={7} sm={4} lg={3}>
+              <div className={classes.search}>
+                <SearchIcon style={{ margin: 10 }} />
+                <InputBase
+                  multiline
+                  fullWidth
+                  placeholder="ค้นหา"
+                  onChange={(e) => setKeyword(e.target.value)}
+                />
+              </div>
+            </Grid>
+          </Grid>
 
           <TableContainer sx={{ maxHeight: "58vh", height: "58vh" }}>
             <Table stickyHeader size="small" aria-label="customized table">
@@ -220,6 +223,7 @@ export default function OrderList() {
                   <StyledTableCell align="center">วันที่</StyledTableCell>
                   <StyledTableCell align="center">เลขที่</StyledTableCell>
                   <StyledTableCell align="center">ชื่อ-สกุล</StyledTableCell>
+                  <StyledTableCell align="center">แผนก</StyledTableCell>
                   <StyledTableCell align="center">สินค้า</StyledTableCell>
                   <StyledTableCell align="center">จำนวน</StyledTableCell>
                   <StyledTableCell align="center">สถานะ</StyledTableCell>
@@ -249,8 +253,12 @@ export default function OrderList() {
                           {Data.lastname}
                         </StyledTableCell>
                         <StyledTableCell align="center">
+                          {Data.orgname}
+                        </StyledTableCell>
+                        <StyledTableCell align="center">
                           {Data.itemName}
                         </StyledTableCell>
+
                         <StyledTableCell align="center">
                           {Data.totalPoint}
                         </StyledTableCell>
@@ -293,6 +301,9 @@ export default function OrderList() {
               <h4>
                 ชื่อ{" "}
                 <span style={{ color: "red", marginLeft: 10 }}>{Name}</span>
+              </h4>
+              <h4>
+                แผนก <span style={{ color: "red", marginLeft: 10 }}>{Org}</span>
               </h4>
               <h4>
                 สินค้า{" "}

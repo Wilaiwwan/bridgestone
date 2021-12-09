@@ -28,7 +28,6 @@ instance.interceptors.response.use(
     }),
   (error) => {
     const _url = error.response.config.url;
-    console.log(_url);
     if (_url.indexOf(apiExcept) === -1) {
       if (error.response.status === 401) {
         localStorage.removeItem("token");
@@ -48,7 +47,6 @@ export function setDefaultURL(url) {
 
   instance.defaults.baseURL = url;
 
-  // console.log(instance.defaults.baseURL);
 }
 
 

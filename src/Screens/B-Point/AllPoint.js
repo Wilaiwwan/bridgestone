@@ -26,6 +26,7 @@ import qs from "qs";
 import moment from "moment";
 import api from "../../Component/api/api";
 import "moment/locale/th";
+import Grid from "@mui/material/Grid";
 import FileUploadService from "../../Services/FileUploadService";
 
 const drawerHeight = "100%";
@@ -40,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     border: "1px solid #e0e0e0",
-    width: "20%",
+    width: "100%",
   },
   Padding: {
     paddingTop: "2%",
@@ -121,7 +122,6 @@ export default function AllPoint() {
       const result = await api.get(`/api/bpoint/employee/point/list?${params}`);
       const _result = result.data.results;
       setPointList(_result);
-      console.log(result);
     } catch (error) {
       console.log("error => ", error);
     }
@@ -168,12 +168,10 @@ export default function AllPoint() {
   };
 
   const Upload = async () => {
-    console.log(files);
     try {
       const result = await FileUploadService.uploadExcel(files);
       setMessageErr(result.data.message);
       setErrList(result.data.results);
-      console.log(result);
     } catch (error) {
       console.log("Could not upload the file!", error);
       setFiles([]);
@@ -215,7 +213,6 @@ export default function AllPoint() {
   };
 
   const handleFileUpload = (event) => {
-    console.log(event.target.files[0]);
     let currentFiles = event.target.files[0];
 
     setFile(currentFiles);
@@ -224,7 +221,6 @@ export default function AllPoint() {
   };
 
   const setFile = (file) => {
-    console.log(file);
     setFiles([...files, file]);
     setOpenUp(true);
   };
@@ -250,15 +246,13 @@ export default function AllPoint() {
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>B-Point</p>
           <h3>คะแนนทั้งหมด</h3>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginTop: 30,
-              marginBottom: 30,
-            }}
+          <Grid
+            container
+            spacing={2}
+            sx={{ justifyContent: { sm: "right" }, marginBottom: 2,marginTop:4 }}
+            rowSpacing={1}
           >
-            <div style={{ marginTop: 5 }}>
+            <Grid item xs={7} sm={8} lg={9}>
               <Button
                 variant="outlined"
                 style={{
@@ -395,18 +389,20 @@ export default function AllPoint() {
                   )}
                 </DialogActions>
               </Dialog>
-            </div>
+            </Grid>
 
-            <div className={classes.search}>
-              <SearchIcon style={{ margin: 10 }} />
-              <InputBase
-                multiline
-                fullWidth
-                placeholder="ค้นหา"
-                onChange={(e) => setKeyword(e.target.value)}
-              />
-            </div>
-          </div>
+            <Grid item xs={7} sm={4} lg={3}>
+              <div className={classes.search}>
+                <SearchIcon style={{ margin: 10 }} />
+                <InputBase
+                  multiline
+                  fullWidth
+                  placeholder="ค้นหา"
+                  onChange={(e) => setKeyword(e.target.value)}
+                />
+              </div>
+            </Grid>
+          </Grid>
 
           <TableContainer sx={{ maxHeight: "56vh", height: "56vh" }}>
             <Table stickyHeader size="small" aria-label="customized table">

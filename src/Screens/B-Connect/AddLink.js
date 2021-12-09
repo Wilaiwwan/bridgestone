@@ -7,6 +7,7 @@ import {
   Dialog,
   DialogContent,
   CircularProgress,
+  Grid,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { alpha, styled } from "@mui/material/styles";
@@ -33,13 +34,6 @@ const useStyles = makeStyles((theme) => ({
     width: drawerwidth,
     marginTop: 20,
   },
-  width: {
-    width: "70%",
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 50,
-  },
   Padding: {
     paddingTop: "2%",
     paddingRight: "6%",
@@ -47,9 +41,6 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: "2%",
     maxHeight: "88vh",
     overflow: "auto",
-  },
-  subject: {
-    width: "20%",
   },
   imgFileType: {
     width: 50,
@@ -120,7 +111,6 @@ export default function AddLink() {
         const result = await FileUploadService.upload(_files);
         const _result = result.data.results.fileId;
         setFileId(_result);
-        console.log(result);
       } catch (error) {
         console.log("Could not upload the file!");
         setFiles([]);
@@ -138,7 +128,6 @@ export default function AddLink() {
 
   const images = Files.map((file, index) => (
     <div key={index} className={classes.Row}>
-      {console.log(file.type)}
 
       {/* <img src={file.preview} style={{ width: "150px" }} alt="preview" /> */}
       {file.type == "image/png" ? (
@@ -270,26 +259,25 @@ export default function AddLink() {
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>B-Connect</p>
           <h3>เพิ่มลิงค์ใหม่</h3>
-          <div className={classes.width}>
-            <p className={classes.subject}>ชื่อหัวข้อ</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
+          <Grid container sx={{ marginBottom: 5, marginTop: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>ชื่อหัวข้อ</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               <TextField
+                sx={{ width: "100%" }}
                 size="small"
                 onChange={(e) => setBconnectName(e.target.value)}
                 value={BconnectName}
                 required
                 error={NameErr}
               />
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>ไอคอน</p>
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5, marginTop: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>ไอคอน</p>
+            </Grid>
             <div>
               {Path && !ShowInput ? (
                 <div className={classes.Row}>
@@ -396,17 +384,13 @@ export default function AddLink() {
                 </div>
               )}
             </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>กลุ่ม</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
-              <FormControl size="small">
+          </Grid>
+          <Grid container sx={{ marginBottom: 5, marginTop: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>กลุ่ม</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
+              <FormControl size="small" sx={{ width: "100%" }}>
                 <Select
                   value={TypeConnectID}
                   onChange={(e) => setTypeConnectID(e.target.value)}
@@ -423,105 +407,83 @@ export default function AddLink() {
                   ))}
                 </Select>
               </FormControl>
-            </div>
-          </div>
+            </Grid>
+          </Grid>
 
-          {/* <div className={classes.width}>
-            <p className={classes.subject}>ลำดับ</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
-              <TextField
-                size="small"
-                type="number"
-                onChange={(e) => setSeq(e.target.value)}
-                value={Seq}
-              />
-            </div>
-          </div> */}
-
-          <div className={classes.width}>
-            <p className={classes.subject}>ลิงค์ปลายทาง</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
-              <TextareaAutosize
-                aria-label="minimum height"
-                minRows={4}
-                style={{ flexGrow: 1, borderColor: "#dbdbdb" }}
-                onChange={(e) => setURL(e.target.value)}
-                value={url}
-              />
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>ใช้งาน</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
+          <Grid container sx={{ marginBottom: 5, marginTop: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>ลิงค์ปลายทาง</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  flexGrow: 1,
+                }}
+              >
+                <TextareaAutosize
+                  aria-label="minimum height"
+                  minRows={4}
+                  // sx={{ flexGrow: 1, borderColor: "#dbdbdb" }}
+                  onChange={(e) => setURL(e.target.value)}
+                  value={url}
+                />
+              </div>
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5, marginTop: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>ใช้งาน</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               <GreenSwitch
                 checked={Deleted}
                 onChange={(e) => setDeleted(e.target.checked)}
               />
-            </div>
-          </div>
-          <div
-            style={{
-              width: "70%",
-              paddingLeft: "14%",
-              marginTop: 50,
-              display: "flex",
-              flexDirection: "row",
-            }}
-          >
-            <Button
-              variant="contained"
-              style={{
-                color: "black",
-                backgroundColor: "#F8F9FA",
-                borderColor: "transparent",
-                marginRight: 10,
-                width: 120,
-              }}
-              onClick={handleRoute}
-            >
-              กลับ
-            </Button>
-            <Button
-              variant="contained"
-              style={{
-                color: "white",
-                backgroundColor: "#FF0000",
-                borderColor: "transparent",
-                marginRight: 10,
-                width: 120,
-              }}
-              onClick={() => handleSubmit()}
-              type="submit"
-            >
-              {Loading ? (
-                <CircularProgress
-                  sx={{
-                    color: "#FFFFFF",
-                  }}
-                  size={24}
-                />
-              ) : (
-                "บันทึก"
-              )}
-            </Button>
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2} />
+
+            <Grid item xs={12} sm={9.5} lg={6}>
+              <Button
+                variant="contained"
+                style={{
+                  color: "black",
+                  backgroundColor: "#F8F9FA",
+                  borderColor: "transparent",
+                  marginRight: 10,
+                  width: 120,
+                }}
+                onClick={handleRoute}
+              >
+                กลับ
+              </Button>
+              <Button
+                variant="contained"
+                style={{
+                  color: "white",
+                  backgroundColor: "#FF0000",
+                  borderColor: "transparent",
+                  marginRight: 10,
+                  width: 120,
+                }}
+                onClick={() => handleSubmit()}
+                type="submit"
+              >
+                {Loading ? (
+                  <CircularProgress
+                    sx={{
+                      color: "#FFFFFF",
+                    }}
+                    size={24}
+                  />
+                ) : (
+                  "บันทึก"
+                )}
+              </Button>
+            </Grid>
             <Dialog
               open={open}
               fullWidth={true}
@@ -554,35 +516,7 @@ export default function AddLink() {
                 </p>
               </DialogContent>
             </Dialog>
-            {/* <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                flexGrow: 1,
-              }}
-            >
-              <Button
-                onClick={() => setDeleted(true)}
-                variant="contained"
-                style={{
-                  color: "black",
-                  backgroundColor: "#F8F9FA",
-                  borderColor: "transparent",
-                  marginRight: 10,
-                  width: 120,
-                }}
-              >
-                ลบ
-              </Button>
-              <Dialog open={Deleted} onClose={handleClose}>
-                <DialogTitle>ต้องการลบ {BconnectName}?</DialogTitle>
-                <DialogActions>
-                  <Button onClick={() => save()}>ตกลง</Button>
-                  <Button onClick={handleClose}>ยกเลิก</Button>
-                </DialogActions>
-              </Dialog>
-            </div> */}
-          </div>
+          </Grid>
         </div>
       </Paper>
     </div>

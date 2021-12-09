@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Paper, InputBase, Button, TablePagination } from "@mui/material";
+import { Paper, InputBase, Button, TablePagination, Grid } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import SearchIcon from "@mui/icons-material/Search";
 import Table from "@mui/material/Table";
@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     border: "1px solid #e0e0e0",
-    width: "20%",
+    width: "100%",
   },
   Padding: {
     paddingTop: "2%",
@@ -89,7 +89,6 @@ export default function AllRound() {
       const result = await api.get(`/api/excellent/head/list?${params}`);
       const _result = result.data.results;
       setRoundList(_result);
-      console.log(result);
     } catch (error) {
       console.log("error => ", error);
     }
@@ -118,37 +117,44 @@ export default function AllRound() {
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>B-360</p>
           <h3>พนักงานดีเด่น</h3>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginBottom: 30,
-            }}
+          <Grid
+            container
+            spacing={2}
+            sx={{ justifyContent: { sm: "right" }, marginBottom: 2 }}
+            rowSpacing={1}
           >
-            <Button
-              variant="contained"
-              style={{
-                color: "white",
-                backgroundColor: "#FF0000",
-                borderColor: "transparent",
-                marginRight: 40,
-                width: 70,
-              }}
-              size="small"
-              onClick={() => history.push("/AddMember")}
+            <Grid
+              item
+              xs={7}
+              sm={2.5}
+              lg={1}
+              sx={{ marginRight: { md: 2 } }}
             >
-              เพิ่มรอบ
-            </Button>
-            <div className={classes.search}>
-              <SearchIcon style={{ margin: 10 }} />
-              <InputBase
-                multiline
-                fullWidth
-                placeholder="ค้นหาเรื่อง"
-                onChange={(e) => setKeyword(e.target.value)}
-              />
-            </div>
-          </div>
+              <Button
+                variant="contained"
+                style={{
+                  color: "white",
+                  backgroundColor: "#FF0000",
+                  borderColor: "transparent",
+                  width: 80,
+                }}
+                onClick={() => history.push("/AddMember")}
+              >
+                เพิ่มรอบ
+              </Button>
+            </Grid>
+            <Grid item xs={7} sm={4} lg={3}>
+              <div className={classes.search}>
+                <SearchIcon style={{ margin: 10 }} />
+                <InputBase
+                  multiline
+                  fullWidth
+                  placeholder="ค้นหาเรื่อง"
+                  onChange={(e) => setKeyword(e.target.value)}
+                />
+              </div>
+            </Grid>
+          </Grid>
 
           <TableContainer sx={{ maxHeight: "58vh", height: "58vh" }}>
             <Table stickyHeader size="small" aria-label="customized table">

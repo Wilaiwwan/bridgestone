@@ -32,12 +32,10 @@ export class HttpClient {
         method: "GET",
       };
 
-      console.log("HttpClient request => ", configs);
 
       const httpResponse = await this.httpRequest(configs);
       const response = await this.handle401(httpResponse, configs);
 
-      console.log("HttpClient response => ", response);
 
       return response.json();
     } catch (error) {
@@ -77,12 +75,10 @@ export class HttpClient {
         body: isFormData ? body : JSON.stringify({ ...body }),
       };
 
-      console.log("HttpClient request => ", configs);
 
       const httpResponse = await this.httpRequest(configs);
       const response = await this.handle401(httpResponse, configs);
 
-      console.log("HttpClient response => ", response);
 
       return response.json();
     } catch (error) {

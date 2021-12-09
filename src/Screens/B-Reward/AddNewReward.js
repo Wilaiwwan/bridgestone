@@ -6,6 +6,7 @@ import {
   Dialog,
   DialogContent,
   CircularProgress,
+  Grid,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { alpha, styled } from "@mui/material/styles";
@@ -32,13 +33,6 @@ const useStyles = makeStyles((theme) => ({
     width: drawerwidth,
     marginTop: 20,
   },
-  width: {
-    width: "70%",
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 50,
-  },
   Padding: {
     paddingTop: "2%",
     paddingRight: "6%",
@@ -46,9 +40,6 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: "2%",
     maxHeight: "88vh",
     overflow: "auto",
-  },
-  subject: {
-    width: "20%",
   },
   imgFileType: {
     width: 50,
@@ -121,7 +112,6 @@ export default function AddNewReward() {
         const result = await FileUploadService.upload(_files);
         const _result = result.data.results.fileId;
         setFileId(_result);
-        console.log(result);
       } catch (error) {
         console.log("Could not upload the file!");
         setFiles([]);
@@ -130,7 +120,6 @@ export default function AddNewReward() {
   });
   const images = Files.map((file, index) => (
     <div key={index} className={classes.Row}>
-      {console.log(file.type)}
 
       {/* <img src={file.preview} style={{ width: "150px" }} alt="preview" /> */}
       {file.type === "image/png" ? (
@@ -189,7 +178,6 @@ export default function AddNewReward() {
       setTimeout(() => {
         history.push(`/AllReward`);
       }, 2000);
-      console.log(result);
     } catch (error) {
       console.error("error => ", error);
       setLoading(false);
@@ -224,7 +212,6 @@ export default function AddNewReward() {
       setPath(_result.path);
       setDescription(_result.description);
 
-      console.log(result);
     } catch (error) {
       console.log("error => ", error);
     }
@@ -265,27 +252,26 @@ export default function AddNewReward() {
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>B-Reward</p>
           <h3>เพิ่มของรางวัลใหม่</h3>
-          <div className={classes.width}>
-            <p className={classes.subject}>ชื่อของรางวัล</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
+          <Grid container sx={{ marginBottom: 5, marginTop: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>ชื่อของรางวัล</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               <TextField
+                sx={{ width: "100%" }}
                 size="small"
                 onChange={(e) => setItemName(e.target.value)}
                 value={ItemName}
                 required
                 error={ItemNameErr}
-              ></TextField>
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>รูปของรางวัล</p>
-            <div>
+              />
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5, marginTop: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>รูปของรางวัล</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               {Path && !ShowInput ? (
                 <div className={classes.Row}>
                   <img
@@ -390,70 +376,69 @@ export default function AddNewReward() {
                   </div>
                 </div>
               )}
-            </div>
-          </div>
+            </Grid>
+          </Grid>
 
-          <div className={classes.width}>
-            <p className={classes.subject}>จำนวนของรางวัลในคลัง</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
+          <Grid container sx={{ marginBottom: 5, marginTop: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>จำนวนของรางวัลในคลัง</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               <TextField
+                sx={{ width: "100%" }}
                 size="small"
                 type="number"
                 onChange={(e) => setStock(e.target.value)}
                 value={Stock}
-              ></TextField>
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>รายละเอียด</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
+              />
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5, marginTop: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>รายละเอียด</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               <TextField
                 size="small"
-                // placeholder="15"
+                sx={{ width: "100%" }}
                 onChange={(e) => setDescription(e.target.value)}
                 value={Description}
-              ></TextField>
-            </div>
-          </div>
-
-          <div className={classes.width}>
-            <p className={classes.subject}>คะแนนแลก</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
-              <TextField
-                size="small"
-                placeholder="1500"
-                onChange={(e) => setPoint(e.target.value)}
-                value={Point}
-                type="number"
-                required
-                error={PointErr}
               />
-              <span style={{ color: "gray" }}>
-                จำนวนคะแนนเพื่อใช้แลกของรางวัล
-              </span>
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>วันที่เริ่ม</p>
-            <div>
+            </Grid>
+          </Grid>
+
+          <Grid container sx={{ marginBottom: 5, marginTop: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>คะแนนแลก</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <TextField
+                  sx={{ width: "100%" }}
+                  size="small"
+                  placeholder="1500"
+                  onChange={(e) => setPoint(e.target.value)}
+                  value={Point}
+                  type="number"
+                  required
+                  error={PointErr}
+                />
+                <span style={{ color: "gray" }}>
+                  จำนวนคะแนนเพื่อใช้แลกของรางวัล
+                </span>
+              </div>
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5, marginTop: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>วันที่เริ่ม</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
                   // label="Basic example"
@@ -466,11 +451,13 @@ export default function AddNewReward() {
                   )}
                 />
               </LocalizationProvider>
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>วันที่สิ้นสุด</p>
-            <div>
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5, marginTop: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>วันที่สิ้นสุด</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
                   // label="Basic example"
@@ -483,67 +470,61 @@ export default function AddNewReward() {
                   )}
                 />
               </LocalizationProvider>
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>สถานะ</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5, marginTop: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>สถานะ</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               <GreenSwitch
                 checked={Status}
                 onChange={(e) => setStatus(e.target.checked)}
               />
-            </div>
-          </div>
+            </Grid>
+          </Grid>
 
-          <div
-            style={{
-              width: "70%",
-              paddingLeft: "14%",
-              marginTop: 50,
-            }}
-          >
-            <Button
-              variant="contained"
-              style={{
-                color: "black",
-                backgroundColor: "#F8F9FA",
-                borderColor: "transparent",
-                marginRight: 10,
-                width: 120,
-              }}
-              onClick={handleRoute}
-            >
-              กลับ
-            </Button>
-            <Button
-              variant="contained"
-              style={{
-                color: "white",
-                backgroundColor: "#FF0000",
-                borderColor: "transparent",
-                marginRight: 10,
-                width: 120,
-              }}
-              onClick={() => handleSave()}
-              type="submit"
-            >
-              {Loading ? (
-                <CircularProgress
-                  sx={{
-                    color: "#FFFFFF",
-                  }}
-                  size={24}
-                />
-              ) : (
-                "บันทึก"
-              )}
-            </Button>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2} />
+
+            <Grid item xs={12} sm={9.5} lg={6}>
+              <Button
+                variant="contained"
+                style={{
+                  color: "black",
+                  backgroundColor: "#F8F9FA",
+                  borderColor: "transparent",
+                  marginRight: 10,
+                  width: 120,
+                }}
+                onClick={handleRoute}
+              >
+                กลับ
+              </Button>
+              <Button
+                variant="contained"
+                style={{
+                  color: "white",
+                  backgroundColor: "#FF0000",
+                  borderColor: "transparent",
+                  marginRight: 10,
+                  width: 120,
+                }}
+                onClick={() => handleSave()}
+                type="submit"
+              >
+                {Loading ? (
+                  <CircularProgress
+                    sx={{
+                      color: "#FFFFFF",
+                    }}
+                    size={24}
+                  />
+                ) : (
+                  "บันทึก"
+                )}
+              </Button>
+            </Grid>
             <Dialog
               open={open}
               fullWidth={true}
@@ -576,7 +557,7 @@ export default function AddNewReward() {
                 </p>
               </DialogContent>
             </Dialog>
-          </div>
+          </Grid>
         </div>
       </Paper>
     </div>

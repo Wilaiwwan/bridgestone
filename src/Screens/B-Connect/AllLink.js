@@ -24,6 +24,7 @@ import { useHistory, Link } from "react-router-dom";
 import qs from "qs";
 import api from "../../Component/api/api";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import Grid from "@mui/material/Grid";
 
 const drawerHeight = "100%";
 const drawerwidth = "100%";
@@ -37,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
     border: "1px solid #e0e0e0",
-    width: "20%",
+    width: "100%",
   },
   Padding: {
     paddingTop: "2%",
@@ -60,9 +61,6 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
-  },
-  "&:nth-of-type(even)": {
-    backgroundColor: "gray",
   },
   // hide last border
   "&:last-child td, &:last-child th": {
@@ -190,65 +188,70 @@ export default function AllLink() {
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>B-Connect</p>
           <h3>ลิงค์ทั้งหมด</h3>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginBottom: 30,
-            }}
+          <Grid
+            container
+            spacing={2}
+            sx={{ justifyContent: { sm: "right" }, marginBottom: 2 }}
+            rowSpacing={1}
           >
-            <FormControlLabel
-              control={
-                <Checkbox
-                  sx={{
-                    color: "#FF0000",
-                    "&.Mui-checked": {
+            <Grid item xs={7} sm={2.5} lg={1}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    sx={{
                       color: "#FF0000",
-                    },
-                  }}
-                  id={"Active"}
-                  checked={_isBackend}
-                  onChange={(e) => setIsBackend(e.target.checked)}
-                />
-              }
-              label="ใช้งาน"
-            />
-
-            <FormControl
-              size="small"
-              sx={{
-                width: "15%",
-                marginRight: 5,
-              }}
-            >
-              <Select
-                style={{ marginTop: 5 }}
-                value={TypeConnectID}
-                onChange={(e) => setTypeConnectID(e.target.value)}
-                displayEmpty
-                inputProps={{ "aria-label": "Without label" }}
-                disableUnderline
-              >
-                <MenuItem value="">
-                  <em>กลุ่มทั้งหมด</em>
-                </MenuItem>
-                {typeConnectList.map((Data) => (
-                  <MenuItem value={Data.typeConnectID}>
-                    {Data.typeConnectName}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <div className={classes.search}>
-              <SearchIcon style={{ margin: 10 }} />
-              <InputBase
-                multiline
-                fullWidth
-                placeholder="ค้นหาชื่อ"
-                onChange={(e) => setKeyword(e.target.value)}
+                      "&.Mui-checked": {
+                        color: "#FF0000",
+                      },
+                    }}
+                    id={"Active"}
+                    checked={_isBackend}
+                    onChange={(e) => setIsBackend(e.target.checked)}
+                  />
+                }
+                label="ใช้งาน"
               />
-            </div>
-          </div>
+            </Grid>
+
+            <Grid item xs={7} sm={4} lg={2}>
+              <FormControl
+                size="small"
+                sx={{
+                  width: "100%",
+                }}
+              >
+                <Select
+                  style={{ marginTop: 5 }}
+                  value={TypeConnectID}
+                  onChange={(e) => setTypeConnectID(e.target.value)}
+                  displayEmpty
+                  inputProps={{ "aria-label": "Without label" }}
+                  disableUnderline
+                >
+                  <MenuItem value="">
+                    <em>กลุ่มทั้งหมด</em>
+                  </MenuItem>
+                  {typeConnectList.map((Data) => (
+                    <MenuItem value={Data.typeConnectID}>
+                      {Data.typeConnectName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item xs={7} sm={4} lg={3}>
+              <div className={classes.search}>
+                <SearchIcon style={{ margin: 10 }} />
+                <InputBase
+                  multiline
+                  fullWidth
+                  placeholder="ค้นหาชื่อ"
+                  onChange={(e) => setKeyword(e.target.value)}
+                />
+              </div>
+            </Grid>
+          </Grid>
 
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="droppable">
@@ -280,26 +283,27 @@ export default function AllLink() {
                           </StyledTableCell>
                         </TableRow>
                       </TableHead>
-                      {BconnectList.length > 0
-                        ? (rowsPerPage > 0
-                            ? BconnectList.slice(
-                                page * rowsPerPage,
-                                page * rowsPerPage + rowsPerPage
-                              )
-                            : BconnectList
-                          ).map((Data, index) => (
-                            <Draggable
-                              key={Data.bconnectID}
-                              draggableId={Data.bconnectID}
-                              index={index}
-                            >
-                              {(provided, snapshot) => (
-                                <TableBody
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                >
-                                  <StyledTableRow key={Data.bconnectID}>
+                      <TableBody>
+                        {BconnectList.length > 0
+                          ? (rowsPerPage > 0
+                              ? BconnectList.slice(
+                                  page * rowsPerPage,
+                                  page * rowsPerPage + rowsPerPage
+                                )
+                              : BconnectList
+                            ).map((Data, index) => (
+                              <Draggable
+                                key={Data.bconnectID}
+                                draggableId={Data.bconnectID}
+                                index={index}
+                              >
+                                {(provided, snapshot) => (
+                                  <StyledTableRow
+                                    key={Data.bconnectID}
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                  >
                                     <StyledTableCell align="center">
                                       {Data.seq}
                                     </StyledTableCell>
@@ -336,11 +340,11 @@ export default function AllLink() {
                                       </Link>
                                     </StyledTableCell>
                                   </StyledTableRow>
-                                </TableBody>
-                              )}
-                            </Draggable>
-                          ))
-                        : null}
+                                )}
+                              </Draggable>
+                            ))
+                          : null}
+                      </TableBody>
                     </Table>
                   </TableContainer>
                   {provided.placeholder}

@@ -66,13 +66,11 @@ export default function Login() {
       localStorage.setItem("EmpId", result.data.results.empId);
 
       handleRoute();
-      console.log(result);
     } catch (error) {
       console.error(error);
       setLoadingLogin(false);
     }
   };
-  console.log(localStorage);
 
   const handleRoute = () => {
     history.push("/AllSubject");

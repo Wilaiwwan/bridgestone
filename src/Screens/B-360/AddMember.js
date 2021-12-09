@@ -13,6 +13,7 @@ import {
   Autocomplete,
   TextareaAutosize,
   CircularProgress,
+  Grid,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { alpha, styled } from "@mui/material/styles";
@@ -57,6 +58,8 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: "6%",
     paddingLeft: "6%",
     paddingBottom: "2%",
+    maxHeight: "88vh",
+    overflow: "auto",
   },
   subject: {
     width: "20%",
@@ -223,31 +226,8 @@ export default function AddMember() {
     }
   };
 
-  const delStaff2 = (emp, index) => {
-    console.log(emp);
-    if (emp) {
-      emp.deleted = true;
-      emp.empId = null;
-      setRoundList([...RoundList]);
-    } else {
-      const StaffList = RoundList.filter((_, i) => i !== index);
-      setRoundList(StaffList);
-    }
-  };
-
   const handleDeleteAllStaff = () => {
     const selectedEmp = RoundList.filter((x) => x.selected === true);
-    // const _selectedEmp = selectedEmp.map((x) => {
-    //   return x;
-    // });
-
-    // 1. map แบบไม่มี return
-    // const _selectedEmp =  selectedEmp.map((x) => ({ ...x, deleted: true }));
-
-    // 2. map แบบมี return
-    // selectedEmp.map((x) => {
-    //   return { ...x, deleted: true };
-    // });
 
     selectedEmp.forEach((x) => {
       x.deleted = true;
@@ -255,18 +235,6 @@ export default function AddMember() {
     });
 
     setRoundList([...RoundList]);
-
-    // setRoundList(selectedEmp);
-    // console.log(_selectedEmp);
-
-    // console.log(selectedEmp);
-
-    // console.log(RoundList);
-
-    // const body = selectedEmp.map(x => {
-    //   return {...x, deleted: true, selected: undefined}
-    // })
-    // console.log(body);
   };
 
   const getFirstAndLastDayOfMonth = () => {
@@ -274,7 +242,6 @@ export default function AddMember() {
     const lastDate = new Date(Dval.getFullYear(), Dval.getMonth() + 1, 0);
     const firstDate = new Date(Dval.getFullYear(), Dval.getMonth(), 1);
     if (firstDate && lastDate) {
-      console.log(firstDate, lastDate, "Set Value");
     }
     AddRound(firstDate, lastDate);
   };
@@ -307,7 +274,6 @@ export default function AddMember() {
       const result = await api.get(`/api/employee/list?${params}`);
       const _result = result.data.results;
       setEmpList(_result);
-      console.log(_result);
     } catch (error) {
       console.log("error => ", error);
     }
@@ -326,7 +292,6 @@ export default function AddMember() {
       setYear(_result.year);
       setMonth(_result.month);
       setDeletedR(_result.deleted === false ? true : false);
-      console.log(result);
     } catch (error) {
       console.log("error => ", error);
     }
@@ -353,10 +318,9 @@ export default function AddMember() {
       }, 2000);
 
       AddMember(result.data.results);
-      console.log(result);
     } catch (error) {
       console.log("error => ", error);
-      setLoading(false)
+      setLoading(false);
     }
   };
   const AddMember = async (RoundId) => {
@@ -375,7 +339,6 @@ export default function AddMember() {
         setTimeout(() => {
           history.push(`/RoundList`);
         }, 2000);
-        console.log("result", result);
       } catch (error) {
         console.log("error => ", error);
       }
@@ -399,35 +362,30 @@ export default function AddMember() {
         <div class={classes.Padding}>
           <p style={{ color: "red" }}>B-360</p>
           <h3>เพิ่มพนักงานดีเด่น</h3>
-          <div className={classes.width}>
-            <p className={classes.subject}>ชื่อรอบ</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
+          <Grid container sx={{ marginBottom: 5, marginTop: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>ชื่อรอบ</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
               <TextField
+                sx={{ width: "100%" }}
                 size="small"
                 onChange={(e) => setExcellentTitle(e.target.value)}
                 value={ExcellentTitle}
                 required
                 error={ExcelNameErr}
               />
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>ปี</p>
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>ปี</p>
+            </Grid>
 
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
-              <FormControl size="small">
+            <Grid item xs={12} sm={9.5} lg={7}>
+              <FormControl size="small" 
+                sx={{ width: "100%" }}
+                >
                 <Select
                   value={Year}
                   onChange={(e) => setYear(e.target.value)}
@@ -443,18 +401,16 @@ export default function AddMember() {
                   ))}
                 </Select>
               </FormControl>
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>เดือน</p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                flexGrow: 1,
-              }}
-            >
-              <FormControl size="small">
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>เดือน</p>
+            </Grid>
+            <Grid item xs={12} sm={9.5} lg={7}>
+              <FormControl size="small" 
+                sx={{ width: "100%" }}
+                >
                 <Select
                   value={Month}
                   onChange={(e) => setMonth(e.target.value)}
@@ -478,23 +434,24 @@ export default function AddMember() {
                   <MenuItem value={12}>ธันวาคม</MenuItem>
                 </Select>
               </FormControl>
-            </div>
-          </div>
-          <div className={classes.width}>
-            <p className={classes.subject}>สถานะ</p>
+            </Grid>
+          </Grid>
+          <Grid container sx={{ marginBottom: 5 }}>
+            <Grid item xs={12} sm={2.5} lg={2}>
+              <p>สถานะ</p>
+            </Grid>
 
             <GreenSwitch
               checked={DeletedR}
               onChange={(e) => setDeletedR(e.target.checked)}
             />
-          </div>
+          </Grid>
           <div
             style={{
               display: "flex",
               justifyContent: "flex-end",
               flexDirection: "row",
               marginBottom: 20,
-              marginTop: 10,
             }}
           >
             <Button
